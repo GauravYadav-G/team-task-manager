@@ -6,7 +6,7 @@ export function StatusBadge({ status }) {
       case 'DONE':
         return 'bg-green-600/10 text-green-400 border-green-600/20';
       case 'IN_PROGRESS':
-        return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+        return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
       case 'TODO':
       default:
         return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
@@ -37,7 +37,7 @@ export function PriorityBadge({ priority }) {
       case 'HIGH':
         return 'bg-red-500/10 text-red-400 border-red-500/20';
       case 'MEDIUM':
-        return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+        return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
       case 'LOW':
       default:
         return 'bg-green-600/10 text-green-400 border-green-600/20';

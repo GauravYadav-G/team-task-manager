@@ -47,7 +47,7 @@ export default function MemberList({
   };
 
   return (
-    <div className="bg-[#262626] border border-white/5 rounded-3xl p-6 shadow-xl flex flex-col gap-5 w-full md:w-80 transition-all duration-300">
+    <div className="bg-[#1F2937] border border-white/5 rounded-3xl p-6 shadow-xl flex flex-col gap-5 w-full md:w-80 transition-all duration-300">
       
       {/* Header */}
       <div className="flex items-center justify-between border-b border-white/5 pb-4">
@@ -59,7 +59,7 @@ export default function MemberList({
           <button
             onClick={() => setShowAddForm(!showAddForm)}
             id="btn-add-member"
-            className="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-xl flex items-center justify-center transition-all duration-200 shadow-md shadow-orange-500/10"
+            className="bg-indigo-500 hover:bg-indigo-600 text-white p-2 rounded-xl flex items-center justify-center transition-all duration-200 shadow-md shadow-indigo-500/10"
           >
             {showAddForm ? <X className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
           </button>
@@ -76,7 +76,7 @@ export default function MemberList({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="collaborator@company.com"
-              className="w-full bg-[#1A1A1A] border border-white/5 rounded-xl py-2 px-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-orange-500/40 transition-all duration-200"
+              className="w-full bg-[#111827] border border-white/5 rounded-xl py-2 px-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/40 transition-all duration-200"
               required
               id="input-member-email"
             />
@@ -85,7 +85,7 @@ export default function MemberList({
             type="submit"
             disabled={adding}
             id="btn-submit-member"
-            className="bg-[#FDFBF7] hover:bg-[#eae6db] text-[#1A1A1A] py-2 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 disabled:opacity-50"
+            className="bg-[#FDFBF7] hover:bg-[#eae6db] text-[#111827] py-2 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 disabled:opacity-50"
           >
             {adding ? 'Adding...' : 'Invite Member'}
           </button>
@@ -97,14 +97,14 @@ export default function MemberList({
         {members?.map((m) => (
           <div key={m.user.id} className="flex items-center justify-between gap-4 p-2 hover:bg-white/2 rounded-xl transition-all duration-200">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-orange-500/15 text-orange-500 font-extrabold flex items-center justify-center text-xs uppercase border border-orange-500/10">
+              <div className="w-8 h-8 rounded-xl bg-indigo-500/15 text-indigo-500 font-extrabold flex items-center justify-center text-xs uppercase border border-indigo-500/10">
                 {getInitials(m.user.name)}
               </div>
               <div className="min-w-0">
                 <span className="text-xs font-extrabold text-white truncate block">
                   {m.user.name}
                   {m.user.id === currentUserId && (
-                    <span className="text-[10px] text-orange-400 font-normal"> (you)</span>
+                    <span className="text-[10px] text-indigo-400 font-normal"> (you)</span>
                   )}
                 </span>
                 <span className="text-[9px] text-gray-500 font-bold truncate block mt-0.5">{m.user.email}</span>

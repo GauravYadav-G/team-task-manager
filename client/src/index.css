@@ -3,14 +3,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 @theme {
-  --color-charcoal: #1A1A1A;
+  --color-charcoal: #111827;
   --color-cream: #FDFBF7;
   --font-sans: 'Inter', 'Outfit', 'sans-serif';
 }
 
 @layer base {
   body {
-    @apply bg-[#1A1A1A] text-white font-sans antialiased;
+    @apply bg-[#111827] text-white font-sans antialiased;
   }
 
   /* Custom scrollbar matching dark bento dashboard styles */
@@ -44,7 +44,7 @@
   }
 
   .loading-spinner {
-    @apply animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-yellow-500;
+    @apply animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-pink-500;
   }
 
   .page-header {
@@ -77,11 +77,11 @@
   }
 
   .project-card {
-    @apply bg-[#262626] border border-white/5 rounded-2xl p-6 cursor-pointer transition-all duration-300 relative overflow-hidden block;
+    @apply bg-[#1F2937] border border-white/5 rounded-2xl p-6 cursor-pointer transition-all duration-300 relative overflow-hidden block;
   }
 
   .project-card:hover {
-    @apply border-orange-500/30 -translate-y-0.5 shadow-lg shadow-orange-500/5;
+    @apply border-indigo-500/30 -translate-y-0.5 shadow-lg shadow-indigo-500/5;
   }
 
   .project-card-header {
@@ -89,7 +89,7 @@
   }
 
   .project-card-icon {
-    @apply bg-orange-500/10 text-orange-500 p-3 rounded-xl flex items-center justify-center transition-transform duration-300 font-bold text-lg;
+    @apply bg-indigo-500/10 text-indigo-500 p-3 rounded-xl flex items-center justify-center transition-transform duration-300 font-bold text-lg;
   }
 
   .project-card:hover .project-card-icon {
@@ -101,7 +101,7 @@
   }
 
   .project-card:hover .project-card-name {
-    @apply text-orange-400;
+    @apply text-indigo-400;
   }
 
   .project-card-desc {
@@ -121,11 +121,11 @@
   }
 
   .avatar {
-    @apply rounded-lg font-bold flex items-center justify-center text-white border-2 border-[#262626];
+    @apply rounded-lg font-bold flex items-center justify-center text-white border-2 border-[#1F2937];
   }
 
   .avatar-xs {
-    @apply w-7 h-7 text-xs bg-orange-500/20 text-orange-500;
+    @apply w-7 h-7 text-xs bg-indigo-500/20 text-indigo-500;
   }
 
   .avatar-more {
@@ -146,7 +146,7 @@
   }
 
   .modal {
-    @apply bg-[#262626] rounded-2xl shadow-xl max-w-md w-full border border-white/5;
+    @apply bg-[#1F2937] rounded-2xl shadow-xl max-w-md w-full border border-white/5;
   }
 
   .modal-header {
@@ -174,7 +174,7 @@
   }
 
   .form-input {
-    @apply w-full bg-[#1A1A1A] border border-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500/40 transition-colors duration-200;
+    @apply w-full bg-[#111827] border border-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/40 transition-colors duration-200;
   }
 
   .form-textarea {
@@ -186,7 +186,7 @@
   }
 
   .btn-primary {
-    @apply bg-orange-500 hover:bg-orange-600 text-white shadow-md;
+    @apply bg-indigo-500 hover:bg-indigo-600 text-white shadow-md;
   }
 
   .btn-ghost {

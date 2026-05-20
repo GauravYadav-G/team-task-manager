@@ -1,57 +1,323 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { 
-  TrendingUp, 
-  Plus, 
-  Check, 
-  ExternalLink, 
-  Filter, 
-  FileSpreadsheet, 
-  Info, 
-  HelpCircle, 
+  ChevronDown, 
+  RefreshCw, 
+  CheckCircle2, 
   Clock, 
-  Zap, 
-  SlidersHorizontal,
-  ChevronRight,
-  Sparkles
+  Plus, 
+  BarChart2, 
+  Calendar
 } from 'lucide-react';
-import { 
-  ComposedChart, 
-  Bar, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  Tooltip as RechartsTooltip, 
-  ResponsiveContainer, 
-  ReferenceArea 
-} from 'recharts';
 import api from '../api/axios';
 import { getInitials } from '../utils/helpers';
 import { toast } from 'react-hot-toast';
 
+const SubHeader = ({ onRefresh }) => {
+  const getMonthYear = () => {
+    return new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  };
+  return (
+    <div className="flex justify-between items-center mb-8">
+      <div className="flex gap-3">
+        <button className="flex items-center gap-2 bg-[#252525] text-gray-300 px-4 py-2 rounded-full text-sm font-medium hover:bg-[#333]">
+          <Calendar size={16} />
+          {getMonthYear()}
+          <ChevronDown size={16} />
+        </button>
+        <button className="flex items-center gap-2 bg-[#252525] text-gray-300 px-4 py-2 rounded-full text-sm font-medium hover:bg-[#333]">
+          <BarChart2 size={16} />
+          Edit View
+          <ChevronDown size={16} />
+        </button>
+      </div>
+      <button onClick={onRefresh} className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition-colors shadow-sm">
+        <RefreshCw size={16} className="text-gray-600" />
+        Refresh
+      </button>
+    </div>
+  );
+};
+
+const CheckCard = ({ bentoTasks, toggleTaskCompletion, completionPercentage }) => {
+  const pendingTasks = bentoTasks.filter(t => !t.completed);
+  const doneTasksItems = bentoTasks.filter(t => t.completed);
+
+  // We highlight the first pending as "Active Item", rest as regular? 
+  // For UI consistency with the design, we'll try to show 1 active, and completed ones below.
+  const activeTask = pendingTasks.length > 0 ? pendingTasks[0] : null;
+
+  return (
+    <div className="bg-[#F6F4EB] rounded-[2rem] p-6 flex flex-col relative overflow-hidden h-full">
+      <div className="flex justify-between items-center mb-6">
+        <span className="text-gray-800 font-semibold">Check</span>
+        <div className="flex items-center gap-4 w-1/2">
+          <div className="h-2 w-full bg-green-200/50 rounded-full overflow-hidden">
+            <div className="h-full bg-green-500 rounded-full transition-all duration-500" style={{width: `${completionPercentage}%`}}></div>
+          </div>
+          <span className="text-gray-500 text-sm whitespace-nowrap">{completionPercentage}% complete</span>
+        </div>
+      </div>
+
+      <div className="space-y-3 flex-1 relative z-10 overflow-y-auto">
+        {activeTask && (
+          <div className="bg-[#FDE047] rounded-xl p-3 flex justify-between items-center shadow-sm transition-all hover:scale-[1.02]">
+            <div className="flex items-center gap-3">
+              <div 
+                className="w-6 h-6 bg-white rounded-md flex items-center justify-center cursor-pointer border border-yellow-300"
+                onClick={() => toggleTaskCompletion(activeTask.id)}
+              >
+              </div>
+              <span className="text-gray-800 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">{activeTask.title}</span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button className="bg-white text-gray-800 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm">View</button>
+              <div className="w-8 h-8 rounded-full border border-yellow-500/30 flex items-center justify-center text-yellow-800 bg-white/50 text-xs font-bold">
+                 {activeTask.assignee}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {doneTasksItems.map(t => (
+          <div key={t.id} className="bg-black/5 rounded-xl p-3 flex justify-between items-center transition-all hover:bg-black/10 cursor-pointer" onClick={() => toggleTaskCompletion(t.id)}>
+            <div className="flex items-center gap-3 opacity-80 min-w-0">
+              <div className="w-6 h-6 shrink-0 bg-yellow-400 rounded-md flex items-center justify-center text-white">
+                <CheckCircle2 size={16} />
+              </div>
+              <span className="text-gray-700 line-through decoration-gray-400 truncate">{t.title}</span>
+            </div>
+            <div className="w-7 h-7 shrink-0 rounded-full opacity-80 bg-gray-300 flex items-center justify-center text-[9px] font-bold text-gray-700">
+               {t.assignee}
+            </div>
+          </div>
+        ))}
+        
+        {/* Placeholder if empty */}
+        {!activeTask && doneTasksItems.length === 0 && (
+          <div className="bg-black/5 rounded-xl p-3 h-12 opacity-50 flex items-center justify-center text-sm text-gray-500">All caught up!</div>
+        )}
+      </div>
+      
+      <div className="absolute bottom-0 right-0 left-0 h-10 bg-gradient-to-t from-[#F6F4EB] to-transparent pointer-events-none rounded-b-3xl"></div>
+    </div>
+  );
+};
+
+const ReportCard = ({ milestones }) => {
+  const topReport = milestones[0];
+  const bottomReport = milestones.length > 1 ? milestones[1] : null;
+
+  return (
+    <div className="bg-[#FF7A50] rounded-[2rem] p-6 flex flex-col h-full relative shadow-lg">
+      <span className="text-white font-medium mb-6">Deliverables & Milestones</span>
+      
+      <div className="space-y-4">
+        {topReport ? (
+          <div className="bg-white rounded-2xl p-4 shadow-xl z-10 relative">
+            <div className="flex justify-between items-start mb-4 gap-2">
+              <span className="text-gray-900 font-semibold text-lg leading-tight">{topReport.name}</span>
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="flex -space-x-2">
+                   {topReport.members.map((m, i) => (
+                     <div key={i} className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 ring-2 ring-white text-gray-500 text-[9px] font-bold border border-gray-200">
+                        {m.substring(0,2).toUpperCase()}
+                     </div>
+                   ))}
+                </div>
+                <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full font-medium flex items-center gap-1 whitespace-nowrap">
+                  {topReport.status.replace('_', ' ').toLowerCase()} <ChevronDown size={12}/>
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-500 text-sm">Target: {topReport.dueDate}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                 <button className="bg-gray-50 text-gray-700 hover:bg-gray-100 px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 border border-gray-100 transition-colors">
+                   <Plus size={14} /> Annotate
+                 </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white/20 rounded-2xl p-4 text-white text-sm">No milestones found</div>
+        )}
+
+        {bottomReport && (
+          <div className="bg-[#D1B153] rounded-2xl p-4 shadow-inner relative -mt-8 pt-8 hover:-translate-y-2 transition-transform cursor-pointer">
+            <div className="flex justify-between items-start mb-2 gap-2">
+              <span className="text-yellow-900 font-semibold truncate block">{bottomReport.name}</span>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-yellow-800/60 text-xs font-medium px-2 py-1 bg-white/20 rounded-full hidden sm:inline-block">Upcoming</span>
+                <span className="bg-white/40 text-yellow-900 text-xs px-2 py-1 rounded-full font-medium flex items-center gap-1">
+                   {bottomReport.status.replace('_', ' ').toLowerCase()} <ChevronDown size={12}/>
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  {bottomReport.members.map((m, i) => (
+                    <div key={i} className="w-6 h-6 border-2 border-[#D1B153] bg-yellow-100 flex items-center justify-center rounded-full text-[8px] font-bold text-yellow-800">
+                      {m.substring(0,2).toUpperCase()}
+                    </div>
+                  ))}
+                </div>
+              <span className="text-yellow-900/70 text-sm">Due: {bottomReport.dueDate}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const UnderstandCard = ({ tasksPerUser }) => {
+  return (
+    <div className="bg-[#1C1F26] rounded-[2rem] p-6 flex flex-col h-full border border-gray-800/50 shadow-xl">
+      <div className="flex justify-between items-center mb-6">
+        <span className="text-gray-100 font-medium">Understand</span>
+        <span className="text-gray-400 text-xs">Workload Overview</span>
+      </div>
+
+      <div className="flex gap-4 mb-4 border-b border-gray-800 pb-2 overflow-x-auto hide-scrollbar">
+        <button className="flex items-center gap-1 text-gray-300 text-sm hover:text-white whitespace-nowrap">
+          Last 12 week <ChevronDown size={14} />
+        </button>
+        <button className="flex items-center gap-1 text-gray-300 text-sm hover:text-white whitespace-nowrap">
+          Specific week <ChevronDown size={14} />
+        </button>
+        <button className="flex items-center gap-1 text-gray-300 text-sm hover:text-white whitespace-nowrap">
+          Active employee <ChevronDown size={14} />
+        </button>
+      </div>
+
+      <div className="overflow-x-auto flex-1 h-[200px] custom-scrollbar pr-2">
+        <table className="w-full text-sm text-left">
+          <thead className="text-xs text-gray-500 uppercase sticky top-0 bg-[#1C1F26] z-10">
+            <tr>
+              <th className="font-medium pb-3 w-1/3">Employee</th>
+              <th className="font-medium pb-3 text-center">Tasks</th>
+              <th className="font-medium pb-3 text-right">Email</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-300">
+            {tasksPerUser && tasksPerUser.length > 0 ? (
+              tasksPerUser.map((row, idx) => (
+                <tr key={idx} className="border-b border-gray-800/50 last:border-0 hover:bg-white/5 transition-colors">
+                  <td className="py-2.5 flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[9px] font-bold text-white shrink-0">
+                       {getInitials(row.user?.name || 'U')}
+                    </div>
+                    <span className="font-medium text-gray-200 truncate">{row.user?.name}</span>
+                  </td>
+                  <td className="py-2.5 text-center font-bold">{row.count}</td>
+                  <td className="py-2.5 text-right text-gray-400 truncate max-w-[100px]">{row.user?.email}</td>
+                </tr>
+              ))
+            ) : (
+              <tr><td colSpan="3" className="text-center py-4 text-gray-500">No member data</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+const PlanCard = ({ velocityData }) => {
+  const [isRealistic, setIsRealistic] = useState(false);
+  
+  // Transform our 6 sprints or dummy into chartData exactly how the html wants it.
+  // We'll scale optimistic/realistic and velocity to percentages or raw values
+  // Max value across data for scaling:
+  const maxVal = Math.max(...velocityData.map(v => Math.max(v.optimistic, v.realistic, v.velocity, 100)));
+  
+  const chartData = velocityData.map((d, i) => {
+     const posVal = isRealistic ? d.realistic : d.optimistic;
+     const negVal = Math.abs(posVal - d.velocity); // dummy logic just to draw two bars
+     const posPercent = (posVal / maxVal) * 100;
+     const negPercent = (negVal / maxVal) * 50; 
+     return {
+       month: d.name.replace('Sprint ', 'S'),
+       pos: posPercent > 10 ? posPercent : 10,
+       neg: negPercent > 5 ? negPercent : 5,
+       isHighlight: i === velocityData.length - 1 // highlight latest
+     };
+  });
+
+  return (
+    <div className="bg-[#FDE047] rounded-[2rem] p-6 flex flex-col h-full shadow-lg relative overflow-hidden">
+      <div className="flex justify-between items-center mb-6 relative z-10 gap-2">
+        <span className="text-gray-900 font-medium">Plan</span>
+        <div className="bg-yellow-200/50 p-1 rounded-full flex gap-1 backdrop-blur-sm shrink-0">
+          <button 
+             onClick={() => setIsRealistic(false)}
+             className={`px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors shadow-sm ${!isRealistic ? 'bg-white text-gray-900' : 'text-gray-700 hover:bg-yellow-100/50'}`}>
+               Optimistic
+          </button>
+          <button 
+             onClick={() => setIsRealistic(true)}
+             className={`px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors shadow-sm ${isRealistic ? 'bg-white text-gray-900' : 'text-gray-700 hover:bg-yellow-100/50'}`}>
+               Realistic
+          </button>
+        </div>
+      </div>
+
+      <div className="flex-1 relative mt-4">
+        <div className="absolute left-0 top-0 bottom-8 flex flex-col justify-between text-[10px] text-yellow-800/60 font-medium w-12 z-10">
+          <span>{maxVal}pt</span>
+          <span>{Math.round(maxVal*0.75)}pt</span>
+          <span>{Math.round(maxVal*0.5)}pt</span>
+          <span>0pt</span>
+          <span>Diff</span>
+        </div>
+
+        <div className="ml-12 h-full flex items-end justify-between pb-8 relative">
+           <div className="absolute left-0 right-0 border-b border-yellow-800/10 z-0" style={{ bottom: '30%' }}></div>
+           
+           <svg className="absolute inset-0 w-full h-full z-10 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 100">
+             <path d="M 0 60 Q 15 50 25 55 T 45 40 T 60 70 T 80 30 T 100 20" fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth="1" strokeLinecap="round"/>
+           </svg>
+
+          {chartData.map((data, idx) => (
+            <div key={idx} className="relative flex flex-col items-center flex-1 h-full z-20">
+              {data.isHighlight && (
+                <div className="absolute -inset-x-1 -top-6 -bottom-2 bg-black rounded-full shadow-xl pointer-events-none z-0"></div>
+              )}
+              <div className="w-3 relative h-full flex flex-col justify-end z-10" style={{ paddingBottom: '30%'}}>
+                 <div className="absolute bottom-[30%] w-full rounded-t-full bg-white transition-all duration-500 ease-in-out" 
+                      style={{ height: `${data.pos}%` }}></div>
+                 <div className="absolute top-[70%] w-full rounded-b-full bg-[#FF7A50] transition-all duration-500 ease-in-out" 
+                      style={{ height: `${data.neg}%` }}></div>
+              </div>
+              <span className={`absolute -bottom-6 text-[10px] font-medium ${data.isHighlight ? 'text-black font-bold' : 'text-yellow-800/60'} whitespace-nowrap`}>
+                {data.month}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function Dashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
   
-  // Interactive UI state
-  const [activeTaskId, setActiveTaskId] = useState('t-2');
-  const [isRealistic, setIsRealistic] = useState(false);
-  const [sprintFilter, setSprintFilter] = useState('Last Sprint');
-  const [teamFilter, setTeamFilter] = useState('All Teams');
+  const [bentoTasks, setBentoTasks] = useState([]);
 
   useEffect(() => {
     fetchDashboard();
   }, []);
 
   const fetchDashboard = async () => {
+    setLoading(true);
     try {
-      const [dashRes, userRes] = await Promise.all([
-        api.get('/dashboard'),
-        api.get('/auth/me')
-      ]);
+      const dashRes = await api.get('/dashboard');
       setData(dashRes.data);
-      setUser(userRes.data.user);
     } catch (err) {
       console.error('Dashboard fetch error:', err);
       toast.error('Unable to fetch live dashboard stats.');
@@ -60,19 +326,62 @@ export default function Dashboard() {
     }
   };
 
-  // Mock data to enrich dashboard visuals where database is empty
+  useEffect(() => {
+    if (data?.recentTasks) {
+      setBentoTasks(data.recentTasks.map(t => ({
+        id: t.id,
+        projectId: t.projectId,
+        title: t.title,
+        completed: t.status === 'DONE',
+        assignee: t.assignedTo ? getInitials(t.assignedTo.name) : 'UN'
+      })));
+    }
+  }, [data]);
+
+  const toggleTaskCompletion = async (id) => {
+    setBentoTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+    try {
+      const taskTarget = bentoTasks.find(t => t.id === id);
+      const newStatus = taskTarget.completed ? 'TODO' : 'DONE';
+      
+      if (taskTarget.projectId) {
+        await api.put(`/projects/${taskTarget.projectId}/tasks/${id}`, { status: newStatus });
+        fetchDashboard();
+      }
+    } catch (err) {
+      console.error('Failed to update task', err);
+      toast.error('Failed to update task status');
+      setBentoTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+    }
+  };
+
+  if (loading && !data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-gray-400 gap-4">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-yellow-500" />
+        <p className="font-sans text-sm font-medium tracking-wide">Gathering Finsights...</p>
+      </div>
+    );
+  }
+
+  const totalTasks = data?.totalTasks || 0;
+  const doneTasks = data?.tasksByStatus?.DONE || 0;
+  const completionPercentage = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
   const defaultMilestones = [
-    { id: 'm-1', name: 'v2.0 Beta Release', dueDate: 'May 28, 2026', status: 'IN_PROGRESS', members: ['Alice', 'Bob'] },
-    { id: 'm-2', name: 'API Integration Sync', dueDate: 'Jun 05, 2026', status: 'TODO', members: ['Charlie'] },
-    { id: 'm-3', name: 'Security Audit & Compliance', dueDate: 'Jun 12, 2026', status: 'DONE', members: ['Alice', 'Dave'] }
+    { id: 'm-1', name: 'v2.0 Beta Release', dueDate: 'May 28', status: 'IN_PROGRESS', members: ['Alice', 'Bob'] },
+    { id: 'm-2', name: 'API Integration Sync', dueDate: 'Jun 05', status: 'TODO', members: ['Charlie'] }
   ];
 
-  const defaultTeamWorkload = [
-    { name: 'Alice Johnson', avatar: 'AJ', role: 'UI/UX Designer', assigned: 8, completed: 6, overdue: 0, hours: 38 },
-    { name: 'Bob Smith', avatar: 'BS', role: 'Full Stack Dev', assigned: 12, completed: 8, overdue: 1, hours: 44 },
-    { name: 'Charlie Davis', avatar: 'CD', role: 'Backend Engineer', assigned: 6, completed: 5, overdue: 0, hours: 32 },
-    { name: 'Dave Miller', avatar: 'DM', role: 'QA Lead', assigned: 4, completed: 4, overdue: 0, hours: 28 }
-  ];
+  const milestones = data?.upcomingTasks && data.upcomingTasks.length > 0 
+    ? data.upcomingTasks.map(t => ({
+        id: t.id,
+        name: t.title,
+        dueDate: new Date(t.dueDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
+        status: t.status,
+        members: t.assignedTo ? [t.assignedTo.name] : ['Unassigned']
+      }))
+    : defaultMilestones;
 
   const defaultVelocityData = [
     { name: 'Sprint 10', optimistic: 42, realistic: 30, velocity: 35 },
@@ -83,460 +392,33 @@ export default function Dashboard() {
     { name: 'Sprint 15', optimistic: 75, realistic: 52, velocity: 55 }
   ];
 
-  // Dummy tasks for Widget 1
-  const [bentoTasks, setBentoTasks] = useState([]);
-
-  useEffect(() => {
-    if (data?.recentTasks) {
-      setBentoTasks(data.recentTasks.map(t => ({
-        id: t.id,
-        title: t.title,
-        completed: t.status === 'DONE',
-        assignee: t.assignedTo ? getInitials(t.assignedTo.name) : 'UN'
-      })));
-      if (data.recentTasks.length > 0) {
-        setActiveTaskId(data.recentTasks[0].id);
-      }
-    }
-  }, [data]);
-
-  const toggleTaskCompletion = async (id) => {
-    // Optimistic UI update
-    setBentoTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
-    try {
-      const taskTarget = bentoTasks.find(t => t.id === id);
-      await api.patch(`/projects/dummy/tasks/${id}`, { status: taskTarget.completed ? 'TODO' : 'DONE' });
-      // In a real app we'd fetchDashboard() again or the endpoint would properly match the task ID and project ID
-    } catch (err) {
-      // Ignored for demo
-    }
-  };
-
-  const handleAnnotate = (milestoneName) => {
-    toast.success(`Annotating ${milestoneName}...`);
-  };
-
-  const handleAnalyze = () => {
-    toast.success('Analyzing Sprint Velocity trends...');
-  };
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-gray-400 gap-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-yellow-500" />
-        <p className="font-sans text-sm font-medium tracking-wide">Compiling Widgets...</p>
-      </div>
-    );
-  }
-
-  // Calculate live stats
-  const totalTasks = data?.totalTasks || 0;
-  const doneTasks = data?.tasksByStatus?.DONE || 0;
-  const inProgressTasks = data?.tasksByStatus?.IN_PROGRESS || 0;
-  const completionPercentage = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
-
-  const milestones = data?.upcomingTasks && data.upcomingTasks.length > 0 
-    ? data.upcomingTasks.map(t => ({
-        id: t.id,
-        name: t.title,
-        dueDate: new Date(t.dueDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
-        status: t.status,
-        members: t.assignedTo ? [t.assignedTo.name] : ['Unassigned']
-      }))
-    : defaultMilestones;
-
   const velocityDataToUse = data?.velocityData && data.velocityData.length > 0
     ? data.velocityData
     : defaultVelocityData;
 
-  const bentoTasksToRender = bentoTasks.length > 0 
-    ? bentoTasks 
-    : [
-        { id: 't-none', title: 'No tasks assigned yet', completed: false, assignee: 'N/A' }
-      ];
+  const tasksPerUser = data?.tasksPerUser || [];
 
   return (
-    <div className="flex flex-col gap-8">
-      
-      {/* Dashboard Top welcome banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-white flex items-center gap-2">
-            Welcome back, <span className="text-yellow-400">{user?.name || 'Partner'}</span>
-            <Sparkles className="w-5 h-5 text-yellow-500 animate-pulse" />
-          </h1>
-          <p className="text-sm text-gray-400 font-bold mt-1">Here is how your bento workflow stands today.</p>
+    <>
+      <SubHeader onRefresh={fetchDashboard} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-7xl">
+        <div className="h-[400px]">
+          <CheckCard 
+            bentoTasks={bentoTasks} 
+            toggleTaskCompletion={toggleTaskCompletion} 
+            completionPercentage={completionPercentage} 
+          />
         </div>
-        <div className="flex items-center gap-2">
-          <Link 
-            to="/projects" 
-            className="bg-[#262626] border border-white/5 hover:border-orange-500/20 text-[#FDFBF7] py-2 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200"
-          >
-            <span>View All Projects</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
+        <div className="h-[400px]">
+          <ReportCard milestones={milestones} />
+        </div>
+        <div className="h-[420px]">
+          <UnderstandCard tasksPerUser={tasksPerUser} />
+        </div>
+        <div className="h-[420px]">
+          <PlanCard velocityData={velocityDataToUse} />
         </div>
       </div>
-
-      {/* 2x2 Asymmetric Bento-Box Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        
-        {/* WIDGET 1: To-Do & Progress (Top Left) - Spans 7 cols */}
-        <section className="lg:col-span-7 bg-[#262626] border border-white/5 text-white p-7 rounded-3xl flex flex-col justify-between shadow-xl min-h-[460px]">
-          
-          {/* Header */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between gap-4 mb-3">
-              <span className="text-xs font-extrabold uppercase tracking-widest text-gray-400">To-Do & Progress</span>
-              <span className="text-sm font-black text-green-500">{completionPercentage}% Completed</span>
-            </div>
-            
-            {/* Progress bar container */}
-            <div className="w-full bg-[#1A1A1A] border border-white/5 rounded-full h-2.5 overflow-hidden">
-              <div 
-                className="bg-green-500 h-2.5 rounded-full transition-all duration-500 ease-out" 
-                style={{ width: `${completionPercentage}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Task Pills */}
-          <div className="flex-1 flex flex-col gap-3">
-            {bentoTasksToRender.map((t) => {
-              const isActive = activeTaskId === t.id && t.id !== 't-none';
-              
-              if (t.completed) {
-                // Completed State - Strikethrough, faded background
-                return (
-                  <div 
-                    key={t.id}
-                    onClick={() => toggleTaskCompletion(t.id)}
-                    className="bg-[#1A1A1A] border border-white/5 opacity-40 hover:opacity-70 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer transition-all duration-200"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full border border-gray-600 bg-[#262626] flex items-center justify-center text-green-500">
-                        <Check className="w-3.5 h-3.5" strokeWidth={3} />
-                      </div>
-                      <span className="text-sm font-bold line-through text-gray-500">{t.title}</span>
-                    </div>
-                    <div className="w-6 h-6 rounded-lg bg-[#262626] text-gray-400 flex items-center justify-center text-[9px] font-black uppercase">
-                      {t.assignee}
-                    </div>
-                  </div>
-                );
-              }
-
-              // Active / Pending State
-              return (
-                <div 
-                  key={t.id}
-                  onClick={() => setActiveTaskId(t.id)}
-                  className={`p-4 rounded-2xl flex flex-col cursor-pointer transition-all duration-300 border ${
-                    isActive 
-                      ? 'bg-[#1A1A1A] border-orange-500/40 shadow-md shadow-orange-500/10' 
-                      : 'bg-[#1A1A1A] hover:bg-white/5 border-white/5 shadow-sm'
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <input 
-                        type="checkbox"
-                        checked={t.completed}
-                        onChange={() => toggleTaskCompletion(t.id)}
-                        className="w-4.5 h-4.5 rounded border-gray-600 bg-[#262626] text-orange-500 focus:ring-0 focus:ring-offset-0 cursor-pointer"
-                      />
-                      <span className="text-sm font-extrabold tracking-tight">{t.title}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <div className={`w-6 h-6 rounded-lg font-black flex items-center justify-center text-[9px] uppercase border ${
-                        isActive ? 'bg-[#262626] text-white border-white/10' : 'bg-[#262626] text-gray-400 border-white/5'
-                      }`}>
-                        {t.assignee}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Expanded Active View */}
-                  {isActive && (
-                    <div className="flex items-center justify-between pt-4 border-t border-white/10 mt-3 animate-fadeIn">
-                      <span className="text-[10px] uppercase font-black tracking-widest text-gray-400 flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />
-                        In Review • High Priority
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <button className="bg-[#262626] hover:bg-[#323232] text-white py-1 px-3 rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1 transition-all duration-200">
-                          <span>View</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-        </section>
-
-        {/* WIDGET 2: Deliverables & Milestones (Top Right) - Spans 5 cols */}
-        <section className="lg:col-span-5 bg-orange-500 text-white p-7 rounded-3xl flex flex-col justify-between shadow-xl min-h-[460px]">
-          <div>
-            <div className="flex items-center justify-between gap-4 mb-6">
-              <span className="text-xs font-extrabold uppercase tracking-widest opacity-80">Deliverables & Milestones</span>
-              <div className="bg-white/10 p-1.5 rounded-lg border border-white/10">
-                <Zap className="w-4 h-4 text-white" />
-              </div>
-            </div>
-
-            {/* Layered Cards container */}
-            <div className="flex flex-col gap-3">
-              {milestones.map((m, idx) => (
-                <div 
-                  key={m.id}
-                  className="bg-[#1A1A1A] text-white p-5 rounded-2xl shadow-lg border border-white/10 relative transition-all duration-300 hover:translate-y-[-2px] hover:shadow-2xl"
-                  style={{
-                    transform: `translateY(${idx * 4}px)`,
-                    zIndex: 10 + idx
-                  }}
-                >
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <h4 className="font-extrabold text-sm tracking-tight leading-snug">{m.name}</h4>
-                    <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${
-                      m.status === 'DONE' 
-                        ? 'bg-green-500/10 text-green-500 border-green-500/20' 
-                        : m.status === 'IN_PROGRESS' 
-                        ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' 
-                        : 'bg-white/5 text-gray-400 border-white/10'
-                    }`}>
-                      {m.status}
-                    </span>
-                  </div>
-
-                  <p className="text-[10px] text-gray-400 font-bold mb-4">Due on {m.dueDate}</p>
-
-                  <div className="flex items-center justify-between border-t border-white/5 pt-3">
-                    <div className="flex -space-x-1">
-                      {m.members.map((mem) => (
-                        <div 
-                          key={mem} 
-                          className="w-6 h-6 rounded-lg bg-orange-500 text-white font-extrabold flex items-center justify-center text-[8px] border-2 border-[#1A1A1A] uppercase shadow-sm"
-                        >
-                          {mem[0]}
-                        </div>
-                      ))}
-                    </div>
-                    <button 
-                      onClick={() => handleAnnotate(m.name)}
-                      className="text-[9px] font-black uppercase tracking-wider text-orange-500 hover:text-orange-400 transition-colors duration-200"
-                    >
-                      + Annotate
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* WIDGET 3: Team Workload & Stats (Bottom Left) - Spans 7 cols */}
-        <section className="lg:col-span-7 bg-[#262626] border border-white/5 p-7 rounded-3xl flex flex-col justify-between shadow-xl min-h-[460px]">
-          <div>
-            <span className="text-xs font-extrabold uppercase tracking-widest text-gray-400 block mb-6">Team Workload & Stats</span>
-            
-            {/* Inner top stats grid */}
-            <div className="grid grid-cols-3 gap-3 mb-6">
-              <div className="bg-orange-500/10 border border-orange-500/20 p-4 rounded-2xl">
-                <span className="text-[9px] uppercase font-bold text-orange-500 tracking-wider">Tasks Done</span>
-                <div className="text-2xl font-black text-white mt-1">{doneTasks}</div>
-              </div>
-              <div className="bg-yellow-400/10 border border-yellow-400/20 p-4 rounded-2xl">
-                <span className="text-[9px] uppercase font-bold text-yellow-500 tracking-wider">In Progress</span>
-                <div className="text-2xl font-black text-white mt-1">{inProgressTasks}</div>
-              </div>
-              <div className="bg-green-600/10 border border-green-600/20 p-4 rounded-2xl">
-                <span className="text-[9px] uppercase font-bold text-green-500 tracking-wider">Total Tasks</span>
-                <div className="text-2xl font-black text-white mt-1">{totalTasks}</div>
-              </div>
-            </div>
-
-            {/* Filter Section */}
-            <div className="flex items-center justify-between gap-4 mb-4">
-              <div className="flex items-center gap-2">
-                <Filter className="w-3.5 h-3.5 text-gray-500" />
-                <span className="text-xs font-extrabold text-gray-400">Filter Overview</span>
-              </div>
-              <div className="flex gap-2">
-                <select 
-                  value={sprintFilter} 
-                  onChange={(e) => setSprintFilter(e.target.value)}
-                  className="bg-[#1A1A1A] text-xs font-bold text-gray-300 border border-white/5 rounded-lg px-2.5 py-1 focus:outline-none focus:border-orange-500/40 cursor-pointer"
-                >
-                  <option>Last Sprint</option>
-                  <option>Active Sprint</option>
-                  <option>Overall Board</option>
-                </select>
-                <select 
-                  value={teamFilter} 
-                  onChange={(e) => setTeamFilter(e.target.value)}
-                  className="bg-[#1A1A1A] text-xs font-bold text-gray-300 border border-white/5 rounded-lg px-2.5 py-1 focus:outline-none focus:border-orange-500/40 cursor-pointer"
-                >
-                  <option>All Teams</option>
-                  <option>Engineering</option>
-                  <option>Design</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Team Data Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-white/5 text-[9px] font-black uppercase text-gray-500 tracking-wider">
-                    <th className="py-2.5">Team Member</th>
-                    <th className="py-2.5 text-center">Assigned</th>
-                    <th className="py-2.5 text-center">Done</th>
-                    <th className="py-2.5 text-center">Overdue</th>
-                    <th className="py-2.5 text-right">Hours</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {data?.tasksPerUser && data.tasksPerUser.length > 0 ? (
-                    data.tasksPerUser.map((w) => (
-                      <tr key={w.user?.id} className="hover:bg-white/2 transition-colors duration-150 text-xs">
-                        <td className="py-3 flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-xl bg-orange-500/20 text-orange-500 font-extrabold flex items-center justify-center text-[10px] uppercase border border-orange-500/10">
-                            {getInitials(w.user?.name || 'U')}
-                          </div>
-                          <div>
-                            <p className="font-extrabold text-[#FDFBF7]">{w.user?.name || 'Unknown'}</p>
-                            <p className="text-[9px] text-gray-500 font-bold">{w.user?.email || 'N/A'}</p>
-                          </div>
-                        </td>
-                        <td className="py-3 text-center font-bold text-gray-400">{w.count}</td>
-                        <td className="py-3 text-center font-bold text-green-400">-</td>
-                        <td className="py-3 text-center font-bold text-red-400">{data?.overdueTasks || 0}</td>
-                        <td className="py-3 text-right font-black text-[#FDFBF7]\">-</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="5" className="py-4 text-center text-gray-400 text-xs">No team members with assigned tasks</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-          </div>
-        </section>
-
-        {/* WIDGET 4: Sprint Velocity & Planning (Bottom Right) - Spans 5 cols */}
-        <section className="lg:col-span-5 bg-[#262626] border border-white/5 text-white p-7 rounded-3xl flex flex-col justify-between shadow-xl min-h-[460px]">
-          
-          {/* Header layout */}
-          <div className="mb-4">
-            <div className="flex items-center justify-between gap-4 mb-4">
-              <span className="text-xs font-extrabold uppercase tracking-widest text-gray-400">Velocity & Projections</span>
-              <button 
-                onClick={handleAnalyze}
-                className="bg-[#1A1A1A] text-yellow-500 p-2 rounded-xl flex items-center justify-center hover:scale-105 transition-transform duration-200 shadow-md border border-white/5"
-                title="Run AI Analysis"
-              >
-                <TrendingUp className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Toggle Switch */}
-            <div className="flex items-center gap-3 bg-[#1A1A1A] border border-white/5 p-1.5 rounded-2xl w-fit">
-              <button 
-                onClick={() => setIsRealistic(false)}
-                className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-200 ${
-                  !isRealistic ? 'bg-[#262626] text-yellow-500 shadow-sm border border-white/5' : 'text-gray-500 hover:text-gray-300'
-                }`}
-              >
-                Optimistic
-              </button>
-              <button 
-                onClick={() => setIsRealistic(true)}
-                className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-200 ${
-                  isRealistic ? 'bg-[#262626] text-yellow-500 shadow-sm border border-white/5' : 'text-gray-500 hover:text-gray-300'
-                }`}
-              >
-                Realistic
-              </button>
-            </div>
-          </div>
-
-          {/* Graph visual content using Recharts */}
-          <div className="flex-1 w-full h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={velocityDataToUse} margin={{ top: 10, right: 5, left: -25, bottom: 0 }}>
-                <XAxis 
-                  dataKey="name" 
-                  stroke="#9CA3AF" 
-                  fontSize={9} 
-                  fontWeight="bold"
-                  tickLine={false} 
-                  axisLine={false}
-                />
-                <YAxis 
-                  stroke="#9CA3AF" 
-                  fontSize={9} 
-                  fontWeight="bold"
-                  tickLine={false} 
-                  axisLine={false}
-                />
-                <RechartsTooltip 
-                  contentStyle={{
-                    background: '#1A1A1A',
-                    color: '#FFF',
-                    border: '1px solid rgba(255,255,255,0.05)',
-                    borderRadius: '12px',
-                    fontSize: '11px',
-                    fontFamily: 'sans-serif'
-                  }}
-                />
-                
-                {/* Highlights Sprint 12 & 13 with a dark, pill-shaped overlay */}
-                <ReferenceArea 
-                  x1="Sprint 12" 
-                  x2="Sprint 13" 
-                  fill="#FDFBF7" 
-                  fillOpacity={0.05} 
-                  radius={10}
-                />
-
-                {/* Bars - Varying shades of orange and white/transparent */}
-                <Bar 
-                  dataKey={isRealistic ? 'realistic' : 'optimistic'} 
-                  fill="#f97316" 
-                  radius={[6, 6, 0, 0]} 
-                  barSize={18}
-                />
-                
-                {/* Smooth line */}
-                <Line 
-                  type="monotone" 
-                  dataKey="velocity" 
-                  stroke="#FDFBF7" 
-                  strokeWidth={2.5} 
-                  dot={{ fill: '#FDFBF7', strokeWidth: 1 }}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Footer note */}
-          <div className="border-t border-white/10 pt-4 mt-2 flex items-center justify-between text-[10px] font-bold text-gray-400">
-            <span>Sprint 15 is active</span>
-            <span className="bg-[#1A1A1A] border border-white/5 text-yellow-500 px-2 py-0.5 rounded-full font-black uppercase">Current Week</span>
-          </div>
-
-        </section>
-
-      </div>
-      
-    </div>
+    </>
   );
 }

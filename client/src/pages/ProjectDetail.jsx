@@ -131,7 +131,7 @@ export default function ProjectDetail() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-gray-400 gap-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-yellow-500" />
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-pink-500" />
         <p className="font-sans text-sm font-medium tracking-wide">Compiling Board...</p>
       </div>
     );
@@ -153,9 +153,9 @@ export default function ProjectDetail() {
         };
       case 'IN_PROGRESS':
         return {
-          border: 'border-t-4 border-t-orange-500',
-          dot: 'bg-orange-500',
-          glow: 'shadow-orange-500/5'
+          border: 'border-t-4 border-t-indigo-500',
+          dot: 'bg-indigo-500',
+          glow: 'shadow-indigo-500/5'
         };
       case 'TODO':
       default:
@@ -194,8 +194,8 @@ export default function ProjectDetail() {
             id="btn-toggle-members"
             className={`py-2.5 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 border transition-all duration-200 ${
               showMembers 
-                ? 'bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/20' 
-                : 'bg-[#262626] border-white/5 text-gray-300 hover:border-white/10 hover:text-white'
+                ? 'bg-indigo-500 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
+                : 'bg-[#1F2937] border-white/5 text-gray-300 hover:border-white/10 hover:text-white'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -210,7 +210,7 @@ export default function ProjectDetail() {
                   setShowTaskModal(true);
                 }}
                 id="btn-create-task"
-                className="bg-[#FDFBF7] hover:bg-[#eae6db] text-[#1A1A1A] py-2.5 px-4.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all duration-200 shadow-md shadow-white/5"
+                className="bg-[#FDFBF7] hover:bg-[#eae6db] text-[#111827] py-2.5 px-4.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all duration-200 shadow-md shadow-white/5"
               >
                 <Plus className="w-4 h-4" />
                 <span>New Task</span>
@@ -244,10 +244,10 @@ export default function ProjectDetail() {
                 onDrop={(e) => handleDrop(e, status)}
                 onDragOver={(e) => handleDragOver(e, status)}
                 onDragLeave={handleDragLeave}
-                className={`bg-[#262626] p-5 rounded-3xl min-h-[550px] flex flex-col gap-4 border border-white/5 transition-all duration-300 ${
+                className={`bg-[#1F2937] p-5 rounded-3xl min-h-[550px] flex flex-col gap-4 border border-white/5 transition-all duration-300 ${
                   styles.border
                 } ${
-                  isOver ? 'bg-[#2b2b2b] border-orange-500/30 scale-[1.01]' : ''
+                  isOver ? 'bg-[#2b2b2b] border-indigo-500/30 scale-[1.01]' : ''
                 }`}
               >
                 {/* Column Header */}
@@ -258,7 +258,7 @@ export default function ProjectDetail() {
                       {getStatusLabel(status)}
                     </span>
                   </div>
-                  <span className="text-[10px] font-black text-gray-500 bg-[#1A1A1A] border border-white/5 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-black text-gray-500 bg-[#111827] border border-white/5 px-2 py-0.5 rounded-full">
                     {getColumnTasks(status).length}
                   </span>
                 </div>
@@ -322,7 +322,7 @@ export default function ProjectDetail() {
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#262626] border border-white/5 w-full max-w-sm rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-white animate-slideUp"
+            className="bg-[#1F2937] border border-white/5 w-full max-w-sm rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-white animate-slideUp"
           >
             <div className="border-b border-white/5 pb-3">
               <h2 className="font-extrabold text-base text-[#FDFBF7]">Delete project workflow</h2>

@@ -1,4 +1,4 @@
-export default function StatCard({ title, value, icon: Icon, bgClass = 'bg-[#262626]', textClass = 'text-white', borderClass = 'border-white/5', subtitle }) {
+export default function StatCard({ title, value, icon: Icon, bgClass = 'bg-[#1F2937]', textClass = 'text-white', borderClass = 'border-white/5', subtitle }) {
   return (
     <div className={`p-5 rounded-2xl border flex flex-col justify-between transition-all duration-300 ${bgClass} ${borderClass} shadow-md`}>
       <div className="flex items-center justify-between gap-4 mb-2">
