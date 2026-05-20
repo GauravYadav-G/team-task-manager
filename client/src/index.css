@@ -77,7 +77,11 @@
   }
 
   .project-card {
-    @apply group bg-[#262626] border border-white/5 hover:border-orange-500/30 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg hover:shadow-orange-500/5 relative overflow-hidden block;
+    @apply bg-[#262626] border border-white/5 rounded-2xl p-6 cursor-pointer transition-all duration-300 relative overflow-hidden block;
+  }
+
+  .project-card:hover {
+    @apply border-orange-500/30 -translate-y-0.5 shadow-lg shadow-orange-500/5;
   }
 
   .project-card-header {
@@ -85,11 +89,19 @@
   }
 
   .project-card-icon {
-    @apply bg-orange-500/10 text-orange-500 p-3 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 font-bold text-lg;
+    @apply bg-orange-500/10 text-orange-500 p-3 rounded-xl flex items-center justify-center transition-transform duration-300 font-bold text-lg;
+  }
+
+  .project-card:hover .project-card-icon {
+    @apply scale-110;
   }
 
   .project-card-name {
-    @apply font-extrabold text-lg text-white mb-2 group-hover:text-orange-400 transition-colors duration-200 truncate;
+    @apply font-extrabold text-lg text-white mb-2 transition-colors duration-200 truncate;
+  }
+
+  .project-card:hover .project-card-name {
+    @apply text-orange-400;
   }
 
   .project-card-desc {
