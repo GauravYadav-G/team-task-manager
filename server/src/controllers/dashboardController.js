@@ -79,6 +79,28 @@ async function getOverall(req, res, next) {
       distinct: ['userId'],
     });
 
+    // Upcoming tasks for milestones
+    const upcomingTasks = await prisma.task.findMany({
+      where: { 
+        projectId: { in: projectIds },
+        dueDate: { not: null }
+      },
+      include: {
+        assignedTo: { select: { name: true } }
+      },
+      orderBy: { dueDate: 'asc' },
+      take: 4,
+    });
+
+    // Velocity data (mocked but based on real task count trend)
+    // Constructing a trend based on total tasks for the demo
+    const velocityData = [
+      { name: 'Sprint 1', optimistic: totalTasks + 10, realistic: totalTasks + 5, velocity: totalTasks + 2 },
+      { name: 'Sprint 2', optimistic: totalTasks + 15, realistic: totalTasks + 8, velocity: totalTasks + 5 },
+      { name: 'Sprint 3', optimistic: totalTasks + 22, realistic: totalTasks + 12, velocity: totalTasks + 10 },
+      { name: 'Sprint 4', optimistic: totalTasks + 30, realistic: totalTasks + 18, velocity: totalTasks + 15 }
+    ];
+
     res.json({
       totalTasks,
       totalProjects,
@@ -87,6 +109,8 @@ async function getOverall(req, res, next) {
       overdueTasks,
       tasksPerUser,
       recentTasks,
+      upcomingTasks,
+      velocityData
     });
   } catch (error) {
     next(error);

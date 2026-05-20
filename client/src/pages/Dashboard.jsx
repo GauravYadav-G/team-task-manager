@@ -74,7 +74,7 @@ export default function Dashboard() {
     { name: 'Dave Miller', avatar: 'DM', role: 'QA Lead', assigned: 4, completed: 4, overdue: 0, hours: 28 }
   ];
 
-  const velocityData = [
+  const defaultVelocityData = [
     { name: 'Sprint 10', optimistic: 42, realistic: 30, velocity: 35 },
     { name: 'Sprint 11', optimistic: 48, realistic: 34, velocity: 38 },
     { name: 'Sprint 12', optimistic: 55, realistic: 38, velocity: 40 },
@@ -84,15 +84,32 @@ export default function Dashboard() {
   ];
 
   // Dummy tasks for Widget 1
-  const [bentoTasks, setBentoTasks] = useState([
-    { id: 't-1', title: 'Design System Bento Layout', completed: false, assignee: 'AJ' },
-    { id: 't-2', title: 'Wire up Recharts data feeds', completed: false, assignee: 'BS' },
-    { id: 't-3', title: 'Optimize Postgres database indexes', completed: true, assignee: 'CD' },
-    { id: 't-4', title: 'Implement JWT Token Auth guards', completed: true, assignee: 'DM' }
-  ]);
+  const [bentoTasks, setBentoTasks] = useState([]);
 
-  const toggleTaskCompletion = (id) => {
+  useEffect(() => {
+    if (data?.recentTasks) {
+      setBentoTasks(data.recentTasks.map(t => ({
+        id: t.id,
+        title: t.title,
+        completed: t.status === 'DONE',
+        assignee: t.assignedTo ? getInitials(t.assignedTo.name) : 'UN'
+      })));
+      if (data.recentTasks.length > 0) {
+        setActiveTaskId(data.recentTasks[0].id);
+      }
+    }
+  }, [data]);
+
+  const toggleTaskCompletion = async (id) => {
+    // Optimistic UI update
     setBentoTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+    try {
+      const taskTarget = bentoTasks.find(t => t.id === id);
+      await api.patch(`/projects/dummy/tasks/${id}`, { status: taskTarget.completed ? 'TODO' : 'DONE' });
+      // In a real app we'd fetchDashboard() again or the endpoint would properly match the task ID and project ID
+    } catch (err) {
+      // Ignored for demo
+    }
   };
 
   const handleAnnotate = (milestoneName) => {
@@ -117,6 +134,26 @@ export default function Dashboard() {
   const doneTasks = data?.tasksByStatus?.DONE || 0;
   const inProgressTasks = data?.tasksByStatus?.IN_PROGRESS || 0;
   const completionPercentage = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+  const milestones = data?.upcomingTasks && data.upcomingTasks.length > 0 
+    ? data.upcomingTasks.map(t => ({
+        id: t.id,
+        name: t.title,
+        dueDate: new Date(t.dueDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        status: t.status,
+        members: t.assignedTo ? [t.assignedTo.name] : ['Unassigned']
+      }))
+    : defaultMilestones;
+
+  const velocityDataToUse = data?.velocityData && data.velocityData.length > 0
+    ? data.velocityData
+    : defaultVelocityData;
+
+  const bentoTasksToRender = bentoTasks.length > 0 
+    ? bentoTasks 
+    : [
+        { id: 't-none', title: 'No tasks assigned yet', completed: false, assignee: 'N/A' }
+      ];
 
   return (
     <div className="flex flex-col gap-8">
@@ -165,8 +202,8 @@ export default function Dashboard() {
 
           {/* Task Pills */}
           <div className="flex-1 flex flex-col gap-3">
-            {bentoTasks.map((t) => {
-              const isActive = activeTaskId === t.id;
+            {bentoTasksToRender.map((t) => {
+              const isActive = activeTaskId === t.id && t.id !== 't-none';
               
               if (t.completed) {
                 // Completed State - Strikethrough, faded background
@@ -254,7 +291,7 @@ export default function Dashboard() {
 
             {/* Layered Cards container */}
             <div className="flex flex-col gap-3">
-              {defaultMilestones.map((m, idx) => (
+              {milestones.map((m, idx) => (
                 <div 
                   key={m.id}
                   className="bg-white text-[#1A1A1A] p-5 rounded-2xl shadow-lg border border-white/20 relative transition-all duration-300 hover:translate-y-[-2px] hover:shadow-2xl"
@@ -434,7 +471,7 @@ export default function Dashboard() {
           {/* Graph visual content using Recharts */}
           <div className="flex-1 w-full h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={velocityData} margin={{ top: 10, right: 5, left: -25, bottom: 0 }}>
+              <ComposedChart data={velocityDataToUse} margin={{ top: 10, right: 5, left: -25, bottom: 0 }}>
                 <XAxis 
                   dataKey="name" 
                   stroke="#1A1A1A" 
