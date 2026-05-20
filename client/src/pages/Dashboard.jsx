@@ -32,6 +32,7 @@ import { toast } from 'react-hot-toast';
 export default function Dashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
   
   // Interactive UI state
   const [activeTaskId, setActiveTaskId] = useState('t-2');
@@ -45,8 +46,12 @@ export default function Dashboard() {
 
   const fetchDashboard = async () => {
     try {
-      const res = await api.get('/dashboard');
-      setData(res.data);
+      const [dashRes, userRes] = await Promise.all([
+        api.get('/dashboard'),
+        api.get('/auth/me')
+      ]);
+      setData(dashRes.data);
+      setUser(userRes.data.user);
     } catch (err) {
       console.error('Dashboard fetch error:', err);
       toast.error('Unable to fetch live dashboard stats.');
@@ -107,11 +112,11 @@ export default function Dashboard() {
     );
   }
 
-  // Calculate live stats or fall back to default
-  const totalTasks = data?.totalTasks || 24;
-  const doneTasks = data?.tasksByStatus?.DONE || 14;
-  const inProgressTasks = data?.tasksByStatus?.IN_PROGRESS || 6;
-  const completionPercentage = Math.round((doneTasks / (totalTasks || 1)) * 100);
+  // Calculate live stats
+  const totalTasks = data?.totalTasks || 0;
+  const doneTasks = data?.tasksByStatus?.DONE || 0;
+  const inProgressTasks = data?.tasksByStatus?.IN_PROGRESS || 0;
+  const completionPercentage = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   return (
     <div className="flex flex-col gap-8">
@@ -120,7 +125,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-white flex items-center gap-2">
-            Welcome back, <span className="text-yellow-400">{data?.user?.name || 'Partner'}</span>
+            Welcome back, <span className="text-yellow-400">{user?.name || 'Partner'}</span>
             <Sparkles className="w-5 h-5 text-yellow-500 animate-pulse" />
           </h1>
           <p className="text-sm text-gray-400 font-bold mt-1">Here is how your bento workflow stands today.</p>
@@ -306,15 +311,15 @@ export default function Dashboard() {
             <div className="grid grid-cols-3 gap-3 mb-6">
               <div className="bg-orange-500/10 border border-orange-500/20 p-4 rounded-2xl">
                 <span className="text-[9px] uppercase font-bold text-orange-500 tracking-wider">Tasks Done</span>
-                <div className="text-2xl font-black text-white mt-1">42</div>
+                <div className="text-2xl font-black text-white mt-1">{doneTasks}</div>
               </div>
               <div className="bg-yellow-400/10 border border-yellow-400/20 p-4 rounded-2xl">
-                <span className="text-[9px] uppercase font-bold text-yellow-500 tracking-wider">Hours Logged</span>
-                <div className="text-2xl font-black text-white mt-1">162h</div>
+                <span className="text-[9px] uppercase font-bold text-yellow-500 tracking-wider">In Progress</span>
+                <div className="text-2xl font-black text-white mt-1">{inProgressTasks}</div>
               </div>
               <div className="bg-green-600/10 border border-green-600/20 p-4 rounded-2xl">
-                <span className="text-[9px] uppercase font-bold text-green-500 tracking-wider">Team Cap</span>
-                <div className="text-2xl font-black text-white mt-1">94%</div>
+                <span className="text-[9px] uppercase font-bold text-green-500 tracking-wider">Total Tasks</span>
+                <div className="text-2xl font-black text-white mt-1">{totalTasks}</div>
               </div>
             </div>
 
@@ -359,23 +364,29 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {defaultTeamWorkload.map((w) => (
-                    <tr key={w.name} className="hover:bg-white/2 transition-colors duration-150 text-xs">
-                      <td className="py-3 flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-xl bg-orange-500/20 text-orange-500 font-extrabold flex items-center justify-center text-[10px] uppercase border border-orange-500/10">
-                          {w.avatar}
-                        </div>
-                        <div>
-                          <p className="font-extrabold text-[#FDFBF7]">{w.name}</p>
-                          <p className="text-[9px] text-gray-500 font-bold">{w.role}</p>
-                        </div>
-                      </td>
-                      <td className="py-3 text-center font-bold text-gray-400">{w.assigned}</td>
-                      <td className="py-3 text-center font-bold text-green-400">{w.completed}</td>
-                      <td className="py-3 text-center font-bold text-red-400">{w.overdue}</td>
-                      <td className="py-3 text-right font-black text-[#FDFBF7]">{w.hours}h</td>
+                  {data?.tasksPerUser && data.tasksPerUser.length > 0 ? (
+                    data.tasksPerUser.map((w) => (
+                      <tr key={w.user?.id} className="hover:bg-white/2 transition-colors duration-150 text-xs">
+                        <td className="py-3 flex items-center gap-2.5">
+                          <div className="w-7 h-7 rounded-xl bg-orange-500/20 text-orange-500 font-extrabold flex items-center justify-center text-[10px] uppercase border border-orange-500/10">
+                            {getInitials(w.user?.name || 'U')}
+                          </div>
+                          <div>
+                            <p className="font-extrabold text-[#FDFBF7]">{w.user?.name || 'Unknown'}</p>
+                            <p className="text-[9px] text-gray-500 font-bold">{w.user?.email || 'N/A'}</p>
+                          </div>
+                        </td>
+                        <td className="py-3 text-center font-bold text-gray-400">{w.count}</td>
+                        <td className="py-3 text-center font-bold text-green-400">-</td>
+                        <td className="py-3 text-center font-bold text-red-400">{data?.overdueTasks || 0}</td>
+                        <td className="py-3 text-right font-black text-[#FDFBF7]\">-</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" className="py-4 text-center text-gray-400 text-xs">No team members with assigned tasks</td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
