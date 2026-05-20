@@ -3,6 +3,7 @@ import { RoleBadge } from './StatusBadge';
 import { getInitials } from '../utils/helpers';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
+import { X, UserPlus, Trash2 } from 'lucide-react';
 
 export default function MemberList({
   projectId,
@@ -46,75 +47,86 @@ export default function MemberList({
   };
 
   return (
-    <div className="member-list">
-      <div className="member-list-header">
-        <h3>Team Members ({members?.length || 0})</h3>
+    <div className="bg-[#262626] border border-white/5 rounded-3xl p-6 shadow-xl flex flex-col gap-5 w-full md:w-80 transition-all duration-300">
+      
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-white/5 pb-4">
+        <div>
+          <h3 className="font-extrabold text-sm text-[#FDFBF7] tracking-wider uppercase">Team Members</h3>
+          <span className="text-[10px] font-bold text-gray-500 mt-1 block">Active collaborators</span>
+        </div>
         {isAdmin && (
           <button
-            className="btn btn-sm btn-primary"
             onClick={() => setShowAddForm(!showAddForm)}
             id="btn-add-member"
+            className="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-xl flex items-center justify-center transition-all duration-200 shadow-md shadow-orange-500/10"
           >
-            {showAddForm ? 'Cancel' : '+ Add'}
+            {showAddForm ? <X className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
           </button>
         )}
       </div>
 
+      {/* Invite Member form */}
       {showAddForm && (
-        <form onSubmit={handleAddMember} className="add-member-form">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter email address"
-            className="form-input"
-            required
-            id="input-member-email"
-          />
+        <form onSubmit={handleAddMember} className="flex flex-col gap-3 animate-fadeIn">
+          <div>
+            <label className="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider block mb-1.5">Add Member Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="collaborator@company.com"
+              className="w-full bg-[#1A1A1A] border border-white/5 rounded-xl py-2 px-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-orange-500/40 transition-all duration-200"
+              required
+              id="input-member-email"
+            />
+          </div>
           <button
             type="submit"
-            className="btn btn-primary btn-sm"
             disabled={adding}
             id="btn-submit-member"
+            className="bg-[#FDFBF7] hover:bg-[#eae6db] text-[#1A1A1A] py-2 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 disabled:opacity-50"
           >
-            {adding ? '...' : 'Add'}
+            {adding ? 'Adding...' : 'Invite Member'}
           </button>
         </form>
       )}
 
-      <div className="member-items">
+      {/* Members list */}
+      <div className="flex flex-col gap-3.5 max-h-[300px] overflow-y-auto pr-1">
         {members?.map((m) => (
-          <div key={m.user.id} className="member-item">
-            <div className="member-info">
-              <div className="avatar avatar-sm">{getInitials(m.user.name)}</div>
-              <div className="member-details">
-                <span className="member-name">
+          <div key={m.user.id} className="flex items-center justify-between gap-4 p-2 hover:bg-white/2 rounded-xl transition-all duration-200">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-xl bg-orange-500/15 text-orange-500 font-extrabold flex items-center justify-center text-xs uppercase border border-orange-500/10">
+                {getInitials(m.user.name)}
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-extrabold text-white truncate block">
                   {m.user.name}
                   {m.user.id === currentUserId && (
-                    <span className="member-you"> (you)</span>
+                    <span className="text-[10px] text-orange-400 font-normal"> (you)</span>
                   )}
                 </span>
-                <span className="member-email">{m.user.email}</span>
+                <span className="text-[9px] text-gray-500 font-bold truncate block mt-0.5">{m.user.email}</span>
               </div>
             </div>
-            <div className="member-actions">
+            
+            <div className="flex items-center gap-2">
               <RoleBadge role={m.role} />
               {isAdmin && m.user.id !== currentUserId && (
                 <button
-                  className="btn-icon btn-danger-icon"
                   onClick={() => handleRemoveMember(m.user.id, m.user.name)}
                   title="Remove member"
+                  className="p-1 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all duration-150 border border-red-500/10"
                 >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
           </div>
         ))}
       </div>
+
     </div>
   );
 }

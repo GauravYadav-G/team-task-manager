@@ -7,6 +7,7 @@ import TaskModal from '../components/TaskModal';
 import MemberList from '../components/MemberList';
 import { getStatusLabel } from '../utils/helpers';
 import toast from 'react-hot-toast';
+import { ArrowLeft, Users, Plus, Trash2, HelpCircle } from 'lucide-react';
 
 const COLUMNS = ['TODO', 'IN_PROGRESS', 'DONE'];
 
@@ -58,10 +59,10 @@ export default function ProjectDetail() {
     try {
       if (taskId) {
         await api.put(`/projects/${id}/tasks/${taskId}`, data);
-        toast.success('Task updated');
+        toast.success('Task updated successfully');
       } else {
         await api.post(`/projects/${id}/tasks`, data);
-        toast.success('Task created');
+        toast.success('Task created successfully');
       }
       fetchTasks();
     } catch (err) {
@@ -73,7 +74,7 @@ export default function ProjectDetail() {
   const handleDeleteTask = async (taskId) => {
     try {
       await api.delete(`/projects/${id}/tasks/${taskId}`);
-      toast.success('Task deleted');
+      toast.success('Task deleted successfully');
       fetchTasks();
     } catch (err) {
       toast.error('Failed to delete task');
@@ -100,8 +101,9 @@ export default function ProjectDetail() {
 
     try {
       await api.put(`/projects/${id}/tasks/${taskId}`, { status: newStatus });
+      toast.success(`Task moved to ${getStatusLabel(newStatus)}`);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to update status');
+      toast.error(err.response?.data?.message || 'Failed to update task status');
       fetchTasks(); // Revert
     }
   };
@@ -119,7 +121,7 @@ export default function ProjectDetail() {
   const handleDeleteProject = async () => {
     try {
       await api.delete(`/projects/${id}`);
-      toast.success('Project deleted');
+      toast.success('Project deleted successfully');
       navigate('/projects');
     } catch (err) {
       toast.error('Failed to delete project');
@@ -128,8 +130,9 @@ export default function ProjectDetail() {
 
   if (loading) {
     return (
-      <div className="page-loading">
-        <div className="loading-spinner" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-gray-400 gap-4">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-yellow-500" />
+        <p className="font-sans text-sm font-medium tracking-wide">Compiling Board...</p>
       </div>
     );
   }
@@ -139,125 +142,153 @@ export default function ProjectDetail() {
   const getColumnTasks = (status) =>
     tasks.filter((t) => t.status === status);
 
+  // Column style helpers mapping to status accents
+  const getColumnStyles = (status) => {
+    switch (status) {
+      case 'DONE':
+        return {
+          border: 'border-t-4 border-t-green-600',
+          dot: 'bg-green-600',
+          glow: 'shadow-green-500/5'
+        };
+      case 'IN_PROGRESS':
+        return {
+          border: 'border-t-4 border-t-orange-500',
+          dot: 'bg-orange-500',
+          glow: 'shadow-orange-500/5'
+        };
+      case 'TODO':
+      default:
+        return {
+          border: 'border-t-4 border-t-gray-500',
+          dot: 'bg-gray-500',
+          glow: 'shadow-gray-500/5'
+        };
+    }
+  };
+
   return (
-    <div className="page project-detail-page">
-      {/* Header */}
-      <div className="page-header">
+    <div className="flex flex-col gap-6 font-sans">
+      
+      {/* Back button and page header section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <button
-            className="btn btn-ghost btn-sm back-btn"
             onClick={() => navigate('/projects')}
+            className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-gray-500 hover:text-white transition-colors duration-200 mb-3"
           >
-            ← Back
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Back to Projects</span>
           </button>
-          <h1>{project.name}</h1>
+          
+          <h1 className="text-3xl font-black tracking-tight text-white">{project.name}</h1>
           {project.description && (
-            <p className="page-subtitle">{project.description}</p>
+            <p className="text-sm text-gray-400 font-bold mt-1.5 max-w-2xl">{project.description}</p>
           )}
         </div>
 
-        <div className="page-header-actions">
+        {/* Board actions */}
+        <div className="flex items-center gap-3">
           <button
-            className="btn btn-ghost"
             onClick={() => setShowMembers(!showMembers)}
             id="btn-toggle-members"
+            className={`py-2.5 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 border transition-all duration-200 ${
+              showMembers 
+                ? 'bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/20' 
+                : 'bg-[#262626] border-white/5 text-gray-300 hover:border-white/10 hover:text-white'
+            }`}
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            Team ({project.members?.length || 0})
+            <Users className="w-4 h-4" />
+            <span>Team ({project.members?.length || 0})</span>
           </button>
 
           {isAdmin && (
             <>
               <button
-                className="btn btn-primary"
                 onClick={() => {
                   setEditingTask(null);
                   setShowTaskModal(true);
                 }}
                 id="btn-create-task"
+                className="bg-[#FDFBF7] hover:bg-[#eae6db] text-[#1A1A1A] py-2.5 px-4.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all duration-200 shadow-md shadow-white/5"
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                New Task
+                <Plus className="w-4 h-4" />
+                <span>New Task</span>
               </button>
 
               <button
-                className="btn btn-ghost btn-danger-text"
                 onClick={() => setShowDeleteConfirm(true)}
-                title="Delete project"
                 id="btn-delete-project"
+                title="Delete Project"
+                className="p-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/10 transition-all duration-200"
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                </svg>
+                <Trash2 className="w-4 h-4" />
               </button>
             </>
           )}
         </div>
       </div>
 
-      <div className="project-detail-layout">
-        {/* Kanban Board */}
-        <div className="kanban-board">
-          {COLUMNS.map((status) => (
-            <div
-              key={status}
-              className={`kanban-column ${dragOverColumn === status ? 'kanban-column-dragover' : ''}`}
-              onDrop={(e) => handleDrop(e, status)}
-              onDragOver={(e) => handleDragOver(e, status)}
-              onDragLeave={handleDragLeave}
-            >
-              <div className="kanban-column-header">
-                <div className="kanban-column-title">
-                  <span
-                    className="kanban-column-dot"
-                    style={{
-                      backgroundColor:
-                        status === 'TODO'
-                          ? '#94a3b8'
-                          : status === 'IN_PROGRESS'
-                            ? '#7c3aed'
-                            : '#22c55e',
-                    }}
-                  />
-                  <span>{getStatusLabel(status)}</span>
-                </div>
-                <span className="kanban-column-count">
-                  {getColumnTasks(status).length}
-                </span>
-              </div>
-
-              <div className="kanban-column-body">
-                {getColumnTasks(status).map((task) => (
-                  <TaskCard
-                    key={task.id}
-                    task={task}
-                    onEdit={handleEditTask}
-                    userRole={userRole}
-                  />
-                ))}
-
-                {getColumnTasks(status).length === 0 && (
-                  <div className="kanban-empty">
-                    <p>No tasks</p>
+      {/* Main Board columns + Members slider */}
+      <div className="flex flex-col lg:flex-row items-start gap-6">
+        
+        {/* Kanban Board Grid */}
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 w-full items-stretch">
+          {COLUMNS.map((status) => {
+            const styles = getColumnStyles(status);
+            const isOver = dragOverColumn === status;
+            
+            return (
+              <div
+                key={status}
+                onDrop={(e) => handleDrop(e, status)}
+                onDragOver={(e) => handleDragOver(e, status)}
+                onDragLeave={handleDragLeave}
+                className={`bg-[#262626] p-5 rounded-3xl min-h-[550px] flex flex-col gap-4 border border-white/5 transition-all duration-300 ${
+                  styles.border
+                } ${
+                  isOver ? 'bg-[#2b2b2b] border-orange-500/30 scale-[1.01]' : ''
+                }`}
+              >
+                {/* Column Header */}
+                <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${styles.dot}`} />
+                    <span className="font-extrabold text-sm text-[#FDFBF7] tracking-tight uppercase">
+                      {getStatusLabel(status)}
+                    </span>
                   </div>
-                )}
+                  <span className="text-[10px] font-black text-gray-500 bg-[#1A1A1A] border border-white/5 px-2 py-0.5 rounded-full">
+                    {getColumnTasks(status).length}
+                  </span>
+                </div>
+
+                {/* Column Body Tasks */}
+                <div className="flex-1 flex flex-col gap-3.5 overflow-y-auto max-h-[600px] pr-1">
+                  {getColumnTasks(status).map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      onEdit={handleEditTask}
+                      userRole={userRole}
+                    />
+                  ))}
+
+                  {getColumnTasks(status).length === 0 && (
+                    <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-white/2 rounded-2xl py-12 px-4 text-center">
+                      <HelpCircle className="w-6 h-6 text-gray-600 mb-2" />
+                      <p className="text-xs text-gray-500 font-bold">No tasks here</p>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Members Panel */}
+        {/* Members panel section */}
         {showMembers && (
-          <div className="members-panel">
+          <div className="shrink-0 w-full lg:w-fit animate-fadeIn">
             <MemberList
               projectId={id}
               members={project.members}
@@ -267,9 +298,10 @@ export default function ProjectDetail() {
             />
           </div>
         )}
+
       </div>
 
-      {/* Task Modal */}
+      {/* Task Creation & Edit properties modal */}
       <TaskModal
         isOpen={showTaskModal}
         onClose={() => {
@@ -282,37 +314,42 @@ export default function ProjectDetail() {
         userRole={userRole}
       />
 
-      {/* Delete Confirmation */}
+      {/* Delete Confirmation Modal Overlay */}
       {showDeleteConfirm && (
-        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Delete Project</h2>
+        <div 
+          onClick={() => setShowDeleteConfirm(false)}
+          className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#262626] border border-white/5 w-full max-w-sm rounded-3xl p-6 shadow-2xl flex flex-col gap-4 text-white animate-slideUp"
+          >
+            <div className="border-b border-white/5 pb-3">
+              <h2 className="font-extrabold text-base text-[#FDFBF7]">Delete project workflow</h2>
             </div>
-            <div className="modal-body">
-              <p>
-                Are you sure you want to delete <strong>{project.name}</strong>?
-                This will permanently delete all tasks and remove all members.
-              </p>
-              <div className="modal-footer">
-                <button
-                  className="btn btn-ghost"
-                  onClick={() => setShowDeleteConfirm(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={handleDeleteProject}
-                  id="btn-confirm-delete"
-                >
-                  Delete Project
-                </button>
-              </div>
+            <p className="text-xs text-gray-400 leading-relaxed font-bold">
+              Are you sure you want to delete <strong className="text-white font-extrabold">{project.name}</strong>?
+              This action is permanent and removes all associated task lists.
+            </p>
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/5 mt-1">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="bg-transparent border border-white/5 hover:bg-white/5 text-gray-300 py-2 px-4 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteProject}
+                id="btn-confirm-delete"
+                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-200 shadow-md shadow-red-500/20"
+              >
+                Delete Project
+              </button>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }
