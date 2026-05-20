@@ -157,9 +157,32 @@ NODE_ENV         → production
 ### 5. Configure build & start commands:
 
 - **Build Command:** `npm run build`
-- **Start Command:** `npm run migrate:deploy && npm start`
+- **Start Command:** `npm start`
 
 The server automatically serves the built React frontend in production.
+
+## 🔺 Vercel Deployment
+
+Since the project uses a monorepo setup, you can deploy it to Vercel as a single application with Serverless Functions for the Express API.
+
+### 1. Create a Vercel Project
+- Go to [vercel.com](https://vercel.com) and click **Add New** → **Project**.
+- Import your `team-task-manager` repository.
+
+### 2. Configure Settings
+- **Framework Preset**: Select `Other` (or let it auto-detect).
+- **Build and Output Settings**:
+  - Keep **Build Command** empty (Vercel will run `npm run vercel-build` automatically from `package.json`).
+  - Set **Output Directory** to `client/dist`.
+
+### 3. Add Environment Variables
+Add the following keys in your Vercel Project Settings under Environment Variables:
+- `DATABASE_URL` → Your PostgreSQL database connection URL (e.g. from Neon, Supabase, Aiven, or Railway).
+- `JWT_SECRET` → A secure random string for signing JWT tokens.
+- `NODE_ENV` → `production`
+
+### 4. Deploy
+- Click **Deploy**. Vercel will install dependencies, generate the Prisma client, push your DB schema migrations, build the React frontend, and deploy the Express serverless functions automatically!
 
 ## 👥 Role-Based Access
 

@@ -4,6 +4,7 @@
   "scripts": {
     "postinstall": "npm --prefix server install && npm --prefix client install && npm --prefix server run prisma:generate",
     "build": "npm --prefix client run build",
+    "vercel-build": "cd server && npx prisma db push --skip-generate && cd .. && npm --prefix client run build",
     "start": "cd server && npx prisma db push --skip-generate && node src/index.js",
     "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
     "migrate:deploy": "npm --prefix server run prisma:deploy",
