@@ -182,19 +182,19 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
         {/* WIDGET 1: To-Do & Progress (Top Left) - Spans 7 cols */}
-        <section className="lg:col-span-7 bg-[#FDFBF7] text-[#1A1A1A] p-7 rounded-3xl flex flex-col justify-between shadow-xl min-h-[460px]">
+        <section className="lg:col-span-7 bg-[#262626] border border-white/5 text-white p-7 rounded-3xl flex flex-col justify-between shadow-xl min-h-[460px]">
           
           {/* Header */}
           <div className="mb-6">
             <div className="flex items-center justify-between gap-4 mb-3">
-              <span className="text-xs font-extrabold uppercase tracking-widest text-gray-500">To-Do & Progress</span>
-              <span className="text-sm font-black text-green-600">{completionPercentage}% Completed</span>
+              <span className="text-xs font-extrabold uppercase tracking-widest text-gray-400">To-Do & Progress</span>
+              <span className="text-sm font-black text-green-500">{completionPercentage}% Completed</span>
             </div>
             
             {/* Progress bar container */}
-            <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+            <div className="w-full bg-[#1A1A1A] border border-white/5 rounded-full h-2.5 overflow-hidden">
               <div 
-                className="bg-green-600 h-2.5 rounded-full transition-all duration-500 ease-out" 
+                className="bg-green-500 h-2.5 rounded-full transition-all duration-500 ease-out" 
                 style={{ width: `${completionPercentage}%` }}
               />
             </div>
@@ -211,15 +211,15 @@ export default function Dashboard() {
                   <div 
                     key={t.id}
                     onClick={() => toggleTaskCompletion(t.id)}
-                    className="bg-[#FDFBF7] border border-gray-200/40 opacity-40 hover:opacity-70 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer transition-all duration-200"
+                    className="bg-[#1A1A1A] border border-white/5 opacity-40 hover:opacity-70 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer transition-all duration-200"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 rounded-full border border-gray-400 bg-gray-200 flex items-center justify-center text-green-600">
+                      <div className="w-5 h-5 rounded-full border border-gray-600 bg-[#262626] flex items-center justify-center text-green-500">
                         <Check className="w-3.5 h-3.5" strokeWidth={3} />
                       </div>
                       <span className="text-sm font-bold line-through text-gray-500">{t.title}</span>
                     </div>
-                    <div className="w-6 h-6 rounded-lg bg-gray-200 text-gray-600 flex items-center justify-center text-[9px] font-black uppercase">
+                    <div className="w-6 h-6 rounded-lg bg-[#262626] text-gray-400 flex items-center justify-center text-[9px] font-black uppercase">
                       {t.assignee}
                     </div>
                   </div>
@@ -233,8 +233,8 @@ export default function Dashboard() {
                   onClick={() => setActiveTaskId(t.id)}
                   className={`p-4 rounded-2xl flex flex-col cursor-pointer transition-all duration-300 border ${
                     isActive 
-                      ? 'bg-yellow-400 border-yellow-500 shadow-md shadow-yellow-500/10' 
-                      : 'bg-white hover:bg-gray-50 border-gray-200/50 shadow-sm'
+                      ? 'bg-[#1A1A1A] border-orange-500/40 shadow-md shadow-orange-500/10' 
+                      : 'bg-[#1A1A1A] hover:bg-white/5 border-white/5 shadow-sm'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -243,14 +243,14 @@ export default function Dashboard() {
                         type="checkbox"
                         checked={t.completed}
                         onChange={() => toggleTaskCompletion(t.id)}
-                        className="w-4.5 h-4.5 rounded border-gray-300 text-orange-500 focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                        className="w-4.5 h-4.5 rounded border-gray-600 bg-[#262626] text-orange-500 focus:ring-0 focus:ring-offset-0 cursor-pointer"
                       />
                       <span className="text-sm font-extrabold tracking-tight">{t.title}</span>
                     </div>
                     
                     <div className="flex items-center gap-2">
                       <div className={`w-6 h-6 rounded-lg font-black flex items-center justify-center text-[9px] uppercase border ${
-                        isActive ? 'bg-[#1A1A1A] text-[#FDFBF7] border-[#1A1A1A]/10' : 'bg-gray-100 text-gray-600 border-gray-200'
+                        isActive ? 'bg-[#262626] text-white border-white/10' : 'bg-[#262626] text-gray-400 border-white/5'
                       }`}>
                         {t.assignee}
                       </div>
@@ -259,13 +259,13 @@ export default function Dashboard() {
 
                   {/* Expanded Active View */}
                   {isActive && (
-                    <div className="flex items-center justify-between pt-4 border-t border-[#1A1A1A]/10 mt-3 animate-fadeIn">
-                      <span className="text-[10px] uppercase font-black tracking-widest text-[#1A1A1A]/60 flex items-center gap-1">
+                    <div className="flex items-center justify-between pt-4 border-t border-white/10 mt-3 animate-fadeIn">
+                      <span className="text-[10px] uppercase font-black tracking-widest text-gray-400 flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
                         In Review • High Priority
                       </span>
                       <div className="flex items-center gap-2">
-                        <button className="bg-[#1A1A1A] hover:bg-[#262626] text-[#FDFBF7] py-1 px-3 rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1 transition-all duration-200">
+                        <button className="bg-[#262626] hover:bg-[#323232] text-white py-1 px-3 rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1 transition-all duration-200">
                           <span>View</span>
                           <ExternalLink className="w-3 h-3" />
                         </button>
@@ -280,12 +280,12 @@ export default function Dashboard() {
         </section>
 
         {/* WIDGET 2: Deliverables & Milestones (Top Right) - Spans 5 cols */}
-        <section className="lg:col-span-5 bg-orange-500 text-[#FDFBF7] p-7 rounded-3xl flex flex-col justify-between shadow-xl min-h-[460px]">
+        <section className="lg:col-span-5 bg-orange-500 text-white p-7 rounded-3xl flex flex-col justify-between shadow-xl min-h-[460px]">
           <div>
             <div className="flex items-center justify-between gap-4 mb-6">
               <span className="text-xs font-extrabold uppercase tracking-widest opacity-80">Deliverables & Milestones</span>
-              <div className="bg-[#FDFBF7]/10 p-1.5 rounded-lg border border-[#FDFBF7]/10">
-                <Zap className="w-4 h-4 text-[#FDFBF7]" />
+              <div className="bg-white/10 p-1.5 rounded-lg border border-white/10">
+                <Zap className="w-4 h-4 text-white" />
               </div>
             </div>
 
@@ -294,7 +294,7 @@ export default function Dashboard() {
               {milestones.map((m, idx) => (
                 <div 
                   key={m.id}
-                  className="bg-white text-[#1A1A1A] p-5 rounded-2xl shadow-lg border border-white/20 relative transition-all duration-300 hover:translate-y-[-2px] hover:shadow-2xl"
+                  className="bg-[#1A1A1A] text-white p-5 rounded-2xl shadow-lg border border-white/10 relative transition-all duration-300 hover:translate-y-[-2px] hover:shadow-2xl"
                   style={{
                     transform: `translateY(${idx * 4}px)`,
                     zIndex: 10 + idx
@@ -304,10 +304,10 @@ export default function Dashboard() {
                     <h4 className="font-extrabold text-sm tracking-tight leading-snug">{m.name}</h4>
                     <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${
                       m.status === 'DONE' 
-                        ? 'bg-green-100 text-green-700 border-green-200' 
+                        ? 'bg-green-500/10 text-green-500 border-green-500/20' 
                         : m.status === 'IN_PROGRESS' 
-                        ? 'bg-yellow-100 text-yellow-700 border-yellow-200' 
-                        : 'bg-gray-100 text-gray-500 border-gray-200'
+                        ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' 
+                        : 'bg-white/5 text-gray-400 border-white/10'
                     }`}>
                       {m.status}
                     </span>
@@ -315,12 +315,12 @@ export default function Dashboard() {
 
                   <p className="text-[10px] text-gray-400 font-bold mb-4">Due on {m.dueDate}</p>
 
-                  <div className="flex items-center justify-between border-t border-gray-100 pt-3">
+                  <div className="flex items-center justify-between border-t border-white/5 pt-3">
                     <div className="flex -space-x-1">
                       {m.members.map((mem) => (
                         <div 
                           key={mem} 
-                          className="w-6 h-6 rounded-lg bg-orange-500 text-white font-extrabold flex items-center justify-center text-[8px] border-2 border-white uppercase shadow-sm"
+                          className="w-6 h-6 rounded-lg bg-orange-500 text-white font-extrabold flex items-center justify-center text-[8px] border-2 border-[#1A1A1A] uppercase shadow-sm"
                         >
                           {mem[0]}
                         </div>
@@ -328,7 +328,7 @@ export default function Dashboard() {
                     </div>
                     <button 
                       onClick={() => handleAnnotate(m.name)}
-                      className="text-[9px] font-black uppercase tracking-wider text-orange-500 hover:text-orange-600 transition-colors duration-200"
+                      className="text-[9px] font-black uppercase tracking-wider text-orange-500 hover:text-orange-400 transition-colors duration-200"
                     >
                       + Annotate
                     </button>
@@ -432,15 +432,15 @@ export default function Dashboard() {
         </section>
 
         {/* WIDGET 4: Sprint Velocity & Planning (Bottom Right) - Spans 5 cols */}
-        <section className="lg:col-span-5 bg-yellow-400 text-[#1A1A1A] p-7 rounded-3xl flex flex-col justify-between shadow-xl min-h-[460px]">
+        <section className="lg:col-span-5 bg-[#262626] border border-white/5 text-white p-7 rounded-3xl flex flex-col justify-between shadow-xl min-h-[460px]">
           
           {/* Header layout */}
           <div className="mb-4">
             <div className="flex items-center justify-between gap-4 mb-4">
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[#1A1A1A]/80">Velocity & Projections</span>
+              <span className="text-xs font-extrabold uppercase tracking-widest text-gray-400">Velocity & Projections</span>
               <button 
                 onClick={handleAnalyze}
-                className="bg-[#1A1A1A] text-yellow-400 p-2 rounded-xl flex items-center justify-center hover:scale-105 transition-transform duration-200 shadow-md"
+                className="bg-[#1A1A1A] text-yellow-500 p-2 rounded-xl flex items-center justify-center hover:scale-105 transition-transform duration-200 shadow-md border border-white/5"
                 title="Run AI Analysis"
               >
                 <TrendingUp className="w-4 h-4" />
@@ -448,11 +448,11 @@ export default function Dashboard() {
             </div>
 
             {/* Toggle Switch */}
-            <div className="flex items-center gap-3 bg-[#1A1A1A]/10 p-1.5 rounded-2xl w-fit">
+            <div className="flex items-center gap-3 bg-[#1A1A1A] border border-white/5 p-1.5 rounded-2xl w-fit">
               <button 
                 onClick={() => setIsRealistic(false)}
                 className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-200 ${
-                  !isRealistic ? 'bg-[#1A1A1A] text-yellow-400 shadow-sm' : 'text-[#1A1A1A]/70'
+                  !isRealistic ? 'bg-[#262626] text-yellow-500 shadow-sm border border-white/5' : 'text-gray-500 hover:text-gray-300'
                 }`}
               >
                 Optimistic
@@ -460,7 +460,7 @@ export default function Dashboard() {
               <button 
                 onClick={() => setIsRealistic(true)}
                 className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all duration-200 ${
-                  isRealistic ? 'bg-[#1A1A1A] text-yellow-400 shadow-sm' : 'text-[#1A1A1A]/70'
+                  isRealistic ? 'bg-[#262626] text-yellow-500 shadow-sm border border-white/5' : 'text-gray-500 hover:text-gray-300'
                 }`}
               >
                 Realistic
@@ -474,14 +474,14 @@ export default function Dashboard() {
               <ComposedChart data={velocityDataToUse} margin={{ top: 10, right: 5, left: -25, bottom: 0 }}>
                 <XAxis 
                   dataKey="name" 
-                  stroke="#1A1A1A" 
+                  stroke="#9CA3AF" 
                   fontSize={9} 
                   fontWeight="bold"
                   tickLine={false} 
                   axisLine={false}
                 />
                 <YAxis 
-                  stroke="#1A1A1A" 
+                  stroke="#9CA3AF" 
                   fontSize={9} 
                   fontWeight="bold"
                   tickLine={false} 
@@ -490,8 +490,8 @@ export default function Dashboard() {
                 <RechartsTooltip 
                   contentStyle={{
                     background: '#1A1A1A',
-                    color: '#FDFBF7',
-                    border: 'none',
+                    color: '#FFF',
+                    border: '1px solid rgba(255,255,255,0.05)',
                     borderRadius: '12px',
                     fontSize: '11px',
                     fontFamily: 'sans-serif'
@@ -502,8 +502,8 @@ export default function Dashboard() {
                 <ReferenceArea 
                   x1="Sprint 12" 
                   x2="Sprint 13" 
-                  fill="#1A1A1A" 
-                  fillOpacity={0.12} 
+                  fill="#FDFBF7" 
+                  fillOpacity={0.05} 
                   radius={10}
                 />
 
@@ -519,18 +519,18 @@ export default function Dashboard() {
                 <Line 
                   type="monotone" 
                   dataKey="velocity" 
-                  stroke="#1A1A1A" 
+                  stroke="#FDFBF7" 
                   strokeWidth={2.5} 
-                  dot={{ fill: '#1A1A1A', strokeWidth: 1 }}
+                  dot={{ fill: '#FDFBF7', strokeWidth: 1 }}
                 />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
 
           {/* Footer note */}
-          <div className="border-t border-[#1A1A1A]/10 pt-4 mt-2 flex items-center justify-between text-[10px] font-bold text-[#1A1A1A]/80">
+          <div className="border-t border-white/10 pt-4 mt-2 flex items-center justify-between text-[10px] font-bold text-gray-400">
             <span>Sprint 15 is active</span>
-            <span className="bg-[#1A1A1A] text-yellow-400 px-2 py-0.5 rounded-full font-black uppercase">Current Week</span>
+            <span className="bg-[#1A1A1A] border border-white/5 text-yellow-500 px-2 py-0.5 rounded-full font-black uppercase">Current Week</span>
           </div>
 
         </section>
