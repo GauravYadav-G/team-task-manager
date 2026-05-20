@@ -17,7 +17,7 @@ export default function TaskCard({ task, onEdit, onStatusChange, userRole }) {
 
   return (
     <div
-      className={`task-card ${overdue ? 'task-card-overdue' : ''}`}
+      className={`task-card priority-${task.priority} ${overdue ? 'task-card-overdue' : ''}`}
       draggable
       onDragStart={handleDragStart}
       onClick={() => onEdit?.(task)}
