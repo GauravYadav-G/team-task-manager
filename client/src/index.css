@@ -31,7 +31,9 @@
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(253, 251, 247, 0.2);
   }
+}
 
+@layer components {
   /* Page Styles */
   .page {
     @apply w-full;
