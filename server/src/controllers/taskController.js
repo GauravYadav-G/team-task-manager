@@ -56,8 +56,8 @@ async function create(req, res, next) {
         createdById: req.userId,
       },
       include: {
-        assignedTo: { select: { id: true, name: true, email: true } },
-        createdBy: { select: { id: true, name: true, email: true } },
+        assignedTo: { select: { id: true, name: true, email: true, avatar: true } },
+        createdBy: { select: { id: true, name: true, email: true, avatar: true } },
       },
     });
 
@@ -80,8 +80,8 @@ async function list(req, res, next) {
     const tasks = await prisma.task.findMany({
       where,
       include: {
-        assignedTo: { select: { id: true, name: true, email: true } },
-        createdBy: { select: { id: true, name: true, email: true } },
+        assignedTo: { select: { id: true, name: true, email: true, avatar: true } },
+        createdBy: { select: { id: true, name: true, email: true, avatar: true } },
       },
       orderBy: [{ createdAt: 'desc' }],
     });
@@ -97,8 +97,8 @@ async function getById(req, res, next) {
     const task = await prisma.task.findUnique({
       where: { id: req.params.taskId },
       include: {
-        assignedTo: { select: { id: true, name: true, email: true } },
-        createdBy: { select: { id: true, name: true, email: true } },
+        assignedTo: { select: { id: true, name: true, email: true, avatar: true } },
+        createdBy: { select: { id: true, name: true, email: true, avatar: true } },
         project: { select: { id: true, name: true } },
       },
     });
@@ -147,8 +147,8 @@ async function update(req, res, next) {
         where: { id: taskId },
         data: { status },
         include: {
-          assignedTo: { select: { id: true, name: true, email: true } },
-          createdBy: { select: { id: true, name: true, email: true } },
+          assignedTo: { select: { id: true, name: true, email: true, avatar: true } },
+          createdBy: { select: { id: true, name: true, email: true, avatar: true } },
         },
       });
 
@@ -172,8 +172,8 @@ async function update(req, res, next) {
       where: { id: taskId },
       data,
       include: {
-        assignedTo: { select: { id: true, name: true, email: true } },
-        createdBy: { select: { id: true, name: true, email: true } },
+        assignedTo: { select: { id: true, name: true, email: true, avatar: true } },
+        createdBy: { select: { id: true, name: true, email: true, avatar: true } },
       },
     });
 
