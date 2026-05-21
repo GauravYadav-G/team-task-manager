@@ -29,7 +29,7 @@ async function create(req, res, next) {
       },
       include: {
         members: {
-          include: { user: { select: { id: true, name: true, email: true } } },
+          include: { user: { select: { id: true, name: true, email: true, isPlaceholder: true } } },
         },
         _count: { select: { tasks: true } },
       },
@@ -49,7 +49,7 @@ async function list(req, res, next) {
       },
       include: {
         members: {
-          include: { user: { select: { id: true, name: true, email: true } } },
+          include: { user: { select: { id: true, name: true, email: true, isPlaceholder: true } } },
         },
         _count: { select: { tasks: true } },
       },
@@ -68,10 +68,10 @@ async function getById(req, res, next) {
       where: { id: req.params.id },
       include: {
         members: {
-          include: { user: { select: { id: true, name: true, email: true } } },
+          include: { user: { select: { id: true, name: true, email: true, isPlaceholder: true } } },
         },
         _count: { select: { tasks: true } },
-        createdBy: { select: { id: true, name: true, email: true } },
+        createdBy: { select: { id: true, name: true, email: true, isPlaceholder: true } },
       },
     });
 
@@ -94,7 +94,7 @@ async function update(req, res, next) {
       data: { name, description },
       include: {
         members: {
-          include: { user: { select: { id: true, name: true, email: true } } },
+          include: { user: { select: { id: true, name: true, email: true, isPlaceholder: true } } },
         },
         _count: { select: { tasks: true } },
       },
@@ -123,9 +123,21 @@ async function addMember(req, res, next) {
       return res.status(400).json({ message: 'Email is required' });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    let user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return res.status(404).json({ message: 'No user found with this email' });
+      // Create a placeholder user
+      const name = email.split('@')[0] || 'Teammate';
+      const bcrypt = require('bcryptjs');
+      const placeholderPasswordHash = await bcrypt.hash('PlaceholderInviteOnlyTempPassword123!', 12);
+      
+      user = await prisma.user.create({
+        data: {
+          name,
+          email,
+          passwordHash: placeholderPasswordHash,
+          isPlaceholder: true,
+        },
+      });
     }
 
     const existing = await prisma.projectMember.findUnique({
@@ -147,7 +159,7 @@ async function addMember(req, res, next) {
         role: role || 'MEMBER',
       },
       include: {
-        user: { select: { id: true, name: true, email: true } },
+        user: { select: { id: true, name: true, email: true, isPlaceholder: true } },
       },
     });
 

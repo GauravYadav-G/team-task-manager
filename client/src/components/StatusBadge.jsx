@@ -4,12 +4,12 @@ export function StatusBadge({ status }) {
   const config = useMemo(() => {
     switch (status) {
       case 'DONE':
-        return 'bg-green-600/10 text-green-400 border-green-600/20';
+        return 'bg-green-600/10 text-green-750 border-green-600/20';
       case 'IN_PROGRESS':
-        return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+        return 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20';
       case 'TODO':
       default:
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+        return 'bg-gray-500/10 text-gray-700 border-gray-500/20';
     }
   }, [status]);
 
@@ -35,12 +35,12 @@ export function PriorityBadge({ priority }) {
     switch (priority) {
       case 'URGENT':
       case 'HIGH':
-        return 'bg-red-500/10 text-red-400 border-red-500/20';
+        return 'bg-red-500/10 text-red-700 border-red-500/20';
       case 'MEDIUM':
-        return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+        return 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20';
       case 'LOW':
       default:
-        return 'bg-green-600/10 text-green-400 border-green-600/20';
+        return 'bg-green-600/10 text-green-750 border-green-600/20';
     }
   }, [priority]);
 
@@ -64,8 +64,8 @@ export function PriorityBadge({ priority }) {
 export function RoleBadge({ role }) {
   const isAdmin = role === 'ADMIN';
   const config = isAdmin
-    ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
-    : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20';
+    ? 'bg-purple-500/10 text-purple-700 border-purple-500/20'
+    : 'bg-cyan-500/10 text-cyan-700 border-cyan-500/20';
 
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-full border ${config}`}>

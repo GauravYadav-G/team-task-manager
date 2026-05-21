@@ -26,15 +26,16 @@ enum Priority {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  name         String
-  email        String   @unique
-  passwordHash String   @map("password_hash")
-  role         String?
-  rate         String?
-  avatar       String?
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  role          String?
+  rate          String?
+  avatar        String?
+  isPlaceholder Boolean  @default(false) @map("is_placeholder")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   createdProjects Project[]
   memberships     ProjectMember[]

@@ -27,13 +27,28 @@ async function signup(req, res, next) {
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
+      if (existingUser.isPlaceholder) {
+        // Upgrade placeholder user to registered user
+        const passwordHash = await bcrypt.hash(password, 12);
+        const user = await prisma.user.update({
+          where: { email },
+          data: {
+            name,
+            passwordHash,
+            isPlaceholder: false,
+          },
+          select: { id: true, name: true, email: true, role: true, rate: true, avatar: true, createdAt: true },
+        });
+        const token = generateToken({ userId: user.id });
+        return res.status(201).json({ user, token });
+      }
       return res.status(409).json({ message: 'Email already registered' });
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
 
     const user = await prisma.user.create({
-      data: { name, email, passwordHash },
+      data: { name, email, passwordHash, isPlaceholder: false },
       select: { id: true, name: true, email: true, role: true, rate: true, avatar: true, createdAt: true },
     });
 

@@ -67,17 +67,17 @@ export default function TaskModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
-      <div className="bg-[#1F2937] border border-white/5 w-full max-w-lg rounded-3xl p-7 shadow-2xl flex flex-col gap-5 text-white max-h-[90vh] overflow-y-auto animate-slideUp" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
+      <div className="bg-bg-surface border border-black/5 w-full max-w-lg rounded-3xl p-7 shadow-xl flex flex-col gap-5 text-text-primary max-h-[90vh] overflow-y-auto animate-slideUp" onClick={(e) => e.stopPropagation()}>
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/5 pb-4">
+        <div className="flex items-center justify-between border-b border-black/5 pb-4">
           <div>
-            <h2 className="font-extrabold text-lg text-[#FDFBF7]">{isEditing ? 'Edit Task Settings' : 'Create New Task'}</h2>
-            <span className="text-[10px] uppercase tracking-wider font-extrabold text-indigo-500 mt-1 block">Task Properties</span>
+            <h2 className="font-extrabold text-lg text-text-primary">{isEditing ? 'Edit Task Settings' : 'Create New Task'}</h2>
+            <span className="text-[10px] uppercase tracking-wider font-extrabold text-accent-secondary mt-1 block">Task Properties</span>
           </div>
           <button 
-            className="p-2 bg-[#111827] hover:bg-[#323232] rounded-xl text-gray-400 hover:text-white transition-all duration-200 border border-white/5" 
+            className="p-2 bg-bg-main hover:bg-black/5 rounded-xl text-text-secondary hover:text-text-primary transition-all duration-200 border border-black/5" 
             onClick={onClose}
           >
             <X className="w-4 h-4" />
@@ -90,8 +90,8 @@ export default function TaskModal({
           {/* Members can only change status */}
           {isMember && isEditing ? (
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="task-status" className="text-xs font-extrabold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-indigo-500" />
+              <label htmlFor="task-status" className="text-xs font-extrabold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-accent-secondary" />
                 Status
               </label>
               <select
@@ -99,7 +99,7 @@ export default function TaskModal({
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="w-full bg-[#111827] border border-white/5 rounded-xl py-2.5 px-3.5 text-sm text-white focus:outline-none focus:border-indigo-500/40 cursor-pointer"
+                className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus:outline-none focus:border-accent-primary transition-all duration-200 cursor-pointer"
               >
                 <option value="TODO">To Do</option>
                 <option value="IN_PROGRESS">In Progress</option>
@@ -110,8 +110,8 @@ export default function TaskModal({
             <>
               {/* Task Title */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="task-title" className="text-xs font-extrabold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <Layout className="w-4 h-4 text-indigo-500" />
+                <label htmlFor="task-title" className="text-xs font-extrabold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
+                  <Layout className="w-4 h-4 text-accent-secondary" />
                   Title *
                 </label>
                 <input
@@ -120,7 +120,7 @@ export default function TaskModal({
                   type="text"
                   value={formData.title}
                   onChange={handleChange}
-                  className="w-full bg-[#111827] border border-white/5 rounded-xl py-2.5 px-3.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/40 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200"
+                  className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent-primary transition-all duration-200"
                   placeholder="Enter task title"
                   required
                 />
@@ -128,8 +128,8 @@ export default function TaskModal({
 
               {/* Task Description */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="task-description" className="text-xs font-extrabold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <FileText className="w-4 h-4 text-indigo-500" />
+                <label htmlFor="task-description" className="text-xs font-extrabold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
+                  <FileText className="w-4 h-4 text-accent-secondary" />
                   Description
                 </label>
                 <textarea
@@ -137,7 +137,7 @@ export default function TaskModal({
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  className="w-full bg-[#111827] border border-white/5 rounded-xl py-2.5 px-3.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/40 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200 resize-none"
+                  className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent-primary transition-all duration-200 resize-none"
                   placeholder="Describe the task details..."
                   rows="3"
                 />
@@ -146,13 +146,13 @@ export default function TaskModal({
               {/* Priority & Status Selectors */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="task-priority" className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Priority</label>
+                  <label htmlFor="task-priority" className="text-xs font-extrabold text-text-secondary uppercase tracking-wider">Priority</label>
                   <select
                     id="task-priority"
                     name="priority"
                     value={formData.priority}
                     onChange={handleChange}
-                    className="w-full bg-[#111827] border border-white/5 rounded-xl py-2.5 px-3.5 text-sm text-white focus:outline-none focus:border-indigo-500/40 cursor-pointer"
+                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus:outline-none focus:border-accent-primary transition-all duration-200 cursor-pointer"
                   >
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
@@ -162,13 +162,13 @@ export default function TaskModal({
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="task-status-admin" className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Status</label>
+                  <label htmlFor="task-status-admin" className="text-xs font-extrabold text-text-secondary uppercase tracking-wider">Status</label>
                   <select
                     id="task-status-admin"
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full bg-[#111827] border border-white/5 rounded-xl py-2.5 px-3.5 text-sm text-white focus:outline-none focus:border-indigo-500/40 cursor-pointer"
+                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus:outline-none focus:border-accent-primary transition-all duration-200 cursor-pointer"
                   >
                     <option value="TODO">To Do</option>
                     <option value="IN_PROGRESS">In Progress</option>
@@ -180,8 +180,8 @@ export default function TaskModal({
               {/* Due Date & Assignee selectors */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="task-due-date" className="text-xs font-extrabold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Calendar className="w-4 h-4 text-indigo-500" />
+                  <label htmlFor="task-due-date" className="text-xs font-extrabold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
+                    <Calendar className="w-4 h-4 text-accent-secondary" />
                     Due Date
                   </label>
                   <input
@@ -190,13 +190,13 @@ export default function TaskModal({
                     type="date"
                     value={formData.dueDate}
                     onChange={handleChange}
-                    className="w-full bg-[#111827] border border-white/5 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-indigo-500/40 cursor-pointer"
+                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2 px-3 text-sm text-text-primary focus:outline-none focus:border-accent-primary transition-all duration-200 cursor-pointer"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="task-assignee" className="text-xs font-extrabold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <User className="w-4 h-4 text-indigo-500" />
+                  <label htmlFor="task-assignee" className="text-xs font-extrabold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
+                    <User className="w-4 h-4 text-accent-secondary" />
                     Assign To
                   </label>
                   <select
@@ -204,7 +204,7 @@ export default function TaskModal({
                     name="assignedToId"
                     value={formData.assignedToId}
                     onChange={handleChange}
-                    className="w-full bg-[#111827] border border-white/5 rounded-xl py-2.5 px-3.5 text-sm text-white focus:outline-none focus:border-indigo-500/40 cursor-pointer"
+                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus:outline-none focus:border-accent-primary transition-all duration-200 cursor-pointer"
                   >
                     <option value="">Unassigned</option>
                     {members?.map((m) => (
@@ -219,10 +219,10 @@ export default function TaskModal({
           )}
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/5 mt-3">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-black/5 mt-3">
             <button
               type="button"
-              className="bg-transparent border border-white/5 hover:bg-white/5 text-gray-300 py-2.5 px-5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200"
+              className="bg-transparent border border-black/10 hover:bg-black/5 text-text-primary py-2.5 px-5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200"
               onClick={onClose}
               disabled={loading}
             >
@@ -230,7 +230,7 @@ export default function TaskModal({
             </button>
             <button
               type="submit"
-              className="bg-indigo-500 hover:bg-indigo-600 text-white py-2.5 px-5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 shadow-md shadow-indigo-500/20 disabled:opacity-50"
+              className="bg-accent-secondary hover:opacity-90 text-white py-2.5 px-5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 shadow-sm disabled:opacity-50"
               disabled={loading}
               id="btn-save-task"
             >
