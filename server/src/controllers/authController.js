@@ -34,7 +34,7 @@ async function signup(req, res, next) {
 
     const user = await prisma.user.create({
       data: { name, email, passwordHash },
-      select: { id: true, name: true, email: true, createdAt: true },
+      select: { id: true, name: true, email: true, role: true, rate: true, avatar: true, createdAt: true },
     });
 
     const token = generateToken({ userId: user.id });
@@ -71,6 +71,9 @@ async function login(req, res, next) {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
+        rate: user.rate,
+        avatar: user.avatar,
         createdAt: user.createdAt,
       },
       token,
@@ -84,7 +87,7 @@ async function getMe(req, res, next) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.userId },
-      select: { id: true, name: true, email: true, createdAt: true },
+      select: { id: true, name: true, email: true, role: true, rate: true, avatar: true, createdAt: true },
     });
 
     if (!user) {
@@ -97,10 +100,54 @@ async function getMe(req, res, next) {
   }
 }
 
+const updateProfileValidation = [
+  body('name').optional().trim().notEmpty().withMessage('Name cannot be empty'),
+  body('role').optional().trim(),
+  body('rate').optional().trim(),
+  body('avatar').optional().trim(),
+];
+
+async function updateProfile(req, res, next) {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { name, role, rate, avatar } = req.body;
+
+    const data = {};
+    if (name !== undefined) data.name = name;
+    if (role !== undefined) data.role = role;
+    if (rate !== undefined) data.rate = rate;
+    if (avatar !== undefined) data.avatar = avatar;
+
+    const updatedUser = await prisma.user.update({
+      where: { id: req.userId },
+      data,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        rate: true,
+        avatar: true,
+        createdAt: true,
+      },
+    });
+
+    res.json({ user: updatedUser });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   signupValidation,
   loginValidation,
+  updateProfileValidation,
   signup,
   login,
   getMe,
+  updateProfile,
 };

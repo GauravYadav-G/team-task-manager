@@ -75,22 +75,21 @@ export default function Projects() {
 
   return (
     <div className="flex flex-col gap-8 max-w-7xl">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-            <LayoutGrid className="w-8 h-8 opacity-80" />
+          <h1 className="text-4xl font-black text-white tracking-tight">
             Workspace Projects
           </h1>
-          <p className="text-sm text-gray-400 font-medium mt-1">
-            {projects.length} active project{projects.length !== 1 ? 's' : ''} in your dashboard.
+          <p className="text-sm text-gray-400 font-medium mt-2">
+            {projects.length} active project{projects.length !== 1 ? 's' : ''} • Organize your team's work across multiple streams
           </p>
         </div>
         <button
-          className="bg-white text-black hover:bg-gray-100 py-2.5 px-5 rounded-full text-sm font-semibold flex items-center gap-2 transition-all duration-200 shadow-lg"
+          className="bg-white text-black hover:bg-gray-100 py-3 px-6 rounded-2xl text-sm font-bold flex items-center gap-2.5 transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95 shrink-0"
           onClick={() => setShowModal(true)}
           id="btn-create-project"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-5 h-5" />
           <span>New Project</span>
         </button>
       </div>
@@ -108,10 +107,10 @@ export default function Projects() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5 w-full">
           {projects.map((project, idx) => {
             const role = getUserRole(project);
-            const isDark = idx % 5 === 0 || idx % 5 === 1 || idx % 5 === 2; // Roughly map which classes are dark bg
+            const isDark = idx % 5 === 0 || idx % 5 === 1 || idx % 5 === 2;
             const cardStyle = getCardColor(idx);
             
             return (
@@ -119,53 +118,65 @@ export default function Projects() {
                 to={`/projects/${project.id}`}
                 key={project.id}
                 id={`project-${project.id}`}
-                className={`${cardStyle} rounded-[2rem] p-6 flex flex-col h-64 relative border shadow-lg transition-transform hover:-translate-y-1 hover:shadow-xl group`}
+                className={`${cardStyle} rounded-[2rem] p-6 flex flex-col h-72 relative border shadow-lg transition-all hover:-translate-y-2 hover:shadow-2xl group overflow-hidden`}
               >
-                <div className="flex justify-between items-start mb-4">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg shadow-sm ${
-                    !isDark ? 'bg-white text-gray-900 border border-gray-100' : 'bg-white/10 text-white border border-white/10'
+                <div className="flex justify-between items-start mb-5 relative z-10">
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-lg ${
+                    !isDark ? 'bg-white text-gray-900 border border-gray-100' : 'bg-white/15 text-white border border-white/20'
                   }`}>
                     {project.name.charAt(0).toUpperCase()}
                   </div>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${
+                  <span className={`text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-lg border transition-all ${
                     role === 'ADMIN' 
-                      ? (!isDark ? 'bg-indigo-100 text-indigo-800 border-indigo-200' : 'bg-white/20 text-white border-white/20')
-                      : (!isDark ? 'bg-gray-100 text-gray-600 border-gray-200' : 'bg-white/10 text-gray-300 border-white/10')
+                      ? (!isDark ? 'bg-indigo-500/20 text-indigo-700 border-indigo-300' : 'bg-white/25 text-white border-white/30')
+                      : (!isDark ? 'bg-gray-200 text-gray-700 border-gray-300' : 'bg-white/10 text-gray-200 border-white/15')
                   }`}>
                     {role}
                   </span>
                 </div>
 
-                <div className="flex-1 mt-2">
-                  <h3 className={`text-xl font-bold mb-2 line-clamp-1 ${!isDark ? 'text-gray-900' : 'text-white'}`}>
+                <div className="flex-1 mt-3 relative z-10">
+                  <h3 className={`text-lg font-black mb-2 line-clamp-2 leading-tight ${
+                    !isDark ? 'text-gray-900' : 'text-white'
+                  }`}>
                     {project.name}
                   </h3>
-                  <p className={`text-sm line-clamp-2 ${!isDark ? 'text-gray-600' : 'text-white/70'}`}>
-                    {project.description || 'No description provided.'}
+                  <p className={`text-xs line-clamp-3 leading-relaxed ${
+                    !isDark ? 'text-gray-600' : 'text-white/65'
+                  }`}>
+                    {project.description || 'No description provided. Add one to help team members understand the project scope.'}
                   </p>
                 </div>
 
-                <div className={`mt-auto flex items-center justify-between pt-4 border-t ${!isDark ? 'border-gray-200/50' : 'border-white/10'}`}>
-                  <div className="flex -space-x-2">
-                    {project.members?.slice(0, 3).map((m) => (
+                <div className={`mt-auto flex items-center justify-between pt-4 border-t relative z-10 ${
+                  !isDark ? 'border-gray-200/60' : 'border-white/15'
+                }`}>
+                  <div className="flex -space-x-1.5">
+                    {project.members?.slice(0, 4).map((m) => (
                       <div
                         key={m.user.id}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold ring-2 ${!isDark ? 'ring-white bg-gray-100 text-gray-600' : 'ring-[#1C1F26] bg-white/20 text-white'}`}
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center text-[9px] font-bold ring-2 transition-transform group-hover:scale-110 ${
+                          !isDark ? 'ring-white bg-gray-100 text-gray-600 shadow-sm' : 'ring-[#1C1F26] bg-white/20 text-white'
+                        }`}
                         title={m.user.name}
                       >
                         {getInitials(m.user.name)}
                       </div>
                     ))}
-                    {project.members?.length > 3 && (
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold ring-2 ${!isDark ? 'ring-white bg-gray-200 text-gray-700' : 'ring-[#1C1F26] bg-white/10 text-white'}`}>
-                        +{project.members.length - 3}
+                    {project.members?.length > 4 && (
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[8px] font-black ring-2 ${
+                        !isDark ? 'ring-white bg-gray-200 text-gray-700' : 'ring-[#1C1F26] bg-white/10 text-white'
+                      }`}>
+                        +{project.members.length - 4}
                       </div>
                     )}
                   </div>
                   
-                  <div className={`flex items-center gap-1.5 text-sm font-medium ${!isDark ? 'text-gray-600' : 'text-white/80'} group-hover:underline`}>
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>{project._count?.tasks || 0} tasks</span>
+                  <div className={`flex items-center gap-1 text-xs font-bold ${
+                    !isDark ? 'text-gray-700' : 'text-white/90'
+                  } group-hover:gap-1.5 transition-all`}>
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>{project._count?.tasks || 0}</span>
                   </div>
                 </div>
               </Link>

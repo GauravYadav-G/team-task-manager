@@ -127,12 +127,12 @@ async function update(req, res, next) {
       return res.status(404).json({ message: 'Task not found' });
     }
 
-    // Members can only update status of their own assigned tasks
+    // Members can only update status of their own assigned tasks or tasks they created
     if (req.memberRole === 'MEMBER') {
-      if (task.assignedToId !== req.userId) {
+      if (task.assignedToId !== req.userId && task.createdById !== req.userId) {
         return res
           .status(403)
-          .json({ message: 'You can only update tasks assigned to you' });
+          .json({ message: 'You can only update tasks assigned to you or created by you' });
       }
 
       const { status } = req.body;
@@ -185,7 +185,21 @@ async function update(req, res, next) {
 
 async function remove(req, res, next) {
   try {
-    await prisma.task.delete({ where: { id: req.params.taskId } });
+    const taskId = req.params.taskId;
+    const task = await prisma.task.findUnique({ where: { id: taskId } });
+
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    // Admins can delete any task. Non-admins (members) can only delete tasks they created.
+    if (req.memberRole !== 'ADMIN' && task.createdById !== req.userId) {
+      return res
+        .status(403)
+        .json({ message: 'You can only delete tasks you created' });
+    }
+
+    await prisma.task.delete({ where: { id: taskId } });
     res.json({ message: 'Task deleted successfully' });
   } catch (error) {
     next(error);

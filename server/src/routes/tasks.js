@@ -20,7 +20,7 @@ router.use(authenticate);
 // Create task — admin only
 router.post(
   '/projects/:id/tasks',
-  roleCheck('ADMIN'),
+  roleCheck(),
   createValidation,
   create
 );
@@ -39,7 +39,7 @@ router.put(
   update
 );
 
-// Delete task — admin only
-router.delete('/projects/:id/tasks/:taskId', roleCheck('ADMIN'), remove);
+// Delete task — admin or creator
+router.delete('/projects/:id/tasks/:taskId', roleCheck(), remove);
 
 module.exports = router;
