@@ -1,5 +1,6 @@
 const { body, validationResult } = require('express-validator');
 const prisma = require('../config/db');
+const { createNotification } = require('./notificationController');
 
 const createValidation = [
   body('title').trim().notEmpty().withMessage('Task title is required'),
@@ -60,6 +61,13 @@ async function create(req, res, next) {
         createdBy: { select: { id: true, name: true, email: true, avatar: true } },
       },
     });
+
+    // Send notification
+    if (task.assignedToId) {
+      await createNotification(task.assignedToId, 'Task Assigned', `You have been assigned the task: "${task.title}"`);
+    } else {
+      await createNotification(req.userId, 'Task Created', `You created the task: "${task.title}"`);
+    }
 
     res.status(201).json({ task });
   } catch (error) {
@@ -152,6 +160,16 @@ async function update(req, res, next) {
         },
       });
 
+      // Send notification
+      if (status !== task.status) {
+        const recipient = updated.assignedToId || updated.createdById;
+        if (status === 'DONE') {
+          await createNotification(recipient, 'Task Completed', `The task: "${updated.title}" has been completed.`);
+        } else {
+          await createNotification(recipient, 'Task Status Updated', `The status of task: "${updated.title}" was changed to ${status}.`);
+        }
+      }
+
       return res.json({ task: updated });
     }
 
@@ -177,6 +195,19 @@ async function update(req, res, next) {
       },
     });
 
+    // Send notifications
+    if (updated.assignedToId && updated.assignedToId !== task.assignedToId) {
+      await createNotification(updated.assignedToId, 'Task Assigned', `You have been assigned the task: "${updated.title}"`);
+    }
+    if (updated.status !== task.status) {
+      const recipient = updated.assignedToId || updated.createdById;
+      if (updated.status === 'DONE') {
+        await createNotification(recipient, 'Task Completed', `The task: "${updated.title}" has been completed.`);
+      } else {
+        await createNotification(recipient, 'Task Status Updated', `The status of task: "${updated.title}" was changed to ${updated.status}.`);
+      }
+    }
+
     res.json({ task: updated });
   } catch (error) {
     next(error);
@@ -200,6 +231,10 @@ async function remove(req, res, next) {
     }
 
     await prisma.task.delete({ where: { id: taskId } });
+
+    // Send notification
+    await createNotification(task.assignedToId || req.userId, 'Task Deleted', `The task: "${task.title}" has been deleted.`);
+
     res.json({ message: 'Task deleted successfully' });
   } catch (error) {
     next(error);

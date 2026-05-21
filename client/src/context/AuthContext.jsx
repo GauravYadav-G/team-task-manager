@@ -55,13 +55,15 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   const updateUser = (userData) => {
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateUser, searchQuery, setSearchQuery }}>
       {children}
     </AuthContext.Provider>
   );

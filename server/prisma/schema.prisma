@@ -40,6 +40,8 @@ model User {
   memberships     ProjectMember[]
   assignedTasks   Task[]          @relation("AssignedTo")
   createdTasks    Task[]          @relation("CreatedBy")
+  timeLogs        TimeLog[]
+  notifications   Notification[]
 
   @@map("users")
 }
@@ -92,3 +94,29 @@ model Task {
 
   @@map("tasks")
 }
+
+model TimeLog {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  date      DateTime @default(now()) @db.Date
+  seconds   Int      @default(0)
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("time_logs")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+

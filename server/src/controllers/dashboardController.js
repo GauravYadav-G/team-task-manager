@@ -212,6 +212,67 @@ async function getOverall(req, res, next) {
       { name: 'Sprint 4', optimistic: totalTasks + 30, realistic: totalTasks + 18, velocity: totalTasks + 15 }
     ];
 
+    // Fetch user weekly hours and today's tracked seconds
+    const startOfWeek = new Date();
+    const day = startOfWeek.getDay();
+    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+    startOfWeek.setDate(diff);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    const timeLogs = await prisma.timeLog.findMany({
+      where: {
+        userId: req.userId,
+        date: {
+          gte: startOfWeek,
+          lte: endOfWeek,
+        },
+      },
+    });
+
+    const daysMap = {
+      1: 'M',
+      2: 'T',
+      3: 'W',
+      4: 'T_u',
+      5: 'F',
+      6: 'S',
+      0: 'S_u',
+    };
+    const dailyHours = {
+      M: 0,
+      T: 0,
+      W: 0,
+      T_u: 0,
+      F: 0,
+      S: 0,
+      S_u: 0,
+    };
+
+    timeLogs.forEach(log => {
+      const logDay = new Date(log.date).getDay();
+      const dayKey = daysMap[logDay];
+      if (dayKey) {
+        dailyHours[dayKey] = parseFloat((log.seconds / 3600).toFixed(2));
+      }
+    });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todayLog = await prisma.timeLog.findUnique({
+      where: {
+        userId_date: {
+          userId: req.userId,
+          date: today,
+        },
+      },
+    });
+    const todaySeconds = todayLog ? todayLog.seconds : 0;
+
     res.json({
       totalTasks,
       totalProjects,
@@ -222,8 +283,43 @@ async function getOverall(req, res, next) {
       recentTasks,
       upcomingTasks,
       velocityData,
-      leaderboard
+      leaderboard,
+      dailyHours,
+      todaySeconds
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function logTime(req, res, next) {
+  try {
+    const { seconds } = req.body;
+    if (seconds === undefined || seconds < 0) {
+      return res.status(400).json({ message: 'Valid seconds are required.' });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const log = await prisma.timeLog.upsert({
+      where: {
+        userId_date: {
+          userId: req.userId,
+          date: today,
+        },
+      },
+      update: {
+        seconds: parseInt(seconds, 10),
+      },
+      create: {
+        userId: req.userId,
+        date: today,
+        seconds: parseInt(seconds, 10),
+      },
+    });
+
+    res.json({ success: true, log });
   } catch (error) {
     next(error);
   }
@@ -297,4 +393,5 @@ async function getProjectDashboard(req, res, next) {
 module.exports = {
   getOverall,
   getProjectDashboard,
+  logTime,
 };

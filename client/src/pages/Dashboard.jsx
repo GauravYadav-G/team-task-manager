@@ -124,7 +124,7 @@ const getCategoryIcon = (category) => {
 };
 
 export default function Dashboard() {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, searchQuery } = useAuth();
   const navigate = useNavigate();
 
   // --- STATE ---
@@ -141,7 +141,6 @@ export default function Dashboard() {
     return `${d.getFullYear()}-${month}-${day}`;
   };
   const [selectedDate, setSelectedDate] = useState(getTodayDateString());
-  const [searchQuery, setSearchQuery] = useState('');
 
   // Profile Settings State
   const [profile, setProfile] = useState({
@@ -165,7 +164,7 @@ export default function Dashboard() {
   }, [user]);
 
   // Time Tracker State
-  const [timerSeconds, setTimerSeconds] = useState(9300); // Starter 02:35:00 (9300s)
+  const [timerSeconds, setTimerSeconds] = useState(0); // Fetched dynamically
   const [timerRunning, setTimerRunning] = useState(false);
   const timerRef = useRef(null);
 
@@ -194,32 +193,136 @@ export default function Dashboard() {
     tasksPerUser: []
   });
 
+  const daysMap = {
+    1: 'M',
+    2: 'T',
+    3: 'W',
+    4: 'T_u',
+    5: 'F',
+    6: 'S',
+    0: 'S_u',
+  };
+
   // Track dynamic chart hours based on finished tasks
   const [dailyHours, setDailyHours] = useState({
-    M: 6.5,
-    T: 4.2,
-    W: 8.1,
-    T_u: 5.0,
-    F: 3.5,
-    S: 1.2,
+    M: 0.0,
+    T: 0.0,
+    W: 0.0,
+    T_u: 0.0,
+    F: 0.0,
+    S: 0.0,
     S_u: 0.0
   });
 
-  // Handle active timer increments
+  const syncTimerToBackend = async (seconds) => {
+    try {
+      await api.post('/dashboard/time-log', { seconds });
+    } catch (err) {
+      console.error('Failed to sync timer to backend:', err);
+    }
+  };
+
+  const timerSecondsRef = useRef(timerSeconds);
+  useEffect(() => {
+    timerSecondsRef.current = timerSeconds;
+  }, [timerSeconds]);
+
+  // Handle active timer increments and dynamic dailyHours updates
   useEffect(() => {
     if (timerRunning) {
       timerRef.current = setInterval(() => {
-        setTimerSeconds(prev => prev + 1);
-        setDailyHours(prev => ({
-          ...prev,
-          W: parseFloat((prev.W + 0.001).toFixed(3))
-        }));
+        setTimerSeconds(prev => {
+          const nextSecs = prev + 1;
+          const todayDay = new Date().getDay();
+          const dayKey = daysMap[todayDay] || 'W';
+          setDailyHours(hours => ({
+            ...hours,
+            [dayKey]: parseFloat((nextSecs / 3600).toFixed(4))
+          }));
+          return nextSecs;
+        });
       }, 1000);
     } else {
       clearInterval(timerRef.current);
     }
     return () => clearInterval(timerRef.current);
   }, [timerRunning]);
+
+  // Periodically sync timer to database if running
+  useEffect(() => {
+    let syncInterval;
+    if (timerRunning) {
+      syncInterval = setInterval(() => {
+        syncTimerToBackend(timerSecondsRef.current);
+      }, 15000);
+    }
+    return () => {
+      if (syncInterval) clearInterval(syncInterval);
+    };
+  }, [timerRunning]);
+
+  const handleToggleTimer = () => {
+    if (timerRunning) {
+      syncTimerToBackend(timerSeconds);
+    }
+    setTimerRunning(!timerRunning);
+  };
+
+  const handleResetTimer = () => {
+    setTimerRunning(false);
+    setTimerSeconds(0);
+    setDailyHours(hours => {
+      const todayDay = new Date().getDay();
+      const dayKey = daysMap[todayDay] || 'W';
+      return {
+        ...hours,
+        [dayKey]: 0
+      };
+    });
+    syncTimerToBackend(0);
+  };
+
+  const getDeviceDetails = () => {
+    const ua = navigator.userAgent;
+    let deviceName = 'Desktop Workstation';
+    let deviceVersion = 'Unknown Version';
+    let iconType = 'Laptop';
+
+    if (/Macintosh/i.test(ua)) {
+      deviceName = 'Apple Mac';
+      if (/Mac OS X 10_15_7/i.test(ua) || navigator.maxTouchPoints > 1) {
+        deviceVersion = 'macOS Desktop';
+      } else {
+        deviceVersion = 'Mac OS X';
+      }
+      iconType = 'Laptop';
+    } else if (/Windows/i.test(ua)) {
+      deviceName = 'Windows PC';
+      deviceVersion = 'Windows 10/11';
+      iconType = 'Monitor';
+    } else if (/iPhone/i.test(ua)) {
+      deviceName = 'iPhone';
+      const match = ua.match(/OS\s([0-9_]+)/);
+      deviceVersion = match ? `iOS ${match[1].replace(/_/g, '.')}` : 'iOS Device';
+      iconType = 'Smartphone';
+    } else if (/iPad/i.test(ua)) {
+      deviceName = 'iPad';
+      const match = ua.match(/OS\s([0-9_]+)/);
+      deviceVersion = match ? `iPadOS ${match[1].replace(/_/g, '.')}` : 'Smartphone';
+      iconType = 'Smartphone';
+    } else if (/Android/i.test(ua)) {
+      deviceName = 'Android Device';
+      const match = ua.match(/Android\s([0-9\.]+)/);
+      deviceVersion = match ? `Version ${match[1]}` : 'Android OS';
+      iconType = 'Smartphone';
+    } else if (/Linux/i.test(ua)) {
+      deviceName = 'Linux PC';
+      deviceVersion = 'Linux Kernel';
+      iconType = 'Monitor';
+    }
+
+    return { name: deviceName, version: deviceVersion, icon: iconType };
+  };
 
   // Load Dashboard Data & Projects on mount
   useEffect(() => {
@@ -232,6 +335,13 @@ export default function Dashboard() {
       const dashRes = await api.get('/dashboard');
       const data = dashRes.data;
       setStats(data);
+
+      if (data.todaySeconds !== undefined) {
+        setTimerSeconds(data.todaySeconds);
+      }
+      if (data.dailyHours) {
+        setDailyHours(data.dailyHours);
+      }
 
       if (data.recentTasks) {
         setBentoTasks(data.recentTasks.map(t => ({
@@ -283,12 +393,16 @@ export default function Dashboard() {
   // Task Handlers
   const toggleTaskCompletion = async (taskId) => {
     // Optimistic Update
+    const todayDay = new Date().getDay();
+    const dayKey = daysMap[todayDay] || 'W';
     setBentoTasks(prev => prev.map(t => {
       if (t.id === taskId) {
         const updatedStatus = !t.completed;
         setDailyHours(hours => ({
           ...hours,
-          W: updatedStatus ? parseFloat((hours.W + 0.8).toFixed(1)) : Math.max(0, parseFloat((hours.W - 0.8).toFixed(1)))
+          [dayKey]: updatedStatus 
+            ? parseFloat(((hours[dayKey] || 0) + 0.8).toFixed(1)) 
+            : Math.max(0, parseFloat(((hours[dayKey] || 0) - 0.8).toFixed(1)))
         }));
         return { ...t, completed: updatedStatus };
       }
@@ -694,16 +808,6 @@ Provide an inspiring, conversational, professional agile workspace performance c
       {/* Search and settings subheader */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-6 gap-3">
         <div className="flex items-center gap-3">
-          <div className="relative w-full md:w-60">
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-text-secondary" />
-            <input 
-              type="text" 
-              placeholder="Search tasks..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-xs rounded-full bg-bg-surface border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent-primary/20 text-text-primary placeholder-text-secondary"
-            />
-          </div>
           <button
             onClick={fetchDashboard}
             className="p-2.5 bg-bg-surface hover:bg-black/5 rounded-full transition-colors border border-black/5"
@@ -925,7 +1029,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
               <div className="w-full">
                 <div className="flex justify-center gap-2 mb-3">
                   <button 
-                    onClick={() => setTimerRunning(!timerRunning)}
+                    onClick={handleToggleTimer}
                     className={`p-2.5 rounded-full transition-all flex items-center justify-center cursor-pointer shadow-sm ${
                       timerRunning ? 'bg-rose-500 text-white hover:bg-rose-600' : 'bg-accent-secondary text-white hover:opacity-90'
                     }`}
@@ -934,10 +1038,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                     {timerRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
                   </button>
                   <button 
-                    onClick={() => {
-                      setTimerRunning(false);
-                      setTimerSeconds(0);
-                    }}
+                    onClick={handleResetTimer}
                     className="p-2.5 bg-bg-main hover:bg-black/5 rounded-full text-text-secondary transition-all border border-black/5 cursor-pointer shadow-sm"
                     title="Reset Stopwatch"
                   >
@@ -1308,18 +1409,24 @@ Provide an inspiring, conversational, professional agile workspace performance c
           <div className="bg-bg-surface rounded-[2.5rem] p-5 border border-black/5 shadow-md">
             <span className="text-[10px] text-text-secondary font-bold uppercase tracking-widest block mb-3">Linked Workstations</span>
             
-            <div className="flex items-center gap-3 bg-bg-main p-3 rounded-2xl border border-black/5">
-              <div className="w-9 h-9 bg-bg-surface text-accent-secondary rounded-xl flex items-center justify-center border border-black/5 shadow-xs">
-                <Laptop className="w-5 h-5 text-accent-primary" />
-              </div>
-              <div className="flex-1 text-left">
-                <h4 className="text-xs font-black text-text-primary">MacBook Air</h4>
-                <p className="text-[10px] text-text-secondary">Version M1 · Assigned to workspace</p>
-              </div>
-              <span className="bg-emerald-500/10 text-emerald-600 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-500/10 shadow-xs">
-                Active
-              </span>
-            </div>
+            {(() => {
+              const device = getDeviceDetails();
+              const DeviceIcon = device.icon === 'Smartphone' ? Smartphone : device.icon === 'Monitor' ? Monitor : Laptop;
+              return (
+                <div className="flex items-center gap-3 bg-bg-main p-3 rounded-2xl border border-black/5">
+                  <div className="w-9 h-9 bg-bg-surface text-accent-secondary rounded-xl flex items-center justify-center border border-black/5 shadow-xs">
+                    <DeviceIcon className="w-5 h-5 text-accent-primary" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <h4 className="text-xs font-black text-text-primary">{device.name}</h4>
+                    <p className="text-[10px] text-text-secondary">{device.version} · Active Workstation</p>
+                  </div>
+                  <span className="bg-emerald-500/10 text-emerald-600 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-500/10 shadow-xs">
+                    Active
+                  </span>
+                </div>
+              );
+            })()}
           </div>
 
         </section>
