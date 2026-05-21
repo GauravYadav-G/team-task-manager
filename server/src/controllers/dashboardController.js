@@ -126,7 +126,8 @@ async function getOverall(req, res, next) {
         id: true,
         assignedToId: true,
         dueDate: true,
-        updatedAt: true
+        updatedAt: true,
+        completedAt: true
       }
     });
 
@@ -137,7 +138,7 @@ async function getOverall(req, res, next) {
       const tasksWithDeadline = userDoneTasks.filter(t => t.dueDate !== null);
       
       const onTimeTasks = tasksWithDeadline.filter(t => {
-        const completionTime = new Date(t.updatedAt);
+        const completionTime = new Date(t.completedAt || t.updatedAt || new Date());
         const deadline = new Date(t.dueDate);
         return completionTime <= deadline;
       });
@@ -148,7 +149,8 @@ async function getOverall(req, res, next) {
       let totalDaysAhead = 0;
       let maxDaysAhead = 0;
       onTimeTasks.forEach(t => {
-        const daysAhead = (new Date(t.dueDate) - new Date(t.updatedAt)) / (1000 * 60 * 60 * 24);
+        const completionTime = new Date(t.completedAt || t.updatedAt || new Date());
+        const daysAhead = (new Date(t.dueDate) - completionTime) / (1000 * 60 * 60 * 24);
         totalDaysAhead += daysAhead;
         if (daysAhead > maxDaysAhead) maxDaysAhead = daysAhead;
       });
@@ -213,15 +215,25 @@ async function getOverall(req, res, next) {
     ];
 
     // Fetch user weekly hours and today's tracked seconds
-    const startOfWeek = new Date();
-    const day = startOfWeek.getDay();
-    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
-    startOfWeek.setDate(diff);
-    startOfWeek.setHours(0, 0, 0, 0);
+    const { localDate } = req.query;
+    let referenceDate = new Date();
+    if (localDate && /^\d{4}-\d{2}-\d{2}$/.test(localDate)) {
+      const [year, month, day] = localDate.split('-').map(Number);
+      referenceDate = new Date(year, month - 1, day);
+    }
 
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
+    const day = referenceDate.getDay();
+    const diff = referenceDate.getDate() - day + (day === 0 ? -6 : 1); // Monday
+    const startOfWeekDate = new Date(referenceDate);
+    startOfWeekDate.setDate(diff);
+
+    const startOfWeekStr = `${startOfWeekDate.getFullYear()}-${String(startOfWeekDate.getMonth() + 1).padStart(2, '0')}-${String(startOfWeekDate.getDate()).padStart(2, '0')}T00:00:00.000Z`;
+    const startOfWeek = new Date(startOfWeekStr);
+
+    const endOfWeekDate = new Date(startOfWeek);
+    endOfWeekDate.setUTCDate(endOfWeekDate.getUTCDate() + 6);
+    const endOfWeekStr = `${endOfWeekDate.getUTCFullYear()}-${String(endOfWeekDate.getUTCMonth() + 1).padStart(2, '0')}-${String(endOfWeekDate.getUTCDate()).padStart(2, '0')}T23:59:59.999Z`;
+    const endOfWeek = new Date(endOfWeekStr);
 
     const timeLogs = await prisma.timeLog.findMany({
       where: {
@@ -253,15 +265,17 @@ async function getOverall(req, res, next) {
     };
 
     timeLogs.forEach(log => {
-      const logDay = new Date(log.date).getDay();
+      const logDay = log.date.getUTCDay();
       const dayKey = daysMap[logDay];
       if (dayKey) {
         dailyHours[dayKey] = parseFloat((log.seconds / 3600).toFixed(2));
       }
     });
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayStr = localDate 
+      ? `${localDate}T00:00:00.000Z` 
+      : `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}T00:00:00.000Z`;
+    const today = new Date(todayStr);
 
     const todayLog = await prisma.timeLog.findUnique({
       where: {
@@ -294,13 +308,15 @@ async function getOverall(req, res, next) {
 
 async function logTime(req, res, next) {
   try {
-    const { seconds } = req.body;
+    const { seconds, date } = req.body;
     if (seconds === undefined || seconds < 0) {
       return res.status(400).json({ message: 'Valid seconds are required.' });
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayStr = date 
+      ? `${date}T00:00:00.000Z` 
+      : `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}T00:00:00.000Z`;
+    const today = new Date(todayStr);
 
     const log = await prisma.timeLog.upsert({
       where: {

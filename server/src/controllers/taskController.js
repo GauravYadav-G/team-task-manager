@@ -51,6 +51,7 @@ async function create(req, res, next) {
         description,
         priority: priority || 'MEDIUM',
         status: status || 'TODO',
+        completedAt: status === 'DONE' ? new Date() : null,
         dueDate: dueDate ? new Date(dueDate) : null,
         projectId,
         assignedToId: assignedToId || null,
@@ -153,7 +154,10 @@ async function update(req, res, next) {
       // Only allow status update for members
       const updated = await prisma.task.update({
         where: { id: taskId },
-        data: { status },
+        data: { 
+          status,
+          completedAt: status === 'DONE' ? new Date() : null,
+        },
         include: {
           assignedTo: { select: { id: true, name: true, email: true, avatar: true } },
           createdBy: { select: { id: true, name: true, email: true, avatar: true } },
@@ -181,7 +185,10 @@ async function update(req, res, next) {
     if (title !== undefined) data.title = title;
     if (description !== undefined) data.description = description;
     if (priority !== undefined) data.priority = priority;
-    if (status !== undefined) data.status = status;
+    if (status !== undefined) {
+      data.status = status;
+      data.completedAt = status === 'DONE' ? new Date() : null;
+    }
     if (dueDate !== undefined)
       data.dueDate = dueDate ? new Date(dueDate) : null;
     if (assignedToId !== undefined) data.assignedToId = assignedToId || null;

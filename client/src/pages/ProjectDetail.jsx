@@ -159,30 +159,12 @@ export default function ProjectDetail() {
     filteredTasks.filter((t) => t.status === status);
 
   const getColumnStyles = (status) => {
-    switch (status) {
-      case 'DONE':
-        return {
-          border: 'border-t-[3px] border-t-emerald-500',
-          dot: 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]',
-          glow: 'shadow-emerald-950/5',
-          headerBg: 'bg-emerald-500/10 text-emerald-700'
-        };
-      case 'IN_PROGRESS':
-        return {
-          border: 'border-t-[3px] border-t-blue-500',
-          dot: 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.3)]',
-          glow: 'shadow-blue-950/5',
-          headerBg: 'bg-blue-500/10 text-blue-700'
-        };
-      case 'TODO':
-      default:
-        return {
-          border: 'border-t-[3px] border-t-accent-primary',
-          dot: 'bg-accent-primary shadow-[0_0_8px_rgba(230,195,92,0.3)]',
-          glow: 'shadow-accent-primary/5',
-          headerBg: 'bg-accent-primary/10 text-accent-secondary'
-        };
-    }
+    return {
+      border: 'border border-black/[0.06] hover:border-black/12 hover:shadow-lg shadow-xs transition-all duration-300',
+      dot: 'bg-accent-secondary ring-4 ring-accent-secondary/15',
+      glow: 'shadow-md',
+      headerBg: 'bg-bg-main text-accent-secondary border border-black/5 font-black'
+    };
   };
 
   const clearFilters = () => {
@@ -344,7 +326,7 @@ export default function ProjectDetail() {
                 onDrop={(e) => handleDrop(e, status)}
                 onDragOver={(e) => handleDragOver(e, status)}
                 onDragLeave={handleDragLeave}
-                className={`bg-bg-surface p-6 rounded-[2rem] min-h-[550px] flex flex-col gap-4 border border-black/5 transition-all duration-300 ${
+                className={`bg-bg-surface p-6 rounded-[2rem] min-h-[550px] flex flex-col gap-4 transition-all duration-300 ${
                   styles.border
                 } ${
                   isOver ? 'bg-bg-main border-accent-primary/20 scale-[1.01]' : ''

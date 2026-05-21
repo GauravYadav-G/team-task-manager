@@ -140,6 +140,13 @@ export default function Dashboard() {
     const day = String(d.getDate()).padStart(2, '0');
     return `${d.getFullYear()}-${month}-${day}`;
   };
+
+  const getSelectedMonthYearLabel = () => {
+    if (!selectedDate) return '';
+    const [year, month] = selectedDate.split('-');
+    const dateObj = new Date(parseInt(year, 10), parseInt(month, 10) - 1, 1);
+    return dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  };
   const [selectedDate, setSelectedDate] = useState(getTodayDateString());
 
   // Profile Settings State
@@ -216,7 +223,7 @@ export default function Dashboard() {
 
   const syncTimerToBackend = async (seconds) => {
     try {
-      await api.post('/dashboard/time-log', { seconds });
+      await api.post('/dashboard/time-log', { seconds, date: getTodayDateString() });
     } catch (err) {
       console.error('Failed to sync timer to backend:', err);
     }
@@ -332,7 +339,8 @@ export default function Dashboard() {
 
   const fetchDashboard = async () => {
     try {
-      const dashRes = await api.get('/dashboard');
+      const localDate = getTodayDateString();
+      const dashRes = await api.get(`/dashboard?localDate=${localDate}`);
       const data = dashRes.data;
       setStats(data);
 
@@ -1147,7 +1155,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
               <div>
                 <span className="text-xs text-accent-primary font-bold uppercase tracking-wider">Schedule Calendar</span>
-                <h3 className="text-2xl font-black mt-1">September 2024</h3>
+                <h3 className="text-2xl font-black mt-1">{getSelectedMonthYearLabel()}</h3>
               </div>
               <button 
                 onClick={() => setShowAddTaskModal(true)}
