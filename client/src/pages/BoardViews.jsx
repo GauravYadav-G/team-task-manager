@@ -86,14 +86,39 @@ export default function BoardViews() {
   const getPriorityConfig = (priority) => {
     switch (priority) {
       case 'URGENT':
-        return { bg: 'bg-rose-50 text-rose-700 border-rose-100', border: 'border-l-4 border-l-rose-500' };
+        return {
+          bg: 'bg-rose-500/10 border-rose-500/20 text-rose-700',
+          dot: 'bg-rose-500',
+          glow: 'group-hover:shadow-[0_0_15px_rgba(244,63,94,0.05)]'
+        };
       case 'HIGH':
-        return { bg: 'bg-amber-50 text-amber-700 border-amber-100', border: 'border-l-4 border-l-amber-500' };
+        return {
+          bg: 'bg-amber-500/10 border-amber-500/20 text-amber-700',
+          dot: 'bg-amber-500',
+          glow: 'group-hover:shadow-[0_0_15px_rgba(245,158,11,0.05)]'
+        };
       case 'MEDIUM':
-        return { bg: 'bg-blue-50 text-blue-700 border-blue-100', border: 'border-l-4 border-l-blue-500' };
+        return {
+          bg: 'bg-blue-500/10 border-blue-500/20 text-blue-700',
+          dot: 'bg-blue-500',
+          glow: 'group-hover:shadow-[0_0_15px_rgba(59,130,246,0.05)]'
+        };
       case 'LOW':
       default:
-        return { bg: 'bg-emerald-50 text-emerald-700 border-emerald-100', border: 'border-l-4 border-l-emerald-500' };
+        return {
+          bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700',
+          dot: 'bg-emerald-500',
+          glow: 'group-hover:shadow-[0_0_15px_rgba(16,185,129,0.05)]'
+        };
+    }
+  };
+
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'IN_PROGRESS': return 'In Progress';
+      case 'DONE': return 'Done';
+      case 'TODO':
+      default: return 'To Do';
     }
   };
 
@@ -105,15 +130,6 @@ export default function BoardViews() {
   });
 
   const getColumnTasks = (status) => filteredTasks.filter(t => t.status === status);
-
-  const getColumnColor = (status) => {
-    switch (status) {
-      case 'DONE': return 'border-t-emerald-500';
-      case 'IN_PROGRESS': return 'border-t-accent-primary';
-      case 'TODO':
-      default: return 'border-t-accent-secondary';
-    }
-  };
 
   if (loading) {
     return (
@@ -178,47 +194,65 @@ export default function BoardViews() {
               onDrop={(e) => handleDrop(e, status)}
               onDragOver={(e) => handleDragOver(e, status)}
               onDragLeave={handleDragLeave}
-              className={`bg-bg-surface p-5 rounded-[2rem] min-h-[500px] border border-black/5 transition-all duration-300 border-t-4 ${getColumnColor(status)} shadow-sm ${
-                isOver ? 'bg-bg-main border-accent-primary/50 scale-[1.01]' : ''
+              className={`bg-bg-surface p-5 rounded-[2rem] min-h-[500px] flex flex-col gap-4 border border-black/[0.06] hover:border-black/[0.12] hover:shadow-lg shadow-xs transition-all duration-300 ${
+                isOver ? 'bg-bg-main !border-accent-primary/30 scale-[1.01]' : ''
               }`}
             >
               {/* Column Header */}
-              <div className="flex justify-between items-center pb-3 border-b border-black/5 mb-4">
-                <span className="text-xs font-black uppercase text-text-primary tracking-widest">{status.replace('_', ' ')}</span>
-                <span className="text-[9px] font-black text-text-secondary bg-bg-main border border-black/5 px-2 py-0.5 rounded-full">
+              <div className="flex items-center justify-between border-b border-black/5 pb-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-accent-secondary ring-4 ring-accent-secondary/15" />
+                  <span className="text-xs font-black uppercase text-text-primary tracking-wider">
+                    {getStatusLabel(status)}
+                  </span>
+                </div>
+                <span className="text-[10px] font-black tracking-wider px-2 py-0.5 rounded-full border border-black/5 bg-bg-main text-accent-secondary">
                   {colTasks.length}
                 </span>
               </div>
 
               {/* Task Items */}
-              <div className="space-y-3.5 max-h-[600px] overflow-y-auto pr-1">
+              <div className="flex-1 flex flex-col gap-3.5 max-h-[600px] overflow-y-auto pr-1">
                 {colTasks.map(t => {
                   const priConfig = getPriorityConfig(t.priority);
+                  const overdue = t.dueDate && t.status !== 'DONE' && new Date(t.dueDate) < new Date().setHours(0,0,0,0);
                   return (
                     <div
                       key={t.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, t.id)}
-                      className={`group p-4 bg-bg-surface hover:bg-bg-main rounded-2xl border border-black/5 hover:border-accent-primary/20 transition-all cursor-grab active:cursor-grabbing shadow-sm ${priConfig.border}`}
+                      className={`group p-4 bg-bg-surface hover:bg-bg-main rounded-2xl border border-black/5 hover:border-accent-primary/20 transition-all cursor-grab active:cursor-grabbing shadow-sm ${priConfig.glow} ${
+                        overdue ? 'border-rose-500/20 hover:border-rose-500/30' : ''
+                      }`}
                     >
-                      <div className="flex justify-between items-start gap-2 mb-2">
-                        <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full border ${priConfig.bg}`}>
+                      <div className="flex justify-between items-start gap-2 mb-2.5">
+                        <span className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg border ${priConfig.bg}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${priConfig.dot}`} />
                           {t.priority}
                         </span>
-                        <span className="text-[8px] font-semibold text-text-secondary">
-                          {t.projectName}
-                        </span>
+                        {overdue ? (
+                          <span className="flex items-center gap-1 text-[9px] uppercase font-black tracking-wider text-rose-600 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">
+                            <AlertCircle size={10} className="stroke-[2.5]" />
+                            Overdue
+                          </span>
+                        ) : (
+                          <span className="text-[9px] font-semibold text-text-secondary truncate max-w-[90px]" title={t.projectName}>
+                            {t.projectName}
+                          </span>
+                        )}
                       </div>
 
-                      <h4 className="text-xs font-black text-text-primary group-hover:text-accent-primary transition-colors leading-snug break-words">
+                      <h4 className="text-xs font-bold text-text-primary group-hover:text-accent-secondary transition-colors leading-snug break-words">
                         {t.title}
                       </h4>
-                      {t.description && <p className="text-[10px] text-text-secondary line-clamp-2 leading-relaxed mt-1">{t.description}</p>}
+                      {t.description && <p className="text-[10px] text-text-secondary line-clamp-2 leading-relaxed mt-1.5">{t.description}</p>}
 
                       <div className="flex justify-between items-center mt-3 pt-3 border-t border-black/5">
-                        <div className="flex items-center gap-1.5 text-[9px] text-text-secondary font-bold">
-                          <Clock size={10} />
-                          <span>{t.dueDate ? new Date(t.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'No Due Date'}</span>
+                        <div className="flex items-center gap-1.5 text-[9px] text-text-secondary font-semibold">
+                          <Clock size={10} className={overdue ? 'text-rose-600' : 'text-accent-secondary/70'} />
+                          <span className={overdue ? 'text-rose-600 font-black' : ''}>
+                            {t.dueDate ? new Date(t.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'No Due Date'}
+                          </span>
                         </div>
 
                         {t.assignedTo ? (
@@ -226,16 +260,19 @@ export default function BoardViews() {
                             <img
                               src={t.assignedTo.avatar}
                               alt={t.assignedTo.name}
-                              className="w-6 h-6 rounded-lg object-cover ring-2 ring-black/5"
+                              className="w-6 h-6 rounded-xl object-cover ring-2 ring-black/5 hover:ring-accent-primary/50 transition-all"
                               title={t.assignedTo.name}
                             />
                           ) : (
-                            <div className="w-6 h-6 rounded-lg bg-accent-primary text-accent-secondary font-black flex items-center justify-center text-[8px] uppercase border border-black/10" title={t.assignedTo.name}>
+                            <div
+                              className="w-6 h-6 rounded-xl bg-accent-primary text-accent-secondary font-black flex items-center justify-center text-[8px] uppercase border border-black/10 transition-transform group-hover:scale-105"
+                              title={t.assignedTo.name}
+                            >
                               {getInitials(t.assignedTo.name)}
                             </div>
                           )
                         ) : (
-                          <div className="w-6 h-6 rounded-lg bg-bg-main text-text-secondary flex items-center justify-center border border-black/5" title="Unassigned">
+                          <div className="w-6 h-6 rounded-xl bg-bg-main text-text-secondary flex items-center justify-center border border-black/5 hover:text-text-primary transition-colors" title="Unassigned">
                             <User size={10} />
                           </div>
                         )}
@@ -245,9 +282,9 @@ export default function BoardViews() {
                 })}
 
                 {colTasks.length === 0 && (
-                  <div className="py-12 border border-dashed border-black/10 rounded-2xl text-center text-text-secondary flex flex-col items-center justify-center">
-                    <HelpCircle size={20} className="text-text-secondary/50 mb-1.5" />
-                    <p className="text-[10px] font-bold">No tasks matching filters</p>
+                  <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-black/5 rounded-2xl py-14 px-4 text-center">
+                    <HelpCircle size={22} className="text-text-secondary/40 mb-2" />
+                    <p className="text-[10px] font-bold text-text-secondary">No tasks matching filters</p>
                   </div>
                 )}
               </div>

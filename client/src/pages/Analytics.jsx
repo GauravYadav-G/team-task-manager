@@ -13,7 +13,8 @@ export default function Analytics() {
 
   const fetchStats = async () => {
     try {
-      const res = await api.get('/dashboard');
+      const localDate = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD in local timezone
+      const res = await api.get(`/dashboard?localDate=${localDate}`);
       setStats(res.data);
     } catch (err) {
       console.error(err);
@@ -177,44 +178,94 @@ export default function Analytics() {
 
           {/* SVG Custom Line Chart */}
           <div className="w-full h-56 mt-6 relative">
-            {velocityData && velocityData.length > 0 ? (
-              <svg className="w-full h-full" viewBox="0 0 400 150">
-                {/* Horizontal Gridlines */}
-                <line x1="30" y1="20" x2="380" y2="20" stroke="rgba(0,0,0,0.06)" strokeWidth="0.5" strokeDasharray="3" />
-                <line x1="30" y1="65" x2="380" y2="65" stroke="rgba(0,0,0,0.06)" strokeWidth="0.5" strokeDasharray="3" />
-                <line x1="30" y1="110" x2="380" y2="110" stroke="rgba(0,0,0,0.06)" strokeWidth="0.5" strokeDasharray="3" />
+            {velocityData && velocityData.length > 0 ? (() => {
+              // Chart dimensions
+              const W = 400, H = 150;
+              const padL = 32, padR = 20, padT = 15, padB = 30;
+              const chartW = W - padL - padR;
+              const chartH = H - padT - padB;
 
-                {/* Target Trend Line (Grey) */}
-                <polyline
-                  fill="none"
-                  stroke="#737373"
-                  strokeWidth="2"
-                  strokeDasharray="4"
-                  points="50,110 150,90 250,60 350,30"
-                />
+              // Find max value across all series to scale the chart
+              const allVals = velocityData.flatMap(d => [d.optimistic, d.realistic, d.velocity]);
+              const maxVal = Math.max(...allVals, 1);
 
-                {/* Actual Velocity Trend Line */}
-                <polyline
-                  fill="none"
-                  stroke="#2D2D2D"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                  points="50,120 150,105 250,75 350,45"
-                />
+              // Convert a data value to SVG Y coordinate (inverted: higher = lower Y)
+              const toY = (v) => padT + chartH - (v / maxVal) * chartH;
+              // Convert a data point index to SVG X coordinate
+              const toX = (i) => padL + (i / Math.max(velocityData.length - 1, 1)) * chartW;
 
-                {/* Interactive points */}
-                <circle cx="50" cy="120" r="4.5" fill="#E6C35C" stroke="#2D2D2D" strokeWidth="1.5" />
-                <circle cx="150" cy="105" r="4.5" fill="#E6C35C" stroke="#2D2D2D" strokeWidth="1.5" />
-                <circle cx="250" cy="75" r="4.5" fill="#E6C35C" stroke="#2D2D2D" strokeWidth="1.5" />
-                <circle cx="350" cy="45" r="4.5" fill="#E6C35C" stroke="#2D2D2D" strokeWidth="1.5" />
+              const realisticPoints = velocityData.map((d, i) => `${toX(i)},${toY(d.realistic)}`).join(' ');
+              const velocityPoints = velocityData.map((d, i) => `${toX(i)},${toY(d.velocity)}`).join(' ');
 
-                {/* Labels */}
-                <text x="50" y="142" fill="#737373" fontSize="8" textAnchor="middle" fontWeight="bold">Sprint 1</text>
-                <text x="150" y="142" fill="#737373" fontSize="8" textAnchor="middle" fontWeight="bold">Sprint 2</text>
-                <text x="250" y="142" fill="#737373" fontSize="8" textAnchor="middle" fontWeight="bold">Sprint 3</text>
-                <text x="350" y="142" fill="#737373" fontSize="8" textAnchor="middle" fontWeight="bold">Sprint 4</text>
-              </svg>
-            ) : (
+              // Gridline y values (3 horizontal guides)
+              const gridYs = [padT, padT + chartH * 0.4, padT + chartH * 0.75];
+
+              return (
+                <svg className="w-full h-full" viewBox={`0 0 ${W} ${H}`}>
+                  {/* Horizontal Gridlines */}
+                  {gridYs.map((gy, gi) => (
+                    <line
+                      key={gi}
+                      x1={padL} y1={gy}
+                      x2={W - padR} y2={gy}
+                      stroke="rgba(0,0,0,0.06)" strokeWidth="0.5" strokeDasharray="3"
+                    />
+                  ))}
+
+                  {/* Target / Realistic line (dashed grey) */}
+                  <polyline
+                    fill="none"
+                    stroke="#737373"
+                    strokeWidth="1.8"
+                    strokeDasharray="4 3"
+                    strokeLinecap="round"
+                    points={realisticPoints}
+                  />
+
+                  {/* Actual Velocity line (solid dark) */}
+                  <polyline
+                    fill="none"
+                    stroke="#2D2D2D"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    points={velocityPoints}
+                  />
+
+                  {/* Interactive data point circles */}
+                  {velocityData.map((d, i) => (
+                    <g key={i}>
+                      <circle
+                        cx={toX(i)}
+                        cy={toY(d.velocity)}
+                        r="5"
+                        fill="#E6C35C"
+                        stroke="#2D2D2D"
+                        strokeWidth="1.5"
+                        className="cursor-pointer hover:r-7 transition-all"
+                      >
+                        <title>{d.name}: {d.velocity} completed (target: {d.realistic})</title>
+                      </circle>
+                    </g>
+                  ))}
+
+                  {/* Sprint labels on X axis */}
+                  {velocityData.map((d, i) => (
+                    <text
+                      key={i}
+                      x={toX(i)}
+                      y={H - 5}
+                      fill="#737373"
+                      fontSize="8"
+                      textAnchor="middle"
+                      fontWeight="bold"
+                    >
+                      {d.name}
+                    </text>
+                  ))}
+                </svg>
+              );
+            })() : (
               <div className="flex items-center justify-center h-full text-xs text-text-secondary">Insufficient velocity data.</div>
             )}
           </div>
