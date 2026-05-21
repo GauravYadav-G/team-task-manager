@@ -92,6 +92,117 @@ async function getOverall(req, res, next) {
       take: 4,
     });
 
+    // Fetch unique members in all projects
+    const projectMembers = await prisma.projectMember.findMany({
+      where: { projectId: { in: projectIds } },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true, avatar: true }
+        }
+      }
+    });
+
+    const uniqueUsersMap = {};
+    projectMembers.forEach((member) => {
+      if (member.user && !uniqueUsersMap[member.user.id]) {
+        uniqueUsersMap[member.user.id] = {
+          id: member.user.id,
+          name: member.user.name,
+          email: member.user.email,
+          avatar: member.user.avatar,
+        };
+      }
+    });
+    const teamUsers = Object.values(uniqueUsersMap);
+
+    // Fetch all completed tasks in user's projects
+    const tasksForLeaderboard = await prisma.task.findMany({
+      where: {
+        projectId: { in: projectIds },
+        status: 'DONE',
+        assignedToId: { not: null }
+      },
+      select: {
+        id: true,
+        assignedToId: true,
+        dueDate: true,
+        updatedAt: true
+      }
+    });
+
+    const userStats = teamUsers.map((u) => {
+      const userDoneTasks = tasksForLeaderboard.filter(t => t.assignedToId === u.id);
+      const totalDone = userDoneTasks.length;
+      
+      const tasksWithDeadline = userDoneTasks.filter(t => t.dueDate !== null);
+      
+      const onTimeTasks = tasksWithDeadline.filter(t => {
+        const completionTime = new Date(t.updatedAt);
+        const deadline = new Date(t.dueDate);
+        return completionTime <= deadline;
+      });
+
+      const onTimeCount = onTimeTasks.length;
+      const lateCount = tasksWithDeadline.length - onTimeCount;
+
+      let totalDaysAhead = 0;
+      let maxDaysAhead = 0;
+      onTimeTasks.forEach(t => {
+        const daysAhead = (new Date(t.dueDate) - new Date(t.updatedAt)) / (1000 * 60 * 60 * 24);
+        totalDaysAhead += daysAhead;
+        if (daysAhead > maxDaysAhead) maxDaysAhead = daysAhead;
+      });
+      const avgDaysAhead = onTimeTasks.length > 0 ? totalDaysAhead / onTimeTasks.length : 0;
+
+      return {
+        user: u,
+        completedCount: totalDone,
+        onTimeCount: onTimeCount,
+        lateCount: lateCount,
+        maxDaysAhead: maxDaysAhead,
+        avgDaysAhead: avgDaysAhead
+      };
+    });
+
+    // Sort by onTimeCount descending
+    userStats.sort((a, b) => b.onTimeCount - a.onTimeCount);
+
+    const leaderboard = userStats.map((stat, index) => {
+      const badges = [];
+      const rank = index + 1;
+      let trophy = null;
+      
+      if (stat.onTimeCount > 0) {
+        if (rank === 1) {
+          trophy = 'GOLD';
+          badges.push({ title: 'Milestone Champion', description: 'Rank 1 on the workspace leaderboard' });
+        } else if (rank === 2) {
+          trophy = 'SILVER';
+          badges.push({ title: 'Sprint Warrior', description: 'Rank 2 on the workspace leaderboard' });
+        } else if (rank === 3) {
+          trophy = 'BRONZE';
+          badges.push({ title: 'Deadline Dodger', description: 'Rank 3 on the workspace leaderboard' });
+        }
+      }
+
+      if (stat.onTimeCount >= 5) {
+        badges.push({ title: 'Taskmaster', description: 'Completed 5+ tasks on time' });
+      }
+      if (stat.maxDaysAhead >= 2) {
+        badges.push({ title: 'Speed Demon', description: 'Completed a task 2+ days before deadline' });
+      }
+      if (stat.completedCount > 0 && (stat.onTimeCount / stat.completedCount) >= 0.85) {
+        badges.push({ title: '100% Reliable', description: 'Maintained 85%+ on-time completion rate' });
+      }
+
+      return {
+        ...stat,
+        rank,
+        trophy,
+        badges
+      };
+    });
+
     // Velocity data (mocked but based on real task count trend)
     // Constructing a trend based on total tasks for the demo
     const velocityData = [
@@ -110,7 +221,8 @@ async function getOverall(req, res, next) {
       tasksPerUser,
       recentTasks,
       upcomingTasks,
-      velocityData
+      velocityData,
+      leaderboard
     });
   } catch (error) {
     next(error);

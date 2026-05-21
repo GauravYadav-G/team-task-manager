@@ -162,25 +162,25 @@ export default function ProjectDetail() {
     switch (status) {
       case 'DONE':
         return {
-          border: 'border-t-[3px] border-t-emerald-400',
-          dot: 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]',
+          border: 'border-t-[3px] border-t-emerald-500',
+          dot: 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]',
           glow: 'shadow-emerald-950/5',
-          headerBg: 'bg-emerald-400/5 text-emerald-400'
+          headerBg: 'bg-emerald-500/10 text-emerald-700'
         };
       case 'IN_PROGRESS':
         return {
-          border: 'border-t-[3px] border-t-blue-400',
-          dot: 'bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.5)]',
+          border: 'border-t-[3px] border-t-blue-500',
+          dot: 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.3)]',
           glow: 'shadow-blue-950/5',
-          headerBg: 'bg-blue-400/5 text-blue-400'
+          headerBg: 'bg-blue-500/10 text-blue-700'
         };
       case 'TODO':
       default:
         return {
-          border: 'border-t-[3px] border-t-amber-400',
-          dot: 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]',
-          glow: 'shadow-amber-950/5',
-          headerBg: 'bg-amber-400/5 text-amber-400'
+          border: 'border-t-[3px] border-t-accent-primary',
+          dot: 'bg-accent-primary shadow-[0_0_8px_rgba(230,195,92,0.3)]',
+          glow: 'shadow-accent-primary/5',
+          headerBg: 'bg-accent-primary/10 text-accent-secondary'
         };
     }
   };
@@ -193,8 +193,8 @@ export default function ProjectDetail() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-gray-400 gap-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-amber-400" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-text-secondary gap-4">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-black/10 border-t-accent-primary" />
         <p className="font-sans text-sm font-medium tracking-wide">Compiling Board...</p>
       </div>
     );
@@ -210,15 +210,15 @@ export default function ProjectDetail() {
         <div>
           <button
             onClick={() => navigate('/projects')}
-            className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-gray-500 hover:text-white transition-colors duration-200 mb-3"
+            className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-text-secondary hover:text-text-primary transition-colors duration-200 mb-3"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Projects</span>
           </button>
           
-          <h1 className="text-4xl font-black tracking-tight text-white">{project.name}</h1>
+          <h1 className="text-4xl font-black tracking-tight text-text-primary">{project.name}</h1>
           {project.description && (
-            <p className="text-sm text-gray-400 font-bold mt-1.5 max-w-2xl">{project.description}</p>
+            <p className="text-sm text-text-secondary font-bold mt-1.5 max-w-2xl">{project.description}</p>
           )}
         </div>
 
@@ -229,8 +229,8 @@ export default function ProjectDetail() {
             id="btn-toggle-members"
             className={`py-2.5 px-4.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2 border transition-all duration-200 ${
               showMembers 
-                ? 'bg-amber-400 border-amber-400 text-black shadow-lg shadow-amber-400/25' 
-                : 'bg-white/5 border-white/5 text-gray-300 hover:border-white/10 hover:text-white'
+                ? 'bg-accent-secondary border-accent-secondary text-white shadow-md' 
+                : 'bg-bg-surface border-black/5 text-text-secondary hover:bg-black/5 hover:text-text-primary'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -245,7 +245,7 @@ export default function ProjectDetail() {
                   setShowTaskModal(true);
                 }}
                 id="btn-create-task"
-                className="bg-amber-400 hover:bg-amber-300 text-black py-2.5 px-5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all duration-200 shadow-lg shadow-amber-400/10"
+                className="bg-accent-secondary hover:opacity-90 text-white py-2.5 px-5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all duration-200 shadow-sm border border-transparent"
               >
                 <Plus className="w-4 h-4" />
                 <span>New Task</span>
@@ -255,7 +255,7 @@ export default function ProjectDetail() {
                 onClick={() => setShowDeleteConfirm(true)}
                 id="btn-delete-project"
                 title="Delete Project"
-                className="p-2.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/10 transition-all duration-200"
+                className="p-2.5 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 hover:text-rose-700 border border-rose-500/10 transition-all duration-200"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -265,16 +265,16 @@ export default function ProjectDetail() {
       </div>
 
       {/* Premium Filter Toolbar */}
-      <div className="bg-[#161920] border border-white/5 rounded-3xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+      <div className="bg-bg-surface border border-black/5 rounded-3xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
         <div className="flex flex-col sm:flex-row flex-1 gap-3 items-center">
           {/* Search Box */}
           <div className="relative w-full sm:max-w-xs flex items-center">
-            <Search className="absolute left-3 w-4 h-4 text-gray-500" />
+            <Search className="absolute left-3 w-4 h-4 text-text-secondary" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#111318] border border-white/5 focus:border-amber-400/50 rounded-xl py-2 pl-9 pr-4 text-xs text-white placeholder-gray-500 focus:outline-none transition-all"
+              className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2 pl-9 pr-4 text-xs text-text-primary placeholder-text-secondary focus:outline-none transition-all"
               placeholder="Search tasks..."
             />
           </div>
@@ -284,7 +284,7 @@ export default function ProjectDetail() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="w-full sm:w-auto bg-[#111318] border border-white/5 rounded-xl py-2 px-3 text-xs text-gray-300 focus:outline-none focus:border-amber-400/50 cursor-pointer appearance-none pr-8"
+              className="w-full sm:w-auto bg-bg-main border border-black/5 rounded-xl py-2 px-3 text-xs text-text-primary focus:outline-none focus:border-accent-primary cursor-pointer appearance-none pr-8"
             >
               <option value="">All Priorities</option>
               <option value="LOW">Low</option>
@@ -292,7 +292,7 @@ export default function ProjectDetail() {
               <option value="HIGH">High</option>
               <option value="URGENT">Urgent</option>
             </select>
-            <Filter className="absolute right-3.5 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500 pointer-events-none" />
+            <Filter className="absolute right-3.5 top-1/2 -translate-y-1/2 w-3 h-3 text-text-secondary pointer-events-none" />
           </div>
 
           {/* Assignee filter */}
@@ -300,7 +300,7 @@ export default function ProjectDetail() {
             <select
               value={assigneeFilter}
               onChange={(e) => setAssigneeFilter(e.target.value)}
-              className="w-full sm:w-auto bg-[#111318] border border-white/5 rounded-xl py-2 px-3 text-xs text-gray-300 focus:outline-none focus:border-amber-400/50 cursor-pointer appearance-none pr-8"
+              className="w-full sm:w-auto bg-bg-main border border-black/5 rounded-xl py-2 px-3 text-xs text-text-primary focus:outline-none focus:border-accent-primary cursor-pointer appearance-none pr-8"
             >
               <option value="">All Assignees</option>
               {project.members?.map((m) => (
@@ -309,14 +309,14 @@ export default function ProjectDetail() {
                 </option>
               ))}
             </select>
-            <SlidersHorizontal className="absolute right-3.5 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500 pointer-events-none" />
+            <SlidersHorizontal className="absolute right-3.5 top-1/2 -translate-y-1/2 w-3 h-3 text-text-secondary pointer-events-none" />
           </div>
 
           {/* Clear Filters button */}
           {(searchQuery || priorityFilter || assigneeFilter) && (
             <button
               onClick={clearFilters}
-              className="text-[10px] uppercase font-black tracking-wider text-amber-400 hover:text-white flex items-center gap-1 bg-white/5 py-1 px-3.5 rounded-lg border border-white/5 transition-colors shrink-0"
+              className="text-[10px] uppercase font-black tracking-wider text-accent-secondary hover:bg-black/5 flex items-center gap-1 bg-bg-main py-1 px-3.5 rounded-lg border border-black/5 transition-colors shrink-0"
             >
               <X size={10} />
               <span>Clear</span>
@@ -324,7 +324,7 @@ export default function ProjectDetail() {
           )}
         </div>
         
-        <div className="text-[11px] text-gray-500 font-bold self-end md:self-auto uppercase tracking-wider shrink-0">
+        <div className="text-[11px] text-text-secondary font-bold self-end md:self-auto uppercase tracking-wider shrink-0">
           Showing {filteredTasks.length} of {tasks.length} tasks
         </div>
       </div>
@@ -344,21 +344,21 @@ export default function ProjectDetail() {
                 onDrop={(e) => handleDrop(e, status)}
                 onDragOver={(e) => handleDragOver(e, status)}
                 onDragLeave={handleDragLeave}
-                className={`bg-[#161920] p-6 rounded-[2rem] min-h-[550px] flex flex-col gap-4 border border-white/5 transition-all duration-300 ${
+                className={`bg-bg-surface p-6 rounded-[2rem] min-h-[550px] flex flex-col gap-4 border border-black/5 transition-all duration-300 ${
                   styles.border
                 } ${
-                  isOver ? 'bg-[#1b1f29] border-amber-400/20 scale-[1.01]' : ''
+                  isOver ? 'bg-bg-main border-accent-primary/20 scale-[1.01]' : ''
                 }`}
               >
                 {/* Column Header */}
-                <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                <div className="flex items-center justify-between border-b border-black/5 pb-4">
                   <div className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${styles.dot}`} />
-                    <span className="font-black text-xs text-[#FDFBF7] tracking-wider uppercase">
+                    <span className="font-black text-xs text-text-primary tracking-wider uppercase">
                       {getStatusLabel(status)}
                     </span>
                   </div>
-                  <span className={`text-[10px] font-black tracking-wider px-2 py-0.5 rounded-full border border-white/5 ${styles.headerBg}`}>
+                  <span className={`text-[10px] font-black tracking-wider px-2 py-0.5 rounded-full border border-black/5 ${styles.headerBg}`}>
                     {getColumnTasks(status).length}
                   </span>
                 </div>
@@ -375,9 +375,9 @@ export default function ProjectDetail() {
                   ))}
 
                   {getColumnTasks(status).length === 0 && (
-                    <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-2xl py-14 px-4 text-center">
-                      <HelpCircle className="w-6 h-6 text-gray-700 mb-2" />
-                      <p className="text-xs text-gray-500 font-bold">No matching tasks</p>
+                    <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-black/5 rounded-2xl py-14 px-4 text-center">
+                      <HelpCircle className="w-6 h-6 text-text-secondary mb-2" />
+                      <p className="text-xs text-text-secondary font-bold">No matching tasks</p>
                     </div>
                   )}
                 </div>
@@ -418,30 +418,30 @@ export default function ProjectDetail() {
       {showDeleteConfirm && (
         <div 
           onClick={() => setShowDeleteConfirm(false)}
-          className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn"
+          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fadeIn"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#161920] border border-white/5 w-full max-w-sm rounded-[2rem] p-6 shadow-2xl flex flex-col gap-4 text-white animate-slideUp"
+            className="bg-bg-surface border border-black/5 w-full max-w-sm rounded-[2rem] p-6 shadow-2xl flex flex-col gap-4 text-text-primary animate-slideUp"
           >
-            <div className="border-b border-white/5 pb-3">
-              <h2 className="font-black text-base text-[#FDFBF7]">Delete Project Workflow</h2>
+            <div className="border-b border-black/5 pb-3">
+              <h2 className="font-black text-base text-text-primary">Delete Project Workflow</h2>
             </div>
-            <p className="text-xs text-gray-400 leading-relaxed font-bold">
-              Are you sure you want to delete <strong className="text-white font-extrabold">{project.name}</strong>?
+            <p className="text-xs text-text-secondary leading-relaxed font-bold">
+              Are you sure you want to delete <strong className="text-text-primary font-extrabold">{project.name}</strong>?
               This action is permanent and removes all associated task lists.
             </p>
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/5 mt-1">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-black/5 mt-1">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="bg-transparent border border-white/5 hover:bg-white/5 text-gray-300 py-2 px-4 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-200"
+                className="bg-transparent border border-black/5 hover:bg-black/5 text-text-secondary py-2 px-4 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-200"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteProject}
                 id="btn-confirm-delete"
-                className="bg-rose-500 hover:bg-rose-600 text-white py-2 px-4 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-200 shadow-md shadow-rose-500/20"
+                className="bg-rose-500 hover:bg-rose-600 text-white py-2 px-4 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all duration-200 shadow-md"
               >
                 Delete Project
               </button>

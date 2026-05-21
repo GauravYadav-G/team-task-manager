@@ -3,17 +3,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 @theme {
-  --color-charcoal: #111827;
-  --color-cream: #FDFBF7;
+  --color-bg-main: #F4F3ED;
+  --color-bg-surface: #FFFFFF;
+  --color-accent-primary: #E6C35C;
+  --color-accent-secondary: #2D2D2D;
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #737373;
   --font-sans: 'Inter', 'Outfit', 'sans-serif';
 }
 
 @layer base {
   body {
-    @apply bg-[#111827] text-white font-sans antialiased;
+    @apply bg-bg-main text-text-primary font-sans antialiased;
   }
 
-  /* Custom scrollbar matching dark bento dashboard styles */
+  /* Custom scrollbar matching soft light dashboard styles */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -24,12 +28,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(253, 251, 247, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 9999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(253, 251, 247, 0.2);
+    background: rgba(0, 0, 0, 0.2);
   }
 }
 
@@ -40,11 +44,11 @@
   }
 
   .page-loading {
-    @apply flex flex-col items-center justify-center min-h-[60vh] text-gray-400 gap-4;
+    @apply flex flex-col items-center justify-center min-h-[60vh] text-text-secondary gap-4;
   }
 
   .loading-spinner {
-    @apply animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-pink-500;
+    @apply animate-spin rounded-full h-10 w-10 border-4 border-gray-200 border-t-accent-primary;
   }
 
   .page-header {
@@ -52,7 +56,7 @@
   }
 
   .page-subtitle {
-    @apply text-sm text-gray-400 font-medium mt-1;
+    @apply text-sm text-text-secondary font-medium mt-1;
   }
 
   .empty-state {
@@ -64,11 +68,11 @@
   }
 
   .empty-state h2 {
-    @apply text-2xl font-bold text-white mb-2;
+    @apply text-2xl font-bold text-text-primary mb-2;
   }
 
   .empty-state p {
-    @apply text-gray-400 mb-6 max-w-sm;
+    @apply text-text-secondary mb-6 max-w-sm;
   }
 
   /* Projects Grid */
@@ -77,11 +81,11 @@
   }
 
   .project-card {
-    @apply bg-[#1F2937] border border-white/5 rounded-2xl p-6 cursor-pointer transition-all duration-300 relative overflow-hidden block;
+    @apply bg-bg-surface border border-black/5 rounded-2xl p-6 cursor-pointer transition-all duration-300 relative overflow-hidden block;
   }
 
   .project-card:hover {
-    @apply border-indigo-500/30 -translate-y-0.5 shadow-lg shadow-indigo-500/5;
+    @apply border-accent-primary/55 -translate-y-0.5 shadow-lg shadow-black/5;
   }
 
   .project-card-header {
@@ -89,7 +93,7 @@
   }
 
   .project-card-icon {
-    @apply bg-indigo-500/10 text-indigo-500 p-3 rounded-xl flex items-center justify-center transition-transform duration-300 font-bold text-lg;
+    @apply bg-accent-primary/10 text-accent-secondary p-3 rounded-xl flex items-center justify-center transition-transform duration-300 font-bold text-lg;
   }
 
   .project-card:hover .project-card-icon {
@@ -97,19 +101,19 @@
   }
 
   .project-card-name {
-    @apply font-extrabold text-lg text-white mb-2 transition-colors duration-200 truncate;
+    @apply font-extrabold text-lg text-text-primary mb-2 transition-colors duration-200 truncate;
   }
 
   .project-card:hover .project-card-name {
-    @apply text-indigo-400;
+    @apply text-accent-secondary;
   }
 
   .project-card-desc {
-    @apply text-sm text-gray-400 leading-relaxed mb-6 line-clamp-2;
+    @apply text-sm text-text-secondary leading-relaxed mb-6 line-clamp-2;
   }
 
   .project-card-footer {
-    @apply flex items-center justify-between pt-4 border-t border-white/5 mt-auto;
+    @apply flex items-center justify-between pt-4 border-t border-black/5 mt-auto;
   }
 
   .project-card-members {
@@ -121,40 +125,40 @@
   }
 
   .avatar {
-    @apply rounded-lg font-bold flex items-center justify-center text-white border-2 border-[#1F2937];
+    @apply rounded-lg font-bold flex items-center justify-center text-text-primary border-2 border-bg-surface;
   }
 
   .avatar-xs {
-    @apply w-7 h-7 text-xs bg-indigo-500/20 text-indigo-500;
+    @apply w-7 h-7 text-xs bg-accent-primary/20 text-accent-secondary;
   }
 
   .avatar-more {
-    @apply bg-gray-700/50 text-gray-300;
+    @apply bg-bg-main text-text-secondary;
   }
 
   .project-card-stats {
-    @apply text-xs text-gray-400 font-bold;
+    @apply text-xs text-text-secondary font-bold;
   }
 
   .project-card-task-count {
-    @apply text-gray-400;
+    @apply text-text-secondary;
   }
 
   /* Modal Styles */
   .modal-overlay {
-    @apply fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50;
+    @apply fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50 backdrop-blur-xs;
   }
 
   .modal {
-    @apply bg-[#1F2937] rounded-2xl shadow-xl max-w-md w-full border border-white/5;
+    @apply bg-bg-surface rounded-2xl shadow-xl max-w-md w-full border border-black/5;
   }
 
   .modal-header {
-    @apply flex items-center justify-between p-6 border-b border-white/5;
+    @apply flex items-center justify-between p-6 border-b border-black/5;
   }
 
   .modal-header h2 {
-    @apply text-xl font-bold text-white;
+    @apply text-xl font-bold text-text-primary;
   }
 
   .modal-body {
@@ -162,7 +166,7 @@
   }
 
   .modal-footer {
-    @apply flex items-center gap-3 justify-end pt-4 border-t border-white/5;
+    @apply flex items-center gap-3 justify-end pt-4 border-t border-black/5;
   }
 
   .form-group {
@@ -170,11 +174,11 @@
   }
 
   .form-group label {
-    @apply text-sm font-bold text-gray-300;
+    @apply text-sm font-bold text-text-primary;
   }
 
   .form-input {
-    @apply w-full bg-[#111827] border border-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500/40 transition-colors duration-200;
+    @apply w-full bg-bg-main border border-black/5 rounded-lg px-4 py-2 text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent-primary transition-colors duration-200;
   }
 
   .form-textarea {
@@ -182,18 +186,18 @@
   }
 
   .btn {
-    @apply px-4 py-2 rounded-lg font-bold transition-all duration-200 flex items-center justify-center gap-2;
+    @apply px-4 py-2 rounded-lg font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer;
   }
 
   .btn-primary {
-    @apply bg-indigo-500 hover:bg-indigo-600 text-white shadow-md;
+    @apply bg-accent-secondary hover:opacity-90 text-white shadow-sm;
   }
 
   .btn-ghost {
-    @apply bg-transparent border border-white/10 text-white hover:bg-white/5;
+    @apply bg-transparent border border-black/10 text-text-primary hover:bg-black/5;
   }
 
   .btn-icon {
-    @apply w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer;
+    @apply w-8 h-8 flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors duration-200 cursor-pointer;
   }
 }

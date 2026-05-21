@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 // Pre-defined modern avatars representing the template style
@@ -124,6 +125,7 @@ const getCategoryIcon = (category) => {
 
 export default function Dashboard() {
   const { user, updateUser } = useAuth();
+  const navigate = useNavigate();
 
   // --- STATE ---
   const [bentoTasks, setBentoTasks] = useState([]);
@@ -146,10 +148,9 @@ export default function Dashboard() {
     name: user?.name || 'Lora Peterson',
     role: user?.role || 'UX/UI Designer',
     rate: user?.rate || '$1,200',
-    avatar: user?.avatar || AVATARS[0]
+    avatar: user?.avatar || ''
   });
   const [geminiKey, setGeminiKey] = useState(localStorage.getItem('gemini_api_key') || '');
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
 
   // Sync profile state when user object updates
   useEffect(() => {
@@ -158,7 +159,7 @@ export default function Dashboard() {
         name: user.name || 'Lora Peterson',
         role: user.role || 'UX/UI Designer',
         rate: user.rate || '$1,200',
-        avatar: user.avatar || AVATARS[0]
+        avatar: user.avatar || ''
       });
     }
   }, [user]);
@@ -376,28 +377,7 @@ export default function Dashboard() {
     }
   };
 
-  // --- Profile Settings Update Handler ---
-  const handleSaveProfile = async (e) => {
-    e.preventDefault();
-    try {
-      // Save Gemini key locally
-      localStorage.setItem('gemini_api_key', geminiKey);
 
-      const response = await api.put('/auth/profile', {
-        name: profile.name,
-        role: profile.role,
-        rate: profile.rate,
-        avatar: profile.avatar
-      });
-
-      updateUser(response.data.user);
-      setIsEditingProfile(false);
-      toast.success('Settings and profile updated!');
-    } catch (err) {
-      console.error('Failed to update profile settings', err);
-      toast.error('Failed to update settings');
-    }
-  };
 
   // --- DYNAMIC CALENDAR GENERATION ---
   const getWeekDays = () => {
@@ -700,8 +680,8 @@ Provide an inspiring, conversational, professional agile workspace performance c
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-gray-400 gap-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-yellow-500" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-text-secondary gap-4">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-black/10 border-t-accent-primary" />
         <p className="font-sans text-sm font-medium tracking-wide">Gathering workspace statistics...</p>
       </div>
     );
@@ -709,40 +689,40 @@ Provide an inspiring, conversational, professional agile workspace performance c
 
   // Render Dashboard
   return (
-    <div className="min-h-screen bg-[#111111] text-[#E5E7EB] font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-bg-main text-text-primary font-sans transition-colors duration-300">
       
       {/* Search and settings subheader */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-6 gap-3">
         <div className="flex items-center gap-3">
           <div className="relative w-full md:w-60">
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-2.5 w-4 h-4 text-text-secondary" />
             <input 
               type="text" 
               placeholder="Search tasks..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-xs rounded-full bg-[#1F2937] border border-white/5 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 text-white"
+              className="w-full pl-9 pr-4 py-2 text-xs rounded-full bg-bg-surface border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent-primary/20 text-text-primary placeholder-text-secondary"
             />
           </div>
           <button
             onClick={fetchDashboard}
-            className="p-2.5 bg-[#1F2937] hover:bg-gray-700 rounded-full transition-colors border border-white/5"
+            className="p-2.5 bg-bg-surface hover:bg-black/5 rounded-full transition-colors border border-black/5"
             title="Refresh Dashboard"
           >
-            <RefreshCw className="w-4 h-4 text-gray-300" />
+            <RefreshCw className="w-4 h-4 text-text-secondary" />
           </button>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs text-gray-400 font-semibold bg-[#1F2937] px-3 py-1.5 rounded-full border border-white/5">
+          <span className="text-xs text-text-secondary font-semibold bg-bg-surface px-3 py-1.5 rounded-full border border-black/5 shadow-sm">
             Active Projects: {stats.totalProjects || 0}
           </span>
           <button 
-            onClick={() => setIsEditingProfile(true)}
-            className="p-2.5 bg-[#1F2937] hover:bg-gray-700 rounded-full transition-colors relative border border-white/5"
+            onClick={() => navigate('/settings')}
+            className="p-2.5 bg-bg-surface hover:bg-black/5 rounded-full transition-colors relative border border-black/5 shadow-sm"
             title="Edit Profile Settings"
           >
-            <Settings className="w-4 h-4 text-gray-300" />
+            <Settings className="w-4 h-4 text-text-secondary" />
           </button>
         </div>
       </div>
@@ -754,30 +734,30 @@ Provide an inspiring, conversational, professional agile workspace performance c
         <section className="lg:col-span-8 flex flex-col gap-6">
           
           {/* WELCOME BANNER WITH CORE PERCENTAGE METER CARDS */}
-          <div className="bg-[#1F2937] rounded-[2.5rem] p-6 sm:p-8 border border-white/5 shadow-sm">
+          <div className="bg-bg-surface rounded-[2.5rem] p-6 sm:p-8 border border-black/5 shadow-md">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
               <div>
-                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-                  Welcome back, <span className="text-yellow-400">{profile.name.split(' ')[0]}</span>
+                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary">
+                  Welcome back, <span className="text-accent-primary">{profile.name.split(' ')[0]}</span>
                 </h2>
-                <p className="text-sm text-gray-400 mt-1">Manage and track your onboarding workflows seamlessly</p>
+                <p className="text-sm text-text-secondary mt-1">Manage and track your onboarding workflows seamlessly</p>
               </div>
 
               {/* Top counter statistics */}
-              <div className="flex items-center gap-6 bg-black/30 px-5 py-3 rounded-2xl border border-white/5">
+              <div className="flex items-center gap-6 bg-bg-main px-5 py-3 rounded-2xl border border-black/5">
                 <div className="text-center">
-                  <span className="block text-2xl font-black text-white">{stats.totalMembers || 0}</span>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase">Members</span>
+                  <span className="block text-2xl font-black text-text-primary">{stats.totalMembers || 0}</span>
+                  <span className="text-[10px] text-text-secondary font-bold uppercase">Members</span>
                 </div>
-                <div className="h-8 w-px bg-gray-800"></div>
+                <div className="h-8 w-px bg-black/10"></div>
                 <div className="text-center">
-                  <span className="block text-2xl font-black text-white">{stats.totalTasks || 0}</span>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase">Tasks</span>
+                  <span className="block text-2xl font-black text-text-primary">{stats.totalTasks || 0}</span>
+                  <span className="text-[10px] text-text-secondary font-bold uppercase">Tasks</span>
                 </div>
-                <div className="h-8 w-px bg-gray-800"></div>
+                <div className="h-8 w-px bg-black/10"></div>
                 <div className="text-center">
-                  <span className="block text-2xl font-black text-white">{stats.totalProjects || 0}</span>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase">Projects</span>
+                  <span className="block text-2xl font-black text-text-primary">{stats.totalProjects || 0}</span>
+                  <span className="text-[10px] text-text-secondary font-bold uppercase">Projects</span>
                 </div>
               </div>
             </div>
@@ -785,25 +765,25 @@ Provide an inspiring, conversational, professional agile workspace performance c
             {/* Core Metrics: Grid with dynamic bar tags from Crextio Template */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: 'Pending Tasks', val: `${stats.totalTasks - completedCount}`, desc: `${stats.overdueTasks} overdue`, color: 'bg-rose-500/10 text-rose-400', percent: totalCount > 0 ? Math.round(((totalCount - completedCount) / totalCount) * 100) : 0 },
-                { label: 'Hired Progress', val: `10%`, desc: 'Average onboarding', color: 'bg-yellow-500/10 text-yellow-400', percent: 10 },
-                { label: 'Project time', val: `${onboardingCompletionPercent}%`, desc: 'Task completion rate', color: 'bg-emerald-500/10 text-emerald-400', percent: onboardingCompletionPercent },
-                { label: 'Sprint Output', val: `12pt`, desc: 'Estimated velocity', color: 'bg-blue-500/10 text-blue-400', percent: 45 }
+                { label: 'Pending Tasks', val: `${stats.totalTasks - completedCount}`, desc: `${stats.overdueTasks} overdue`, color: 'bg-rose-500/10 text-rose-500', percent: totalCount > 0 ? Math.round(((totalCount - completedCount) / totalCount) * 100) : 0 },
+                { label: 'Hired Progress', val: `10%`, desc: 'Average onboarding', color: 'bg-accent-primary/20 text-accent-secondary', percent: 10 },
+                { label: 'Project time', val: `${onboardingCompletionPercent}%`, desc: 'Task completion rate', color: 'bg-emerald-500/10 text-emerald-600', percent: onboardingCompletionPercent },
+                { label: 'Sprint Output', val: `12pt`, desc: 'Estimated velocity', color: 'bg-blue-500/10 text-blue-600', percent: 45 }
               ].map((metric, i) => (
-                <div key={i} className="bg-black/20 p-4 rounded-3xl border border-white/5 hover:scale-[1.02] transition-transform">
-                  <span className="text-xs text-gray-400 font-semibold block mb-1">{metric.label}</span>
-                  <span className="text-2xl font-black tracking-tight block text-white">{metric.val}</span>
+                <div key={i} className="bg-bg-main p-4 rounded-3xl border border-black/5 hover:scale-[1.02] transition-transform">
+                  <span className="text-xs text-text-secondary font-semibold block mb-1">{metric.label}</span>
+                  <span className="text-2xl font-black tracking-tight block text-text-primary">{metric.val}</span>
                   
                   {/* Miniature linear fill meter mimicking the mockup */}
-                  <div className="w-full bg-gray-800 h-2 rounded-full mt-3 overflow-hidden">
+                  <div className="w-full bg-black/5 h-2 rounded-full mt-3 overflow-hidden">
                     <div 
                       className={`h-full rounded-full ${
-                        i === 0 ? 'bg-rose-400' : i === 1 ? 'bg-yellow-300' : i === 2 ? 'bg-emerald-400' : 'bg-blue-400'
+                        i === 0 ? 'bg-rose-400' : i === 1 ? 'bg-accent-primary' : i === 2 ? 'bg-emerald-400' : 'bg-blue-400'
                       }`} 
                       style={{ width: `${metric.percent}%` }}
                     />
                   </div>
-                  <span className="text-[9px] text-gray-400 block mt-2 font-medium">{metric.desc}</span>
+                  <span className="text-[9px] text-text-secondary block mt-2 font-medium">{metric.desc}</span>
                 </div>
               ))}
             </div>
@@ -813,36 +793,42 @@ Provide an inspiring, conversational, professional agile workspace performance c
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* 1. Profile Interactive Card */}
-            <div className="bg-[#1F2937] rounded-[2rem] p-5 border border-white/5 shadow-sm flex flex-col justify-between">
+            <div className="bg-bg-surface rounded-[2rem] p-5 border border-black/5 shadow-md flex flex-col justify-between">
               <div className="relative">
-                <div className="overflow-hidden rounded-2xl h-44 w-full relative group border border-white/5">
-                  <img 
-                    src={profile.avatar} 
-                    alt={profile.name} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
+                <div className="overflow-hidden rounded-2xl h-44 w-full relative group border border-black/5">
+                  {profile.avatar ? (
+                    <img 
+                      src={profile.avatar} 
+                      alt={profile.name} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-accent-primary/20 text-accent-secondary font-black flex items-center justify-center text-3xl">
+                      {profile.name ? profile.name.substring(0, 2).toUpperCase() : 'US'}
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-3">
                     <div>
                       <h4 className="text-white font-bold text-lg leading-tight">{profile.name}</h4>
-                      <p className="text-yellow-300 text-xs font-semibold">{profile.role}</p>
+                      <p className="text-accent-primary text-xs font-semibold">{profile.role}</p>
                     </div>
                   </div>
                   
                   {/* Float price/rate badge from template */}
-                  <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-yellow-300 text-[11px] font-black px-2.5 py-1 rounded-full shadow-sm border border-white/5">
+                  <span className="absolute top-3 right-3 bg-accent-secondary text-white text-[11px] font-black px-2.5 py-1 rounded-full shadow-sm">
                     {profile.rate}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-white/5 flex justify-between items-center">
+              <div className="mt-4 pt-3 border-t border-black/5 flex justify-between items-center">
                 <div className="text-left">
-                  <span className="text-[10px] text-gray-400 font-bold uppercase block">Compensation</span>
-                  <span className="text-xs font-bold text-gray-300">Workspace Member</span>
+                  <span className="text-[10px] text-text-secondary font-bold uppercase block">Compensation</span>
+                  <span className="text-xs font-bold text-text-primary">Workspace Member</span>
                 </div>
                 <button 
-                  onClick={() => setIsEditingProfile(true)}
-                  className="px-3 py-1.5 bg-yellow-400 hover:bg-yellow-500 text-black text-[11px] font-bold rounded-xl transition-all"
+                  onClick={() => navigate('/settings')}
+                  className="px-3 py-1.5 bg-accent-secondary hover:opacity-90 text-white text-[11px] font-black uppercase tracking-wider rounded-xl transition-all shadow-md cursor-pointer"
                 >
                   Edit Settings
                 </button>
@@ -850,55 +836,55 @@ Provide an inspiring, conversational, professional agile workspace performance c
             </div>
 
             {/* 2. Weekly Work Time Progress Bar Chart */}
-            <div className="bg-[#1F2937] rounded-[2rem] p-5 border border-white/5 shadow-sm flex flex-col justify-between">
+            <div className="bg-bg-surface rounded-[2rem] p-5 border border-black/5 shadow-md flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <span className="text-xs text-gray-400 font-semibold uppercase tracking-wider block">Weekly Hours</span>
-                    <h3 className="text-2xl font-black mt-1 text-white">{(Object.values(dailyHours).reduce((a, b) => a + b, 0)).toFixed(1)} h</h3>
+                    <span className="text-xs text-text-secondary font-semibold uppercase tracking-wider block">Weekly Hours</span>
+                    <h3 className="text-2xl font-black mt-1 text-text-primary">{(Object.values(dailyHours).reduce((a, b) => a + b, 0)).toFixed(1)} h</h3>
                   </div>
-                  <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  <span className="bg-emerald-500/10 text-emerald-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
                     +12% this wk
                   </span>
                 </div>
-                <p className="text-[11px] text-gray-400">Total tracked productive task hours across active sprint</p>
+                <p className="text-[11px] text-text-secondary">Total tracked productive task hours across active sprint</p>
               </div>
 
-              {/* Bar Chart Graphics matching video screenshot */}
+              {/* Bar Chart Graphics */}
               <div className="flex items-end justify-between h-28 pt-4 pb-2 px-1">
                 {[
-                  { day: 'M', h: dailyHours.M, color: 'bg-gray-600' },
-                  { day: 'T', h: dailyHours.T, color: 'bg-yellow-400' },
-                  { day: 'W', h: dailyHours.W, color: 'bg-yellow-300' },
-                  { day: 'T', h: dailyHours.T_u, color: 'bg-orange-400' },
-                  { day: 'F', h: dailyHours.F, color: 'bg-gray-600' },
-                  { day: 'S', h: dailyHours.S, color: 'bg-gray-700' },
-                  { day: 'S', h: dailyHours.S_u, color: 'bg-gray-800' }
+                  { day: 'M', h: dailyHours.M, color: 'bg-text-secondary' },
+                  { day: 'T', h: dailyHours.T, color: 'bg-accent-primary' },
+                  { day: 'W', h: dailyHours.W, color: 'bg-accent-secondary' },
+                  { day: 'T', h: dailyHours.T_u, color: 'bg-accent-primary/70' },
+                  { day: 'F', h: dailyHours.F, color: 'bg-text-secondary/70' },
+                  { day: 'S', h: dailyHours.S, color: 'bg-text-secondary/50' },
+                  { day: 'S', h: dailyHours.S_u, color: 'bg-text-secondary/30' }
                 ].map((bar, idx) => {
                   const heightPercent = Math.min(100, Math.max(8, (bar.h / 12) * 100));
                   return (
                     <div key={idx} className="flex flex-col items-center flex-1 group relative">
-                      <span className="absolute -top-7 scale-0 group-hover:scale-100 bg-black text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-white/10 transition-all z-10">
+                      <span className="absolute -top-7 scale-0 group-hover:scale-100 bg-accent-secondary text-white text-[9px] font-bold px-1.5 py-0.5 rounded border border-black/5 transition-all z-10">
                         {bar.h.toFixed(1)}h
                       </span>
-                      <div className="w-2.5 sm:w-3.5 bg-black/40 h-20 rounded-full flex items-end overflow-hidden">
+                      <div className="w-2.5 sm:w-3.5 bg-black/5 h-20 rounded-full flex items-end overflow-hidden">
                         <div 
                           className={`w-full ${bar.color} rounded-full transition-all duration-500`}
                           style={{ height: `${heightPercent}%` }}
                         ></div>
                       </div>
-                      <span className="text-[10px] text-gray-400 font-bold mt-2">{bar.day}</span>
+                      <span className="text-[10px] text-text-secondary font-bold mt-2">{bar.day}</span>
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* 3. Time Tracker - Dial Timer (Matching the gorgeous golden circle element) */}
-            <div className="bg-[#1F2937] rounded-[2rem] p-5 border border-white/5 shadow-sm flex flex-col justify-between items-center text-center">
+            {/* 3. Time Tracker - Dial Timer */}
+            <div className="bg-bg-surface rounded-[2rem] p-5 border border-black/5 shadow-md flex flex-col justify-between items-center text-center">
               <div className="w-full flex justify-between items-center mb-1">
-                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block text-left">Time tracker</span>
-                <Clock className="w-4 h-4 text-yellow-400" />
+                <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider block text-left">Time tracker</span>
+                <Clock className="w-4 h-4 text-accent-primary" />
               </div>
 
               {/* Circular Dial Graphics */}
@@ -908,7 +894,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                     cx="50" 
                     cy="50" 
                     r="42" 
-                    stroke="#111827" 
+                    stroke="rgba(0,0,0,0.05)" 
                     strokeWidth="5" 
                     fill="transparent" 
                   />
@@ -916,7 +902,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                     cx="50" 
                     cy="50" 
                     r="42" 
-                    stroke="#FBBF24" 
+                    stroke="#E6C35C" 
                     strokeWidth="5" 
                     fill="transparent" 
                     strokeDasharray="264" 
@@ -926,10 +912,10 @@ Provide an inspiring, conversational, professional agile workspace performance c
                 </svg>
 
                 <div className="z-10">
-                  <span className="block text-lg font-black text-white tracking-tight leading-none">
+                  <span className="block text-lg font-black text-text-primary tracking-tight leading-none">
                     {formatTimer(timerSeconds).substring(0, 5)}
                   </span>
-                  <span className="text-[9px] font-semibold text-gray-400 block mt-1 uppercase">
+                  <span className="text-[9px] font-semibold text-text-secondary block mt-1 uppercase">
                     Work Time
                   </span>
                 </div>
@@ -940,8 +926,8 @@ Provide an inspiring, conversational, professional agile workspace performance c
                 <div className="flex justify-center gap-2 mb-3">
                   <button 
                     onClick={() => setTimerRunning(!timerRunning)}
-                    className={`p-2.5 rounded-full transition-all flex items-center justify-center ${
-                      timerRunning ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-yellow-400 text-black hover:bg-yellow-500'
+                    className={`p-2.5 rounded-full transition-all flex items-center justify-center cursor-pointer shadow-sm ${
+                      timerRunning ? 'bg-rose-500 text-white hover:bg-rose-600' : 'bg-accent-secondary text-white hover:opacity-90'
                     }`}
                     title={timerRunning ? "Pause tracking" : "Start tracking"}
                   >
@@ -952,31 +938,119 @@ Provide an inspiring, conversational, professional agile workspace performance c
                       setTimerRunning(false);
                       setTimerSeconds(0);
                     }}
-                    className="p-2.5 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-all border border-white/5"
+                    className="p-2.5 bg-bg-main hover:bg-black/5 rounded-full text-text-secondary transition-all border border-black/5 cursor-pointer shadow-sm"
                     title="Reset Stopwatch"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                <div className="bg-black/30 px-3 py-1.5 rounded-xl text-center border border-white/5">
-                  <p className="text-[9px] text-gray-400 font-semibold uppercase leading-none">Logged on current sprint task</p>
+                <div className="bg-bg-main px-3 py-1.5 rounded-xl text-center border border-black/5">
+                  <p className="text-[9px] text-text-secondary font-semibold uppercase leading-none">Logged on current sprint task</p>
                 </div>
               </div>
             </div>
 
           </div>
 
+          {/* ACHIEVEMENTS LEADERBOARD */}
+          <div className="bg-bg-surface rounded-[2.5rem] p-6 sm:p-8 border border-black/5 shadow-md flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <span className="text-xs text-accent-secondary font-bold uppercase tracking-wider">Workspace Rankings</span>
+                  <h3 className="text-2xl font-black mt-1 text-text-primary">Achievements Leaderboard</h3>
+                </div>
+                <div className="flex items-center gap-1.5 text-accent-secondary bg-accent-primary/15 px-3 py-1.5 rounded-full border border-accent-primary/25 text-xs font-black uppercase shadow-xs">
+                  <Sparkles className="w-3.5 h-3.5 text-accent-primary animate-pulse" />
+                  <span>Top Performers</span>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {(!stats.leaderboard || stats.leaderboard.length === 0) ? (
+                  <div className="py-8 text-center text-text-secondary text-xs border border-dashed border-black/10 rounded-2xl">
+                    No task statistics available yet. Complete tasks before their deadlines to rank!
+                  </div>
+                ) : (
+                  stats.leaderboard.map((item, idx) => {
+                    const rank = idx + 1;
+                    return (
+                      <div key={item.user.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-bg-main rounded-2xl border border-black/5 gap-3 hover:border-accent-primary/45 transition-colors">
+                        <div className="flex items-center gap-3">
+                          {/* Rank Badge */}
+                          <div className="w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm">
+                            {rank === 1 ? (
+                              <span className="text-xl" title="Gold Trophy">🏆</span>
+                            ) : rank === 2 ? (
+                              <span className="text-xl" title="Silver Trophy">🥈</span>
+                            ) : rank === 3 ? (
+                              <span className="text-xl" title="Bronze Trophy">🥉</span>
+                            ) : (
+                              <span className="text-text-secondary font-extrabold">#{rank}</span>
+                            )}
+                          </div>
+
+                          {/* User Avatar */}
+                          {item.user.avatar ? (
+                            <img 
+                              src={item.user.avatar} 
+                              alt={item.user.name} 
+                              className="w-10 h-10 rounded-xl object-cover ring-2 ring-accent-primary/20"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-xl bg-accent-primary/20 text-accent-secondary font-black flex items-center justify-center text-xs">
+                              {item.user.name ? item.user.name.substring(0, 2).toUpperCase() : 'US'}
+                            </div>
+                          )}
+
+                          {/* User Name & Title */}
+                          <div>
+                            <h4 className="font-extrabold text-sm text-text-primary flex items-center gap-1.5">
+                              {item.user.name}
+                              {item.user.id === user?.id && (
+                                <span className="bg-accent-secondary text-white text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md">You</span>
+                              )}
+                            </h4>
+                            <p className="text-[10px] text-text-secondary font-semibold uppercase tracking-wider">
+                              On-time tasks: {item.onTimeCount} / {item.completedCount}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Badges / Rewards */}
+                        <div className="flex flex-wrap gap-1.5 items-center">
+                          {item.badges && item.badges.map((badge, bIdx) => (
+                            <span 
+                              key={bIdx} 
+                              className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-md bg-accent-secondary text-white border border-black/5 hover:scale-105 transition-transform"
+                              title={badge.description}
+                            >
+                              {badge.title}
+                            </span>
+                          ))}
+                          {(!item.badges || item.badges.length === 0) && (
+                            <span className="text-[10px] text-text-secondary italic">No badges earned yet</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* SPRINT CALENDAR WIDGET & DETAILED TIMELINE SCHEDULE */}
-          <div className="bg-[#1C1F26] text-white rounded-[2.5rem] p-6 sm:p-8 border border-white/5 shadow-md">
+          <div className="bg-bg-surface text-text-primary rounded-[2.5rem] p-6 sm:p-8 border border-black/5 shadow-md">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
               <div>
-                <span className="text-xs text-yellow-400 font-semibold uppercase tracking-wider">Schedule Calendar</span>
+                <span className="text-xs text-accent-primary font-bold uppercase tracking-wider">Schedule Calendar</span>
                 <h3 className="text-2xl font-black mt-1">September 2024</h3>
               </div>
               <button 
                 onClick={() => setShowAddTaskModal(true)}
-                className="bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 transition-all"
+                className="bg-accent-secondary hover:opacity-90 text-white text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-xl flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" /> New Event
               </button>
@@ -990,15 +1064,15 @@ Provide an inspiring, conversational, professional agile workspace performance c
                   <button
                     key={idx}
                     onClick={() => setSelectedDate(day.dateStr)}
-                    className={`flex flex-col items-center py-3 rounded-2xl transition-all border ${
+                    className={`flex flex-col items-center py-3 rounded-2xl transition-all border cursor-pointer ${
                       isSelected 
-                        ? 'bg-white text-black font-black transform scale-105 shadow-md border-white' 
-                        : 'bg-[#292a2d] hover:bg-[#34353a] text-gray-400 border-transparent'
+                        ? 'bg-accent-secondary text-white font-black transform scale-105 shadow-md border-accent-secondary' 
+                        : 'bg-bg-main hover:bg-black/5 text-text-secondary border-transparent'
                     }`}
                   >
                     <span className="text-[10px] font-semibold uppercase tracking-widest block opacity-70 mb-1">{day.label}</span>
                     <span className="text-lg font-black">{day.num}</span>
-                    {isSelected && <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full mt-1"></span>}
+                    {isSelected && <span className="w-1.5 h-1.5 bg-accent-primary rounded-full mt-1"></span>}
                   </button>
                 );
               })}
@@ -1006,28 +1080,28 @@ Provide an inspiring, conversational, professional agile workspace performance c
 
             {/* Dynamic Event timeline matching calendar day chosen */}
             <div className="space-y-3">
-              <span className="text-[10px] font-bold tracking-widest uppercase text-gray-500 block mb-2">Upcoming items for this selected day</span>
+              <span className="text-[10px] font-bold tracking-widest uppercase text-text-secondary block mb-2">Upcoming items for this selected day</span>
               
               {getTasksForSelectedDate().length === 0 ? (
-                <div className="py-6 text-center text-gray-500 text-xs border border-dashed border-gray-800 rounded-2xl">
+                <div className="py-6 text-center text-text-secondary text-xs border border-dashed border-black/10 rounded-2xl">
                   No tasks or syncs scheduled for this date. Click "New Event" above to plan.
                 </div>
               ) : (
                 getTasksForSelectedDate().map((evt) => (
-                  <div key={evt.id} className="flex items-center justify-between p-4 bg-[#252830] rounded-2xl border border-white/5 hover:border-gray-700 transition-colors">
+                  <div key={evt.id} className="flex items-center justify-between p-4 bg-bg-main rounded-2xl border border-black/5 hover:border-black/10 transition-colors">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-yellow-400">
+                      <div className="w-10 h-10 rounded-xl bg-bg-surface flex items-center justify-center text-accent-primary border border-black/5">
                         <Clock className="w-5 h-5" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-sm text-white">{evt.title}</h4>
-                        <p className="text-xs text-gray-400 flex items-center gap-1.5 mt-0.5">
-                          <span className="inline-block w-2 h-2 rounded-full bg-yellow-400"></span>
+                        <h4 className="font-bold text-sm text-text-primary">{evt.title}</h4>
+                        <p className="text-xs text-text-secondary flex items-center gap-1.5 mt-0.5 font-medium">
+                          <span className="inline-block w-2 h-2 rounded-full bg-accent-primary"></span>
                           Onboarding Phase · {evt.time.split(',')[1] || evt.time}
                         </p>
                       </div>
                     </div>
-                    <span className="bg-yellow-400/10 text-yellow-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                    <span className="bg-accent-primary/20 text-accent-secondary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider border border-accent-primary/20 shadow-xs">
                       {evt.category}
                     </span>
                   </div>
@@ -1042,20 +1116,20 @@ Provide an inspiring, conversational, professional agile workspace performance c
         <section className="lg:col-span-4 flex flex-col gap-6">
           
           {/* ONBOARDING OVERALL COMPLETION METER */}
-          <div className="bg-[#1F2937] rounded-[2.5rem] p-6 border border-white/5 shadow-sm flex flex-col justify-between">
+          <div className="bg-bg-surface rounded-[2.5rem] p-6 border border-black/5 shadow-md flex flex-col justify-between">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="text-lg font-bold text-white">Onboarding progress</h3>
-                <p className="text-xs text-gray-400">Global completion status indicator</p>
+                <h3 className="text-lg font-bold text-text-primary">Onboarding progress</h3>
+                <p className="text-xs text-text-secondary font-medium">Global completion status indicator</p>
               </div>
-              <span className="text-2xl font-black text-white">{onboardingCompletionPercent}%</span>
+              <span className="text-2xl font-black text-text-primary">{onboardingCompletionPercent}%</span>
             </div>
 
             {/* Custom Interactive Ring */}
             <div className="relative h-14 my-2 flex items-center justify-center">
-              <div className="w-full bg-black/40 h-6 rounded-full p-1 relative flex items-center border border-white/5">
+              <div className="w-full bg-bg-main h-6 rounded-full p-1 relative flex items-center border border-black/5">
                 <div 
-                  className="bg-gradient-to-r from-yellow-400 to-orange-500 h-full rounded-full transition-all duration-1000 flex items-center justify-end pr-2 text-[9px] text-black font-extrabold"
+                  className="bg-gradient-to-r from-accent-primary to-accent-secondary h-full rounded-full transition-all duration-1000 flex items-center justify-end pr-2 text-[9px] text-white font-extrabold"
                   style={{ width: `${onboardingCompletionPercent}%` }}
                 >
                   {onboardingCompletionPercent > 10 && `${onboardingCompletionPercent}%`}
@@ -1064,48 +1138,48 @@ Provide an inspiring, conversational, professional agile workspace performance c
             </div>
 
             {/* Tag distributions */}
-            <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-white/5">
+            <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-black/5">
               <div className="text-center">
-                <span className="block text-sm font-bold text-white">{onboardingCompletionPercent}%</span>
-                <span className="text-[9px] text-gray-400 font-bold uppercase block mt-1">Task</span>
+                <span className="block text-sm font-bold text-text-primary">{onboardingCompletionPercent}%</span>
+                <span className="text-[9px] text-text-secondary font-bold uppercase block mt-1">Task</span>
               </div>
-              <div className="text-center border-x border-white/5">
-                <span className="block text-sm font-bold text-white">10%</span>
-                <span className="text-[9px] text-gray-400 font-bold uppercase block mt-1">Interview</span>
+              <div className="text-center border-x border-black/5">
+                <span className="block text-sm font-bold text-text-primary">10%</span>
+                <span className="text-[9px] text-text-secondary font-bold uppercase block mt-1">Interview</span>
               </div>
               <div className="text-center">
-                <span className="block text-sm font-bold text-white">{stats.totalProjects ? '100%' : '0%'}</span>
-                <span className="text-[9px] text-gray-400 font-bold uppercase block mt-1">Project</span>
+                <span className="block text-sm font-bold text-text-primary">{stats.totalProjects ? '100%' : '0%'}</span>
+                <span className="text-[9px] text-text-secondary font-bold uppercase block mt-1">Project</span>
               </div>
             </div>
           </div>
 
           {/* INTEGRATED GEMINI AI ASSISTANT HUB */}
-          <div className="bg-[#1C1F26] text-white rounded-[2.5rem] p-6 border border-white/5 shadow-lg flex flex-col justify-between relative overflow-hidden">
+          <div className="bg-bg-surface text-text-primary rounded-[2.5rem] p-6 border border-black/5 shadow-md flex flex-col justify-between relative overflow-hidden">
             {/* Ambient Background Glow */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-yellow-400/10 rounded-full blur-2xl"></div>
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-accent-primary/10 rounded-full blur-2xl"></div>
             
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <div className="p-2 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl text-black">
+                <div className="p-2 bg-gradient-to-br from-accent-primary to-yellow-600 rounded-xl text-accent-secondary">
                   <BrainCircuit className="w-5 h-5 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black tracking-tight flex items-center gap-1.5">
+                  <h3 className="text-base font-black tracking-tight flex items-center gap-1.5 text-text-primary">
                     Crextio AI Copilot
                   </h3>
-                  <p className="text-[10px] text-gray-400">Powered by Gemini 2.5 Flash</p>
+                  <p className="text-[10px] text-text-secondary font-medium">Powered by Gemini 2.5 Flash</p>
                 </div>
               </div>
 
-              <p className="text-xs text-gray-300 leading-relaxed mb-4">
+              <p className="text-xs text-text-secondary leading-relaxed mb-4 font-medium">
                 Draft customized sprint objectives or critique backlog velocities with deep semantic task breakdowns.
               </p>
 
               {aiFeedback && (
-                <div className="bg-white/5 border border-white/10 p-3 rounded-2xl mb-4 text-xs text-yellow-300 flex items-start gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
-                  <Sparkles className="w-4 h-4 mt-0.5 shrink-0" />
-                  <p className="font-medium leading-normal">{aiFeedback}</p>
+                <div className="bg-bg-main border border-black/5 p-3 rounded-2xl mb-4 text-xs text-accent-secondary flex items-start gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                  <Sparkles className="w-4 h-4 mt-0.5 shrink-0 text-accent-primary" />
+                  <p className="font-bold leading-normal">{aiFeedback}</p>
                 </div>
               )}
             </div>
@@ -1114,10 +1188,10 @@ Provide an inspiring, conversational, professional agile workspace performance c
               <button
                 onClick={handleGenerateRoleTasks}
                 disabled={aiLoading}
-                className="bg-[#292a2d] hover:bg-[#34353a] text-white text-[11px] font-bold py-2.5 px-3 rounded-2xl flex items-center justify-center gap-1.5 transition-all border border-white/5 disabled:opacity-50"
+                className="bg-bg-main hover:bg-black/5 text-text-primary text-[11px] font-bold py-2.5 px-3 rounded-2xl flex items-center justify-center gap-1.5 transition-all border border-black/5 disabled:opacity-50 cursor-pointer"
               >
                 {aiLoading ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-yellow-400" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-accent-primary" />
                 ) : (
                   <>✨ Suggest Tasks</>
                 )}
@@ -1126,7 +1200,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
               <button
                 onClick={handleSprintCoachReview}
                 disabled={aiLoading}
-                className="bg-yellow-400 hover:bg-yellow-500 text-black text-[11px] font-extrabold py-2.5 px-3 rounded-2xl flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+                className="bg-accent-secondary hover:opacity-95 text-white text-[11px] font-black uppercase tracking-wider py-2.5 px-3 rounded-2xl flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer shadow-md"
               >
                 {aiLoading ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -1138,14 +1212,14 @@ Provide an inspiring, conversational, professional agile workspace performance c
           </div>
 
           {/* CORE WORKSPACE TASKS CHECKLIST WITH DYNAMIC AI DECOMPOSITION */}
-          <div className="bg-[#1F2937] rounded-[2.5rem] p-6 border border-white/5 shadow-sm flex flex-col justify-between flex-1 min-h-[400px]">
+          <div className="bg-bg-surface rounded-[2.5rem] p-6 border border-black/5 shadow-md flex flex-col justify-between flex-1 min-h-[400px]">
             <div>
               <div className="flex justify-between items-center mb-5">
                 <div>
-                  <h3 className="text-lg font-bold text-white">Onboarding Task</h3>
-                  <p className="text-xs text-gray-400 mt-0.5">Your action lists and milestones</p>
+                  <h3 className="text-lg font-bold text-text-primary">Onboarding Tasks</h3>
+                  <p className="text-xs text-text-secondary mt-0.5 font-medium">Your action lists and milestones</p>
                 </div>
-                <span className="bg-black text-white text-xs font-black px-3 py-1 rounded-full border border-white/5">
+                <span className="bg-bg-main text-text-primary text-xs font-black px-3 py-1 rounded-full border border-black/5">
                   {completedCount}/{totalCount}
                 </span>
               </div>
@@ -1157,27 +1231,27 @@ Provide an inspiring, conversational, professional agile workspace performance c
                     key={task.id} 
                     className={`group flex items-center justify-between p-3.5 rounded-2xl border transition-all duration-300 ${
                       task.completed 
-                        ? 'bg-black/25 border-transparent opacity-70' 
-                        : 'bg-black/15 border-white/5 hover:border-yellow-400/20 shadow-sm'
+                        ? 'bg-bg-main border-transparent opacity-70' 
+                        : 'bg-bg-main border-black/5 hover:border-accent-primary/30 shadow-sm'
                     }`}
                   >
                     <div className="flex items-center gap-3 w-10/12">
                       <button
                         onClick={() => toggleTaskCompletion(task.id)}
-                        className={`w-5 h-5 rounded-md flex items-center justify-center transition-all border ${
+                        className={`w-5 h-5 rounded-md flex items-center justify-center transition-all border cursor-pointer ${
                           task.completed 
-                            ? 'bg-yellow-400 border-yellow-400 text-black' 
-                            : 'border-gray-600 hover:border-yellow-400 bg-transparent'
+                            ? 'bg-accent-primary border-accent-primary text-accent-secondary' 
+                            : 'border-black/20 hover:border-accent-primary bg-transparent'
                         }`}
                       >
                         {task.completed && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                       </button>
 
                       <div className="text-left w-11/12">
-                        <p className={`text-xs font-bold leading-snug break-words ${task.completed ? 'line-through text-gray-500' : 'text-white'}`}>
+                        <p className={`text-xs font-bold leading-snug break-words ${task.completed ? 'line-through text-text-secondary' : 'text-text-primary'}`}>
                           {task.title}
                         </p>
-                        <p className="text-[10px] text-gray-400 font-semibold mt-0.5 uppercase tracking-wider">
+                        <p className="text-[10px] text-text-secondary font-bold mt-0.5 uppercase tracking-wider">
                           {task.category} • {task.time}
                         </p>
                       </div>
@@ -1189,20 +1263,20 @@ Provide an inspiring, conversational, professional agile workspace performance c
                         <button
                           onClick={() => handleExpandTaskIntoSubtasks(task)}
                           disabled={breakingTaskId !== null}
-                          className="p-1.5 hover:bg-gray-800 rounded-xl text-yellow-400 transition-colors opacity-60 group-hover:opacity-100 disabled:opacity-40"
+                          className="p-1.5 hover:bg-black/5 rounded-xl text-accent-secondary transition-colors opacity-60 group-hover:opacity-100 disabled:opacity-40 cursor-pointer"
                           title="✨ Break down with AI"
                         >
                           {breakingTaskId === task.id ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
                           ) : (
-                            <Sparkles className="w-3.5 h-3.5" />
+                            <Sparkles className="w-3.5 h-3.5 text-accent-primary" />
                           )}
                         </button>
                       )}
 
                       <button 
                         onClick={() => deleteTask(task.id)}
-                        className="p-1 text-gray-500 hover:text-red-500 rounded-lg transition-colors scale-0 group-hover:scale-100"
+                        className="p-1 text-text-secondary hover:text-rose-500 rounded-lg transition-colors scale-0 group-hover:scale-100 cursor-pointer"
                         title="Delete task"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1213,17 +1287,17 @@ Provide an inspiring, conversational, professional agile workspace performance c
 
                 {filteredTasks.length === 0 && (
                   <div className="text-center py-12">
-                    <p className="text-xs text-gray-500 font-bold">No tasks found in current list.</p>
+                    <p className="text-xs text-text-secondary font-bold">No tasks found in current list.</p>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Quick Task Creation Footer form */}
-            <div className="mt-6 pt-4 border-t border-white/5">
+            <div className="mt-6 pt-4 border-t border-black/5">
               <button 
                 onClick={() => setShowAddTaskModal(true)}
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold py-3 px-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer"
+                className="w-full bg-accent-secondary hover:opacity-95 text-white text-xs font-black uppercase tracking-wider py-3 px-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
               >
                 <Plus className="w-4 h-4" /> Add Next Sprint Task
               </button>
@@ -1231,18 +1305,18 @@ Provide an inspiring, conversational, professional agile workspace performance c
           </div>
 
           {/* HARDWARE & WORKSTATIONS */}
-          <div className="bg-[#1F2937] rounded-[2.5rem] p-5 border border-white/5 shadow-sm">
-            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest block mb-3">Linked Workstations</span>
+          <div className="bg-bg-surface rounded-[2.5rem] p-5 border border-black/5 shadow-md">
+            <span className="text-[10px] text-text-secondary font-bold uppercase tracking-widest block mb-3">Linked Workstations</span>
             
-            <div className="flex items-center gap-3 bg-black/20 p-3 rounded-2xl border border-white/5">
-              <div className="w-9 h-9 bg-black text-white rounded-xl flex items-center justify-center border border-white/5">
-                <Laptop className="w-5 h-5 text-yellow-400" />
+            <div className="flex items-center gap-3 bg-bg-main p-3 rounded-2xl border border-black/5">
+              <div className="w-9 h-9 bg-bg-surface text-accent-secondary rounded-xl flex items-center justify-center border border-black/5 shadow-xs">
+                <Laptop className="w-5 h-5 text-accent-primary" />
               </div>
               <div className="flex-1 text-left">
-                <h4 className="text-xs font-black text-white">MacBook Air</h4>
-                <p className="text-[10px] text-gray-400">Version M1 · Assigned to workspace</p>
+                <h4 className="text-xs font-black text-text-primary">MacBook Air</h4>
+                <p className="text-[10px] text-text-secondary">Version M1 · Assigned to workspace</p>
               </div>
-              <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-black px-2 py-0.5 rounded-full">
+              <span className="bg-emerald-500/10 text-emerald-600 text-[10px] font-black px-2 py-0.5 rounded-full border border-emerald-500/10 shadow-xs">
                 Active
               </span>
             </div>
@@ -1254,27 +1328,27 @@ Provide an inspiring, conversational, professional agile workspace performance c
 
       {/* --- GEMINI AI INSIGHTS DIALOG MODAL --- */}
       {showAiModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-[#1F2937] rounded-[2.5rem] max-w-lg w-full p-6 sm:p-8 border border-white/10 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-bg-surface rounded-[2.5rem] max-w-lg w-full p-6 sm:p-8 border border-black/5 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
             <button 
               onClick={() => setShowAiModal(false)}
-              className="absolute top-5 right-5 p-2 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors border border-white/5 cursor-pointer"
+              className="absolute top-5 right-5 p-2 bg-bg-main hover:bg-black/5 rounded-full text-text-secondary transition-colors border border-black/5 cursor-pointer shadow-sm"
             >
               <X className="w-4 h-4" />
             </button>
 
             <div className="mb-5 flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl text-black">
-                <Sparkles className="w-5 h-5" />
+              <div className="p-2 bg-gradient-to-br from-accent-primary to-yellow-600 rounded-xl text-accent-secondary shadow-sm">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold tracking-tight text-white">{aiModalTitle}</h3>
-                <p className="text-xs text-gray-400">Agile sprint evaluation and optimization brief</p>
+                <h3 className="text-xl font-bold tracking-tight text-text-primary">{aiModalTitle}</h3>
+                <p className="text-xs text-text-secondary mt-0.5">Agile sprint evaluation and optimization brief</p>
               </div>
             </div>
 
-            <div className="bg-black/30 border border-white/5 p-5 rounded-3xl max-h-[350px] overflow-y-auto mb-6">
-              <p className="text-xs text-gray-300 leading-relaxed whitespace-pre-line font-medium">
+            <div className="bg-bg-main border border-black/5 p-5 rounded-3xl max-h-[350px] overflow-y-auto mb-6">
+              <p className="text-xs text-text-primary leading-relaxed whitespace-pre-line font-medium">
                 {aiModalContent}
               </p>
             </div>
@@ -1282,7 +1356,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
             <div className="flex justify-end gap-3">
               <button 
                 onClick={() => setShowAiModal(false)}
-                className="w-full py-3 bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold rounded-2xl flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                className="w-full py-3 bg-accent-secondary hover:opacity-95 text-white text-xs font-black uppercase tracking-wider rounded-2xl flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
               >
                 <ThumbsUp className="w-4 h-4" /> Thank you Coach!
               </button>
@@ -1293,27 +1367,27 @@ Provide an inspiring, conversational, professional agile workspace performance c
 
       {/* --- ADD TASK MODAL DRAWER --- */}
       {showAddTaskModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-[#1F2937] rounded-[2.5rem] max-w-md w-full p-6 sm:p-8 border border-white/10 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-bg-surface rounded-[2.5rem] max-w-md w-full p-6 sm:p-8 border border-black/5 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
             <button 
               onClick={() => setShowAddTaskModal(false)}
-              className="absolute top-5 right-5 p-2 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors border border-white/5 cursor-pointer"
+              className="absolute top-5 right-5 p-2 bg-bg-main hover:bg-black/5 rounded-full text-text-secondary transition-colors border border-black/5 cursor-pointer shadow-sm"
             >
               <X className="w-4 h-4" />
             </button>
 
             <div className="mb-6">
-              <h3 className="text-xl font-bold tracking-tight text-white">Create Workspace Task</h3>
-              <p className="text-xs text-gray-400 mt-1">Define workflow parameters to add directly onto the onboarding board</p>
+              <h3 className="text-xl font-bold tracking-tight text-text-primary">Create Workspace Task</h3>
+              <p className="text-xs text-text-secondary mt-1">Define workflow parameters to add directly onto the onboarding board</p>
             </div>
 
             <form onSubmit={createNewTask} className="space-y-4">
               <div>
-                <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1.5">Select Project</label>
+                <label className="block text-[10px] font-bold uppercase text-text-secondary mb-1.5">Select Project</label>
                 <select
                   value={selectedProjectId}
                   onChange={(e) => setSelectedProjectId(e.target.value)}
-                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-black/40 border border-white/5 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 text-white"
+                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent-primary/20 text-text-primary"
                   required
                 >
                   {projectsList.length === 0 && <option value="">(No projects available - will create default)</option>}
@@ -1324,38 +1398,38 @@ Provide an inspiring, conversational, professional agile workspace performance c
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1.5">Task Description/Title</label>
+                <label className="block text-[10px] font-bold uppercase text-text-secondary mb-1.5">Task Description/Title</label>
                 <input 
                   type="text" 
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                   placeholder="e.g., Deliver wireframes for Visual QA review"
-                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-black/40 border border-white/5 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 text-white"
+                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent-primary/20 text-text-primary"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1.5">Day of September</label>
+                  <label className="block text-[10px] font-bold uppercase text-text-secondary mb-1.5">Day of September</label>
                   <input
                     type="number"
                     min="1"
                     max="30"
                     value={newTaskDay}
                     onChange={(e) => setNewTaskDay(e.target.value)}
-                    className="w-full px-4 py-2.5 text-xs rounded-xl bg-black/40 border border-white/5 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 text-white"
+                    className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent-primary/20 text-text-primary"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1.5">Time</label>
+                  <label className="block text-[10px] font-bold uppercase text-text-secondary mb-1.5">Time</label>
                   <input
                     type="text"
                     placeholder="e.g. 10:00"
                     value={newTaskTime}
                     onChange={(e) => setNewTaskTime(e.target.value)}
-                    className="w-full px-4 py-2.5 text-xs rounded-xl bg-black/40 border border-white/5 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 text-white"
+                    className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent-primary/20 text-text-primary"
                     required
                   />
                 </div>
@@ -1363,98 +1437,9 @@ Provide an inspiring, conversational, professional agile workspace performance c
 
               <button
                 type="submit"
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold py-3 px-4 rounded-xl mt-4 transition-all shadow-sm cursor-pointer"
+                className="w-full bg-accent-secondary hover:opacity-90 text-white text-xs font-black uppercase tracking-wider py-3 px-4 rounded-xl mt-4 transition-all shadow-md cursor-pointer"
               >
                 Add Task
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* --- EDIT PROFILE & SETTINGS MODAL --- */}
-      {isEditingProfile && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-[#1F2937] rounded-[2.5rem] max-w-md w-full p-6 sm:p-8 border border-white/10 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
-            <button 
-              onClick={() => setIsEditingProfile(false)}
-              className="absolute top-5 right-5 p-2 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition-colors border border-white/5 cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <div className="mb-6">
-              <h3 className="text-xl font-bold tracking-tight text-white">Workspace Profile Settings</h3>
-              <p className="text-xs text-gray-400 mt-1">Customize your display settings and configure AI features</p>
-            </div>
-
-            <form onSubmit={handleSaveProfile} className="space-y-4">
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1.5">Display Name</label>
-                <input 
-                  type="text" 
-                  value={profile.name}
-                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-black/40 border border-white/5 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 text-white"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1.5">Workplace Role / Title</label>
-                <input 
-                  type="text" 
-                  value={profile.role}
-                  onChange={(e) => setProfile({ ...profile, role: e.target.value })}
-                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-black/40 border border-white/5 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 text-white"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1.5">Compensation Rate</label>
-                  <input 
-                    type="text" 
-                    value={profile.rate}
-                    onChange={(e) => setProfile({ ...profile, rate: e.target.value })}
-                    className="w-full px-4 py-2.5 text-xs rounded-xl bg-black/40 border border-white/5 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 text-white"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1.5">Avatar URL</label>
-                  <select
-                    value={profile.avatar}
-                    onChange={(e) => setProfile({ ...profile, avatar: e.target.value })}
-                    className="w-full px-4 py-2.5 text-xs rounded-xl bg-black/40 border border-white/5 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 text-white"
-                  >
-                    {AVATARS.map((url, index) => (
-                      <option key={index} value={url}>Avatar Option {index + 1}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold uppercase text-gray-400 mb-1.5">Gemini API Key (Optional)</label>
-                <div className="relative">
-                  <Key className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                  <input 
-                    type="password" 
-                    placeholder="AI features work out-of-the-box. Enter key to connect live Gemini." 
-                    value={geminiKey}
-                    onChange={(e) => setGeminiKey(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2.5 text-xs rounded-xl bg-black/40 border border-white/5 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 text-white font-mono"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold py-3 px-4 rounded-xl mt-4 transition-all shadow-sm cursor-pointer"
-              >
-                Save Settings
               </button>
             </form>
           </div>

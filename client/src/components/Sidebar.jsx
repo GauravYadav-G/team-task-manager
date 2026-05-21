@@ -31,38 +31,39 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-20 bg-[#161920] flex flex-col items-center py-6 shrink-0 h-screen sticky top-0 rounded-r-3xl z-20 border-r border-white/5 overflow-y-auto shadow-2xl transition-all duration-300">
-      {/* Premium Gradient Logo */}
+    <div className="w-full md:w-20 h-16 md:h-screen bg-bg-surface flex md:flex-col flex-row items-center md:py-6 px-4 md:px-0 shrink-0 fixed bottom-0 md:sticky md:top-0 rounded-t-2xl md:rounded-t-none md:rounded-r-3xl z-20 border-t md:border-t-0 md:border-r border-black/5 shadow-lg md:shadow-xl transition-all duration-300">
+      
+      {/* Brand Logo - Hide on mobile */}
       <div 
-        className="mb-8 cursor-pointer transform hover:scale-110 transition-transform p-2.5 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-2xl shadow-lg shadow-yellow-500/10 flex items-center justify-center" 
+        className="hidden md:flex mb-8 cursor-pointer transform hover:scale-110 transition-transform p-3 bg-accent-primary rounded-2xl shadow-sm text-accent-secondary items-center justify-center" 
         onClick={() => navigate('/')}
-        title="Crextio Workspace"
+        title="TaskFlow Workspace"
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 12L10 6L14 10L20 4" stroke="black" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M4 20L10 14L14 18L20 12" stroke="black" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 12L10 6L14 10L20 4" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M4 20L10 14L14 18L20 12" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
 
-      {/* Main Navigation Items */}
-      <div className="flex flex-col gap-5 flex-1 w-full items-center">
+      {/* Main Navigation Items - Flex Row on mobile, Flex Col on Desktop */}
+      <div className="flex md:flex-col flex-row gap-2 md:gap-5 flex-1 w-full justify-around md:justify-start items-center">
         {navItems.map((item, idx) => {
           const Icon = item.icon;
           return (
             <NavLink
               key={idx}
               to={item.to}
-              className={({ isActive }) => `p-3 rounded-2xl transition-all duration-300 relative group flex items-center justify-center ${
+              className={({ isActive }) => `p-2.5 md:p-3 rounded-xl md:rounded-2xl transition-all duration-200 relative group flex items-center justify-center ${
                 isActive 
-                  ? 'bg-yellow-400 text-black shadow-lg shadow-yellow-400/25 scale-105' 
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-accent-secondary text-white shadow-md shadow-accent-secondary/15 scale-105' 
+                  : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
               }`}
               title={item.title}
             >
-              <Icon size={20} className="stroke-[2.2]" />
+              <Icon size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />
               
-              {/* Premium Floating Tooltip */}
-              <div className="absolute left-20 bg-black/90 text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-2xl border border-white/10 z-30">
+              {/* Premium Floating Tooltip - Hide on mobile */}
+              <div className="hidden md:block absolute left-20 bg-accent-secondary text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl border border-black/5 z-30">
                 {item.title}
               </div>
             </NavLink>
@@ -70,20 +71,20 @@ export default function Sidebar() {
         })}
       </div>
 
-      {/* Bottom Controls */}
-      <div className="flex flex-col gap-4 items-center w-full mt-6 pt-6 border-t border-white/5">
+      {/* Bottom Controls - Flex Row on mobile, Flex Col on Desktop */}
+      <div className="flex md:flex-col flex-row gap-2 md:gap-4 items-center justify-end md:justify-center md:w-full md:mt-6 md:pt-6 md:border-t border-black/5">
         {/* Settings */}
         <NavLink
           to="/settings"
-          className={({ isActive }) => `p-3 rounded-2xl transition-all duration-300 relative group flex items-center justify-center ${
+          className={({ isActive }) => `p-2.5 md:p-3 rounded-xl md:rounded-2xl transition-all duration-200 relative group flex items-center justify-center ${
             isActive 
-              ? 'bg-yellow-400 text-black shadow-lg shadow-yellow-400/25 scale-105' 
-              : 'text-gray-400 hover:text-white hover:bg-white/5'
+              ? 'bg-accent-secondary text-white shadow-md shadow-accent-secondary/15 scale-105' 
+              : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
           }`}
           title="Settings"
         >
-          <Settings size={20} className="stroke-[2.2]" />
-          <div className="absolute left-20 bg-black/90 text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-2xl border border-white/10 z-30">
+          <Settings size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />
+          <div className="hidden md:block absolute left-20 bg-accent-secondary text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl border border-black/5 z-30">
             Settings
           </div>
         </NavLink>
@@ -91,11 +92,11 @@ export default function Sidebar() {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="p-3 text-gray-500 hover:text-rose-400 hover:bg-rose-500/10 cursor-pointer transition-all duration-300 rounded-2xl relative group"
+          className="p-2.5 md:p-3 text-text-secondary hover:text-rose-500 hover:bg-rose-500/10 cursor-pointer transition-all duration-200 rounded-xl md:rounded-2xl relative group"
           title="Log Out"
         >
-          <LogOut size={20} className="stroke-[2.2]" />
-          <div className="absolute left-20 bg-black/90 text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-2xl border border-white/10 z-30">
+          <LogOut size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />
+          <div className="hidden md:block absolute left-20 bg-accent-secondary text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl border border-black/5 z-30">
             Log Out
           </div>
         </button>

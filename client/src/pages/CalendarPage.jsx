@@ -119,8 +119,8 @@ export default function CalendarPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-gray-400 gap-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-yellow-500" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-text-secondary gap-4">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-black/10 border-t-accent-secondary" />
         <p className="font-sans text-sm font-medium tracking-wide">Drawing workspace timeline...</p>
       </div>
     );
@@ -131,21 +131,21 @@ export default function CalendarPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-2">
-            <CalendarIcon className="text-yellow-400" /> Workspace Schedule
+          <h1 className="text-3xl font-black text-text-primary tracking-tight flex items-center gap-2">
+            <CalendarIcon className="text-accent-secondary" /> Workspace Schedule
           </h1>
-          <p className="text-sm text-gray-400 mt-1">Calendar roadmap showing task milestones and timelines</p>
+          <p className="text-sm text-text-secondary mt-1">Calendar roadmap showing task milestones and timelines</p>
         </div>
 
         {/* Date controllers */}
-        <div className="flex items-center gap-2 bg-[#1C1F26] p-1.5 rounded-2xl border border-white/5">
-          <button onClick={handlePrevMonth} className="p-2 hover:bg-white/5 text-gray-400 hover:text-white rounded-xl transition-colors">
+        <div className="flex items-center gap-2 bg-bg-surface p-1.5 rounded-2xl border border-black/5 shadow-sm">
+          <button onClick={handlePrevMonth} className="p-2 hover:bg-bg-main text-text-secondary hover:text-text-primary rounded-xl transition-colors">
             <ChevronLeft size={16} />
           </button>
-          <span className="text-xs font-black text-white px-3 tracking-wide uppercase min-w-32 text-center">
+          <span className="text-xs font-black text-text-primary px-3 tracking-wide uppercase min-w-[130px] text-center">
             {monthName} {year}
           </span>
-          <button onClick={handleNextMonth} className="p-2 hover:bg-white/5 text-gray-400 hover:text-white rounded-xl transition-colors">
+          <button onClick={handleNextMonth} className="p-2 hover:bg-bg-main text-text-secondary hover:text-text-primary rounded-xl transition-colors">
             <ChevronRight size={16} />
           </button>
         </div>
@@ -153,10 +153,10 @@ export default function CalendarPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Calendar Month Grid */}
-        <div className="lg:col-span-8 bg-[#1C1F26] border border-white/5 p-5 sm:p-6 rounded-[2.5rem] shadow-xl">
+        <div className="lg:col-span-8 bg-bg-surface border border-black/5 p-5 sm:p-6 rounded-[2.5rem] shadow-sm">
           <div className="grid grid-cols-7 gap-2 mb-4 text-center">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d, i) => (
-              <span key={i} className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{d}</span>
+              <span key={i} className="text-[10px] font-black text-text-secondary uppercase tracking-widest">{d}</span>
             ))}
           </div>
 
@@ -172,11 +172,11 @@ export default function CalendarPage() {
                   onClick={() => handleSelectDay(cell)}
                   className={`min-h-20 p-2 text-left rounded-2xl flex flex-col justify-between border transition-all ${
                     cell.isCurrentMonth
-                      ? 'bg-black/20 hover:bg-black/45 border-white/5 text-white'
-                      : 'bg-transparent border-transparent text-gray-600'
-                  } ${isToday ? 'ring-2 ring-yellow-400 border-yellow-400' : ''}`}
+                      ? 'bg-bg-surface hover:bg-bg-main border-black/5 text-text-primary shadow-sm'
+                      : 'bg-bg-main/30 border-transparent text-text-secondary/40'
+                  } ${isToday ? 'ring-2 ring-accent-primary border-accent-primary' : ''}`}
                 >
-                  <span className={`text-xs font-black leading-none ${isToday ? 'text-yellow-400' : ''}`}>{cell.day}</span>
+                  <span className={`text-xs font-black leading-none ${isToday ? 'text-accent-secondary bg-accent-primary px-1.5 py-0.5 rounded-md' : ''}`}>{cell.day}</span>
                   
                   {/* Miniature task indicators */}
                   {hasTasks && (
@@ -184,19 +184,19 @@ export default function CalendarPage() {
                       {dayTasks.slice(0, 2).map((t, tIdx) => (
                         <div
                           key={tIdx}
-                          className={`text-[8px] font-bold px-1.5 py-0.5 rounded truncate leading-tight ${
+                          className={`text-[8px] font-bold px-1.5 py-0.5 rounded truncate leading-tight border ${
                             t.status === 'DONE'
-                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/10'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
                               : t.priority === 'URGENT' || t.priority === 'HIGH'
-                              ? 'bg-red-500/10 text-red-400 border border-red-500/10'
-                              : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/10'
+                              ? 'bg-rose-50 text-rose-700 border-rose-100'
+                              : 'bg-accent-primary/10 text-accent-secondary border-accent-primary/20'
                           }`}
                         >
                           {t.title}
                         </div>
                       ))}
                       {dayTasks.length > 2 && (
-                        <span className="text-[7px] text-gray-500 font-bold pl-1">+{dayTasks.length - 2} more</span>
+                        <span className="text-[7px] text-text-secondary/70 font-bold pl-1">+{dayTasks.length - 2} more</span>
                       )}
                     </div>
                   )}
@@ -207,39 +207,39 @@ export default function CalendarPage() {
         </div>
 
         {/* Selected Day Task Drawer */}
-        <div className="lg:col-span-4 bg-[#1C1F26] border border-white/5 p-6 rounded-[2.5rem] min-h-[400px] flex flex-col justify-between">
+        <div className="lg:col-span-4 bg-bg-surface border border-black/5 p-6 rounded-[2.5rem] min-h-[400px] flex flex-col justify-between shadow-sm">
           <div>
-            <h3 className="text-base font-black text-white">Daily Agenda</h3>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <h3 className="text-base font-black text-text-primary">Daily Agenda</h3>
+            <p className="text-xs text-text-secondary mt-0.5">
               {selectedDateStr || 'Select a calendar block to show tasks'}
             </p>
 
             <div className="space-y-3.5 mt-5">
               {selectedDayTasks.length > 0 ? (
                 selectedDayTasks.map((t, idx) => (
-                  <div key={idx} className="p-4 bg-black/25 rounded-2xl border border-white/5 hover:border-gray-700 transition-colors text-left space-y-2">
+                  <div key={idx} className="p-4 bg-bg-main/40 hover:bg-bg-main rounded-2xl border border-black/5 hover:border-accent-primary/20 transition-all text-left space-y-2">
                     <div className="flex justify-between items-center gap-2">
-                      <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${
-                        t.status === 'DONE' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-yellow-500/10 text-yellow-400'
+                      <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full border ${
+                        t.status === 'DONE' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-accent-primary/10 text-accent-secondary border-accent-primary/20'
                       }`}>
                         {t.status}
                       </span>
-                      <span className="text-[9px] font-bold text-gray-500 flex items-center gap-1">
+                      <span className="text-[9px] font-bold text-text-secondary flex items-center gap-1">
                         <Tag size={10} /> {t.projectName}
                       </span>
                     </div>
 
-                    <h4 className="text-xs font-black text-white leading-snug break-words">{t.title}</h4>
-                    {t.description && <p className="text-[10px] text-gray-400 leading-normal line-clamp-2">{t.description}</p>}
+                    <h4 className="text-xs font-black text-text-primary leading-snug break-words">{t.title}</h4>
+                    {t.description && <p className="text-[10px] text-text-secondary leading-normal line-clamp-2">{t.description}</p>}
 
-                    <div className="flex items-center gap-1 text-[9px] text-gray-500 pt-1 border-t border-white/5">
+                    <div className="flex items-center gap-1 text-[9px] text-text-secondary pt-1 border-t border-black/5">
                       <Clock size={10} /> Due {new Date(t.dueDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-16 text-xs text-gray-500 border border-dashed border-gray-800 rounded-2xl flex flex-col items-center justify-center">
-                  <Clock className="w-8 h-8 text-gray-600 mb-2" />
+                <div className="text-center py-16 text-xs text-text-secondary border border-dashed border-black/10 rounded-2xl flex flex-col items-center justify-center">
+                  <Clock className="w-8 h-8 text-text-secondary/50 mb-2" />
                   <p className="font-bold">No tasks scheduled for this day</p>
                 </div>
               )}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import { Mail, Lock, User, FolderKanban } from 'lucide-react';
 
 export default function Signup() {
   const { signup } = useAuth();
@@ -42,119 +43,123 @@ export default function Signup() {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-bg">
-        <div className="auth-bg-orb auth-bg-orb-1" />
-        <div className="auth-bg-orb auth-bg-orb-2" />
-        <div className="auth-bg-orb auth-bg-orb-3" />
-      </div>
+    <div className="min-h-screen bg-bg-main flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
+      {/* Subtle Warm Decorative Orbs */}
+      <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-accent-primary/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent-secondary/5 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="auth-card">
-        <div className="auth-header">
-          <div className="auth-logo">
-            <svg viewBox="0 0 32 32" fill="none" width="48" height="48">
-              <rect width="32" height="32" rx="8" fill="url(#authGrad2)" />
-              <path
-                d="M9 16l4 4 10-10"
-                stroke="white"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <defs>
-                <linearGradient id="authGrad2" x1="0" y1="0" x2="32" y2="32">
-                  <stop offset="0%" stopColor="#7c3aed" />
-                  <stop offset="100%" stopColor="#06b6d4" />
-                </linearGradient>
-              </defs>
-            </svg>
+      <div className="bg-bg-surface border border-black/5 p-6 sm:p-10 rounded-3xl w-full max-w-md shadow-xl relative z-10 flex flex-col gap-6">
+        
+        {/* Header section with brand logo */}
+        <div className="flex flex-col items-center text-center gap-3">
+          <div className="bg-accent-primary text-accent-secondary p-4 rounded-2xl flex items-center justify-center shadow-md">
+            <FolderKanban className="w-7 h-7" strokeWidth={2.2} />
           </div>
-          <h1>Create your account</h1>
-          <p>Get started with TaskFlow today</p>
+          <div>
+            <h1 className="text-3xl font-black tracking-tight text-text-primary">
+              Create Account
+            </h1>
+            <p className="text-sm text-text-secondary font-medium mt-1">Get started with our workspace today</p>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="signup-name">Full Name</label>
+        {/* Input Form */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          
+          {/* Name field */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="signup-name" className="text-xs font-bold uppercase tracking-wider text-text-secondary flex items-center gap-2">
+              <User className="w-4 h-4 text-accent-primary" />
+              <span>Full Name</span>
+            </label>
             <input
               id="signup-name"
               name="name"
               type="text"
               value={formData.name}
               onChange={handleChange}
-              className="form-input"
+              className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary focus:outline-none transition-all duration-200"
               placeholder="John Doe"
               required
               autoFocus
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="signup-email">Email</label>
+          {/* Email field */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="signup-email" className="text-xs font-bold uppercase tracking-wider text-text-secondary flex items-center gap-2">
+              <Mail className="w-4 h-4 text-accent-primary" />
+              <span>Email Address</span>
+            </label>
             <input
               id="signup-email"
               name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
-              className="form-input"
+              className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary focus:outline-none transition-all duration-200"
               placeholder="you@example.com"
               required
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="signup-password">Password</label>
+          {/* Password field */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="signup-password" className="text-xs font-bold uppercase tracking-wider text-text-secondary flex items-center gap-2">
+              <Lock className="w-4 h-4 text-accent-primary" />
+              <span>Password</span>
+            </label>
             <input
               id="signup-password"
               name="password"
               type="password"
               value={formData.password}
               onChange={handleChange}
-              className="form-input"
+              className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary focus:outline-none transition-all duration-200"
               placeholder="Min. 6 characters"
               required
               minLength={6}
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="signup-confirm">Confirm Password</label>
+          {/* Confirm Password field */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="signup-confirm" className="text-xs font-bold uppercase tracking-wider text-text-secondary flex items-center gap-2">
+              <Lock className="w-4 h-4 text-accent-primary" />
+              <span>Confirm Password</span>
+            </label>
             <input
               id="signup-confirm"
               name="confirmPassword"
               type="password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="form-input"
+              className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary focus:outline-none transition-all duration-200"
               placeholder="••••••••"
               required
             />
           </div>
 
+          {/* Signup Button */}
           <button
             type="submit"
-            className="btn btn-primary btn-full"
             disabled={loading}
             id="btn-signup"
+            className="w-full bg-accent-secondary hover:opacity-95 text-white py-3 px-5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 shadow-md disabled:opacity-50 mt-2 cursor-pointer"
           >
-            {loading ? (
-              <span className="btn-loading">
-                <span className="loading-spinner loading-spinner-sm" />
-                Creating account...
-              </span>
-            ) : (
-              'Create Account'
-            )}
+            {loading ? 'Creating account...' : 'Create Account'}
           </button>
+
         </form>
 
-        <p className="auth-footer-text">
+        {/* Footer text */}
+        <p className="text-center text-xs text-text-secondary font-bold">
           Already have an account?{' '}
-          <Link to="/login" className="auth-link">
+          <Link to="/login" className="text-accent-secondary hover:underline transition-all duration-200 font-black">
             Sign in
           </Link>
         </p>
+
       </div>
     </div>
   );
