@@ -53,10 +53,10 @@ export default function Sidebar() {
             <NavLink
               key={idx}
               to={item.to}
-              className={({ isActive }) => `p-2.5 md:p-3 rounded-xl md:rounded-2xl transition-all duration-200 relative group flex items-center justify-center ${
+              className={({ isActive }) => `p-2.5 md:p-3 rounded-xl md:rounded-2xl transition-all duration-300 relative group flex items-center justify-center ${
                 isActive 
                   ? 'bg-accent-secondary text-white shadow-md shadow-accent-secondary/15 scale-105' 
-                  : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-black/5 hover:scale-108 active:scale-95'
               }`}
               title={item.title}
             >
@@ -64,7 +64,7 @@ export default function Sidebar() {
                 <>
                   <Icon size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />
                   {isActive && (
-                    <span className="absolute bottom-1 w-1 h-1 rounded-full bg-white animate-pulse md:block hidden" />
+                    <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white animate-breath md:block hidden" />
                   )}
                   {/* Premium Floating Tooltip - Hide on mobile */}
                   <div className="hidden md:block absolute left-20 bg-accent-secondary text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl border border-white/10 z-30">
@@ -82,10 +82,10 @@ export default function Sidebar() {
         {/* Settings */}
         <NavLink
           to="/settings"
-          className={({ isActive }) => `p-2.5 md:p-3 rounded-xl md:rounded-2xl transition-all duration-200 relative group flex items-center justify-center ${
+          className={({ isActive }) => `p-2.5 md:p-3 rounded-xl md:rounded-2xl transition-all duration-300 relative group flex items-center justify-center ${
             isActive 
               ? 'bg-accent-secondary text-white shadow-md shadow-accent-secondary/15 scale-105' 
-              : 'text-text-secondary hover:text-text-primary hover:bg-black/5'
+              : 'text-text-secondary hover:text-text-primary hover:bg-black/5 hover:scale-108 active:scale-95'
           }`}
           title="Settings"
         >
@@ -93,7 +93,7 @@ export default function Sidebar() {
             <>
               <Settings size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />
               {isActive && (
-                <span className="absolute bottom-1 w-1 h-1 rounded-full bg-white animate-pulse md:block hidden" />
+                <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white animate-breath md:block hidden" />
               )}
               <div className="hidden md:block absolute left-20 bg-accent-secondary text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl border border-white/10 z-30">
                 Settings

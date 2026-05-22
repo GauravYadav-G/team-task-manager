@@ -153,7 +153,7 @@ export default function CalendarPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Calendar Month Grid */}
-        <div className="lg:col-span-8 bg-bg-surface border border-black/5 p-5 sm:p-6 rounded-[2.5rem] shadow-sm">
+        <div className="lg:col-span-8 bg-bg-surface border border-black/5 p-5 sm:p-6 rounded-[2.5rem] mac-shadow">
           <div className="grid grid-cols-7 gap-2 mb-4 text-center">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d, i) => (
               <span key={i} className="text-[10px] font-black text-text-secondary uppercase tracking-widest">{d}</span>
@@ -165,18 +165,23 @@ export default function CalendarPage() {
               const dayTasks = getTasksForDate(cell.date);
               const hasTasks = dayTasks.length > 0;
               const isToday = new Date().toDateString() === cell.date.toDateString();
+              const isSelected = selectedDateStr === cell.date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
 
               return (
                 <button
                   key={idx}
                   onClick={() => handleSelectDay(cell)}
-                  className={`min-h-20 p-2 text-left rounded-2xl flex flex-col justify-between border transition-all ${
-                    cell.isCurrentMonth
-                      ? 'bg-bg-surface hover:bg-bg-main border-black/5 text-text-primary shadow-sm'
-                      : 'bg-bg-main/30 border-transparent text-text-secondary/40'
-                  } ${isToday ? 'ring-2 ring-accent-primary border-accent-primary' : ''}`}
+                  className={`min-h-20 p-2.5 text-left rounded-2xl flex flex-col justify-between border transition-all duration-300 ${
+                    isToday
+                      ? 'calendar-today text-text-primary'
+                      : isSelected
+                      ? 'calendar-selected text-text-primary'
+                      : cell.isCurrentMonth
+                      ? 'bg-bg-surface hover:bg-bg-main border-black/5 text-text-primary shadow-xs hover:scale-[1.02]'
+                      : 'bg-bg-main/30 border-transparent text-text-secondary/40 hover:bg-bg-main/50'
+                  }`}
                 >
-                  <span className={`text-xs font-black leading-none ${isToday ? 'text-accent-secondary bg-accent-primary px-1.5 py-0.5 rounded-md' : ''}`}>{cell.day}</span>
+                  <span className={`text-xs font-black leading-none ${isToday ? 'text-accent-secondary border-b-2 border-accent-primary pb-0.5 font-extrabold' : ''}`}>{cell.day}</span>
                   
                   {/* Miniature task indicators */}
                   {hasTasks && (
@@ -186,10 +191,10 @@ export default function CalendarPage() {
                           key={tIdx}
                           className={`text-[8px] font-bold px-1.5 py-0.5 rounded truncate leading-tight border ${
                             t.status === 'DONE'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                              ? 'bg-emerald-500/10 text-emerald-800 border-emerald-500/20'
                               : t.priority === 'URGENT' || t.priority === 'HIGH'
-                              ? 'bg-rose-50 text-rose-700 border-rose-100'
-                              : 'bg-accent-primary/10 text-accent-secondary border-accent-primary/20'
+                              ? 'bg-rose-500/10 text-rose-800 border-rose-500/20'
+                              : 'bg-accent-primary/15 text-accent-secondary border-accent-primary/30'
                           }`}
                         >
                           {t.title}
@@ -207,7 +212,7 @@ export default function CalendarPage() {
         </div>
 
         {/* Selected Day Task Drawer */}
-        <div className="lg:col-span-4 bg-bg-surface border border-black/5 p-6 rounded-[2.5rem] min-h-[400px] flex flex-col justify-between shadow-sm">
+        <div className="lg:col-span-4 bg-bg-surface border border-black/5 p-6 rounded-[2.5rem] min-h-[400px] flex flex-col justify-between mac-shadow">
           <div>
             <h3 className="text-base font-black text-text-primary">Daily Agenda</h3>
             <p className="text-xs text-text-secondary mt-0.5">
@@ -217,7 +222,8 @@ export default function CalendarPage() {
             <div className="space-y-3.5 mt-5">
               {selectedDayTasks.length > 0 ? (
                 selectedDayTasks.map((t, idx) => (
-                  <div key={idx} className="p-4 bg-bg-main/40 hover:bg-bg-main rounded-2xl border border-black/5 hover:border-accent-primary/20 transition-all text-left space-y-2">
+                  <div key={idx} className="p-4 bg-bg-main/40 hover:bg-bg-main rounded-2xl border border-black/5 hover:border-accent-primary/25 transition-all text-left space-y-2 mac-shadow hover:scale-[1.02] duration-300">
+
                     <div className="flex justify-between items-center gap-2">
                       <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full border ${
                         t.status === 'DONE' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-accent-primary/10 text-accent-secondary border-accent-primary/20'

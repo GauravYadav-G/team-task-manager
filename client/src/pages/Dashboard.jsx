@@ -847,7 +847,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
         <section className="lg:col-span-8 flex flex-col gap-6">
           
           {/* WELCOME BANNER WITH CORE PERCENTAGE METER CARDS */}
-          <div className="bg-bg-surface rounded-[2.5rem] p-6 sm:p-8 border border-black/5 shadow-md">
+          <div className="bg-bg-surface rounded-[2.5rem] p-6 sm:p-8 border border-black/5 mac-shadow">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
               <div>
                 <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary">
@@ -889,7 +889,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                   { label: 'Done Tasks', val: `${doneCount}`, desc: `${donePct}% completed`, color: 'bg-blue-500/10 text-blue-600', percent: donePct }
                 ];
               })().map((metric, i) => (
-                <div key={i} className="bg-bg-main p-4 rounded-3xl border border-black/5 hover:scale-[1.02] transition-transform">
+                <div key={i} className="bg-bg-surface p-4 rounded-3xl border border-black/5 mac-shadow hover:scale-[1.03] transition-all duration-300">
                   <span className="text-xs text-text-secondary font-semibold block mb-1">{metric.label}</span>
                   <span className="text-2xl font-black tracking-tight block text-text-primary">{metric.val}</span>
                   
@@ -912,7 +912,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* 1. Profile Interactive Card */}
-            <div className="bg-bg-surface rounded-[2rem] p-5 border border-black/5 shadow-md flex flex-col justify-between">
+            <div className="bg-bg-surface rounded-[2rem] p-5 border border-black/5 mac-shadow flex flex-col justify-between">
               <div className="relative">
                 <div className="overflow-hidden rounded-2xl h-44 w-full relative group border border-black/5">
                   {profile.avatar ? (
@@ -955,7 +955,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
             </div>
 
             {/* 2. Weekly Work Time Progress Bar Chart */}
-            <div className="bg-bg-surface rounded-[2rem] p-5 border border-black/5 shadow-md flex flex-col justify-between">
+            <div className="bg-bg-surface rounded-[2rem] p-5 border border-black/5 mac-shadow flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <div>
@@ -1000,7 +1000,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
             </div>
 
             {/* 3. Time Tracker - Dial Timer */}
-            <div className="bg-bg-surface rounded-[2rem] p-5 border border-black/5 shadow-md flex flex-col justify-between items-center text-center">
+            <div className="bg-bg-surface rounded-[2rem] p-5 border border-black/5 mac-shadow flex flex-col justify-between items-center text-center">
               <div className="w-full flex justify-between items-center mb-1">
                 <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider block text-left">Time tracker</span>
                 <Clock className="w-4 h-4 text-accent-primary" />
@@ -1070,7 +1070,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
           </div>
 
           {/* ACHIEVEMENTS LEADERBOARD */}
-          <div className="bg-bg-surface rounded-[2.5rem] p-6 sm:p-8 border border-black/5 shadow-md flex flex-col justify-between">
+          <div className="bg-bg-surface rounded-[2.5rem] p-6 sm:p-8 border border-black/5 mac-shadow flex flex-col justify-between">
             <div>
               <div className="flex justify-between items-center mb-6">
                 <div>
@@ -1092,7 +1092,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                   stats.leaderboard.map((item, idx) => {
                     const rank = idx + 1;
                     return (
-                      <div key={item.user.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-bg-main rounded-2xl border border-black/5 gap-3 hover:border-accent-primary/45 transition-colors">
+                      <div key={item.user.id} className="leaderboard-row flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-bg-main rounded-2xl border border-black/5 gap-3 transition-all duration-300">
                         <div className="flex items-center gap-3">
                           {/* Rank Badge */}
                           <div className="w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm">
@@ -1158,7 +1158,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
           </div>
 
           {/* SPRINT CALENDAR WIDGET & DETAILED TIMELINE SCHEDULE */}
-          <div className="bg-bg-surface text-text-primary rounded-[2.5rem] p-6 sm:p-8 border border-black/5 shadow-md">
+          <div className="bg-bg-surface text-text-primary rounded-[2.5rem] p-6 sm:p-8 border border-black/5 mac-shadow">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
               <div>
                 <span className="text-xs text-accent-primary font-bold uppercase tracking-wider">Schedule Calendar</span>
@@ -1232,7 +1232,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
         <section className="lg:col-span-4 flex flex-col gap-6">
           
           {/* ONBOARDING OVERALL COMPLETION METER */}
-          <div className="bg-bg-surface rounded-[2.5rem] p-6 border border-black/5 shadow-md flex flex-col justify-between">
+          <div className="bg-bg-surface rounded-[2.5rem] p-6 border border-black/5 mac-shadow flex flex-col justify-between">
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="text-lg font-bold text-text-primary">Onboarding progress</h3>
@@ -1271,7 +1271,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
           </div>
 
           {/* INTEGRATED GEMINI AI ASSISTANT HUB */}
-          <div className="bg-bg-surface text-text-primary rounded-[2.5rem] p-6 border border-black/5 shadow-md flex flex-col justify-between relative overflow-hidden">
+          <div className="bg-bg-surface text-text-primary rounded-[2.5rem] p-6 border border-black/5 mac-shadow flex flex-col justify-between relative overflow-hidden">
             {/* Ambient Background Glow */}
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-accent-primary/10 rounded-full blur-2xl"></div>
             
@@ -1328,7 +1328,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
           </div>
 
           {/* CORE WORKSPACE TASKS CHECKLIST WITH DYNAMIC AI DECOMPOSITION */}
-          <div className="bg-bg-surface rounded-[2.5rem] p-6 border border-black/5 shadow-md flex flex-col justify-between flex-1 min-h-[400px]">
+          <div className="bg-bg-surface rounded-[2.5rem] p-6 border border-black/5 mac-shadow flex flex-col justify-between flex-1 min-h-[400px]">
             <div>
               <div className="flex justify-between items-center mb-5">
                 <div>
@@ -1421,7 +1421,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
           </div>
 
           {/* HARDWARE & WORKSTATIONS */}
-          <div className="bg-bg-surface rounded-[2.5rem] p-5 border border-black/5 shadow-md">
+          <div className="bg-bg-surface rounded-[2.5rem] p-5 border border-black/5 mac-shadow">
             <span className="text-[10px] text-text-secondary font-bold uppercase tracking-widest block mb-3">Linked Workstations</span>
             
             {(() => {
@@ -1509,7 +1509,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                 <select
                   value={selectedProjectId}
                   onChange={(e) => setSelectedProjectId(e.target.value)}
-                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent-primary/20 text-text-primary"
+                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus-glow text-text-primary transition-all duration-300"
                   required
                 >
                   {projectsList.length === 0 && <option value="">(No projects available - will create default)</option>}
@@ -1526,7 +1526,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                   placeholder="e.g., Deliver wireframes for Visual QA review"
-                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent-primary/20 text-text-primary"
+                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus-glow text-text-primary transition-all duration-300"
                   required
                 />
               </div>
@@ -1540,7 +1540,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                     max="30"
                     value={newTaskDay}
                     onChange={(e) => setNewTaskDay(e.target.value)}
-                    className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent-primary/20 text-text-primary"
+                    className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus-glow text-text-primary transition-all duration-300"
                     required
                   />
                 </div>
@@ -1551,7 +1551,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                     placeholder="e.g. 10:00"
                     value={newTaskTime}
                     onChange={(e) => setNewTaskTime(e.target.value)}
-                    className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus:outline-none focus:ring-2 focus:ring-accent-primary/20 text-text-primary"
+                    className="w-full px-4 py-2.5 text-xs rounded-xl bg-bg-main border border-black/5 focus-glow text-text-primary transition-all duration-300"
                     required
                   />
                 </div>

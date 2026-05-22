@@ -195,7 +195,7 @@ export default function BoardViews() {
               onDragOver={(e) => handleDragOver(e, status)}
               onDragLeave={handleDragLeave}
               className={`bg-bg-surface p-5 rounded-[2rem] min-h-[500px] flex flex-col gap-4 border border-black/[0.06] hover:border-black/[0.12] hover:shadow-lg shadow-xs transition-all duration-300 ${
-                isOver ? 'bg-bg-main !border-accent-primary/30 scale-[1.01]' : ''
+                isOver ? 'bg-white/60 !border-accent-primary/50 shadow-md shadow-accent-primary/5 scale-[1.01]' : ''
               }`}
             >
               {/* Column Header */}
@@ -221,7 +221,7 @@ export default function BoardViews() {
                       key={t.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, t.id)}
-                      className={`group p-4 bg-bg-surface hover:bg-bg-main rounded-2xl border border-black/5 hover:border-accent-primary/20 transition-all cursor-grab active:cursor-grabbing shadow-sm ${priConfig.glow} ${
+                      className={`group p-4 bg-bg-surface hover:bg-white/65 rounded-2xl border border-black/5 hover:border-accent-primary/20 transition-all cursor-grab active:cursor-grabbing shadow-sm hover:mac-shadow hover:scale-[1.01] ${priConfig.glow} ${
                         overdue ? 'border-rose-500/20 hover:border-rose-500/30' : ''
                       }`}
                     >

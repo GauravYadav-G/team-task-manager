@@ -273,3 +273,51 @@
   animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Double-Layer Shadows for macOS depth */
+.mac-shadow {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.02), 0 16px 40px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Premium brand accent focus glow */
+.focus-glow:focus {
+  border-color: rgba(230, 195, 92, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(230, 195, 92, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.8) !important;
+  outline: none !important;
+}
+
+/* Sidebar Active indicator dot pulsing */
+@keyframes breath {
+  0%, 100% { opacity: 0.7; transform: scale(0.9) translate(-50%, 0); }
+  50% { opacity: 1; transform: scale(1.2) translate(-50%, 0); }
+}
+
+.animate-breath {
+  animation: breath 2.5s ease-in-out infinite;
+}
+
+/* Calendar cell premium states */
+.calendar-today {
+  border-color: rgba(230, 195, 92, 0.85) !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8), 0 0 14px rgba(230, 195, 92, 0.28) !important;
+  background: linear-gradient(135deg, rgba(230, 195, 92, 0.18) 0%, rgba(230, 195, 92, 0.06) 100%) !important;
+}
+
+.calendar-selected {
+  border-color: rgba(230, 195, 92, 0.6) !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8), 0 0 10px rgba(230, 195, 92, 0.18) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.45) 100%) !important;
+}
+
+/* Leaderboard row frosted state and premium hover styles */
+.leaderboard-row {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.leaderboard-row:hover {
+  background-color: rgba(255, 255, 255, 0.55) !important;
+  border-color: rgba(230, 195, 92, 0.35) !important;
+  transform: translateY(-1.5px) scale(1.005);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+}
+
+
