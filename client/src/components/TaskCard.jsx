@@ -58,7 +58,7 @@ export default function TaskCard({ task, onEdit, userRole }) {
       onDragStart={handleDragStart}
       onClick={() => onEdit?.(task)}
       id={`task-${task.id}`}
-      className={`group bg-bg-surface hover:bg-bg-main border border-black/5 hover:border-accent-primary/20 p-5 rounded-2xl cursor-grab active:cursor-grabbing transition-all duration-300 shadow-sm ${
+      className={`group bg-bg-surface hover:scale-[1.02] hover:-translate-y-0.5 border border-black/5 hover:border-accent-primary/45 p-5 rounded-2xl cursor-grab active:cursor-grabbing transition-all duration-300 mac-shadow ${
         overdue 
           ? 'bg-rose-500/[0.02] border-rose-500/20 hover:border-rose-500/30' 
           : ''
@@ -113,7 +113,7 @@ export default function TaskCard({ task, onEdit, userRole }) {
               />
             ) : (
               <div 
-                className="w-7 h-7 rounded-xl bg-accent-primary text-accent-secondary font-black flex items-center justify-center text-[10px] uppercase border border-black/10 transition-transform group-hover:scale-105"
+                className="w-7 h-7 rounded-xl bg-gradient-to-br from-accent-primary/45 to-accent-primary/10 text-accent-secondary font-black flex items-center justify-center text-[10px] uppercase border border-accent-primary/20 transition-transform group-hover:scale-105 shadow-xs"
                 title={task.assignedTo.name}
               >
                 {getInitials(task.assignedTo.name)}

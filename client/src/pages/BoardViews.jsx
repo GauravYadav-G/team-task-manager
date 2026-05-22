@@ -160,7 +160,7 @@ export default function BoardViews() {
           <select
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
-            className="px-3 py-1.5 text-xs bg-bg-main border border-black/10 rounded-xl text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary cursor-pointer"
+            className="px-3 py-1.5 text-xs bg-bg-main border border-black/10 rounded-xl text-text-primary focus-glow cursor-pointer transition-all duration-300"
           >
             <option value="ALL">All Projects</option>
             {projects.map(p => (
@@ -171,7 +171,7 @@ export default function BoardViews() {
           <select
             value={selectedPriority}
             onChange={(e) => setSelectedPriority(e.target.value)}
-            className="px-3 py-1.5 text-xs bg-bg-main border border-black/10 rounded-xl text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary cursor-pointer"
+            className="px-3 py-1.5 text-xs bg-bg-main border border-black/10 rounded-xl text-text-primary focus-glow cursor-pointer transition-all duration-300"
           >
             <option value="ALL">All Priorities</option>
             <option value="LOW">Low</option>
@@ -194,7 +194,7 @@ export default function BoardViews() {
               onDrop={(e) => handleDrop(e, status)}
               onDragOver={(e) => handleDragOver(e, status)}
               onDragLeave={handleDragLeave}
-              className={`bg-bg-surface p-5 rounded-[2rem] min-h-[500px] flex flex-col gap-4 border border-black/[0.06] hover:border-black/[0.12] hover:shadow-lg shadow-xs transition-all duration-300 ${
+              className={`bg-bg-surface p-5 rounded-[2rem] min-h-[500px] flex flex-col gap-4 border border-black/[0.06] hover:border-accent-primary/25 mac-shadow transition-all duration-300 ${
                 isOver ? 'bg-white/60 !border-accent-primary/50 shadow-md shadow-accent-primary/5 scale-[1.01]' : ''
               }`}
             >
@@ -221,8 +221,8 @@ export default function BoardViews() {
                       key={t.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, t.id)}
-                      className={`group p-4 bg-bg-surface hover:bg-white/65 rounded-2xl border border-black/5 hover:border-accent-primary/20 transition-all cursor-grab active:cursor-grabbing shadow-sm hover:mac-shadow hover:scale-[1.01] ${priConfig.glow} ${
-                        overdue ? 'border-rose-500/20 hover:border-rose-500/30' : ''
+                      className={`group p-4 bg-bg-surface hover:scale-[1.02] hover:-translate-y-0.5 border border-black/5 hover:border-accent-primary/45 transition-all cursor-grab active:cursor-grabbing mac-shadow ${priConfig.glow} ${
+                        overdue ? 'bg-rose-500/[0.02] border-rose-500/20 hover:border-rose-500/30' : ''
                       }`}
                     >
                       <div className="flex justify-between items-start gap-2 mb-2.5">
@@ -265,7 +265,7 @@ export default function BoardViews() {
                             />
                           ) : (
                             <div
-                              className="w-6 h-6 rounded-xl bg-accent-primary text-accent-secondary font-black flex items-center justify-center text-[8px] uppercase border border-black/10 transition-transform group-hover:scale-105"
+                              className="w-6 h-6 rounded-xl bg-gradient-to-br from-accent-primary/45 to-accent-primary/10 text-accent-secondary font-black flex items-center justify-center text-[8px] uppercase border border-accent-primary/20 transition-transform group-hover:scale-105 shadow-xs"
                               title={t.assignedTo.name}
                             >
                               {getInitials(t.assignedTo.name)}

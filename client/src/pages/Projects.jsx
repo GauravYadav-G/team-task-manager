@@ -111,12 +111,10 @@ export default function Projects() {
                 to={`/projects/${project.id}`}
                 key={project.id}
                 id={`project-${project.id}`}
-                className={`${cardStyle} rounded-[2rem] p-6 flex flex-col h-72 relative border shadow-sm transition-all hover:-translate-y-2 hover:shadow-md group overflow-hidden`}
+                className={`${cardStyle} rounded-[2rem] p-6 flex flex-col h-72 relative border mac-shadow transition-all duration-300 hover:-translate-y-2 hover:scale-[1.01] group overflow-hidden`}
               >
                 <div className="flex justify-between items-start mb-5 relative z-10">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-xs ${
-                    !isDark ? 'bg-bg-main text-text-primary border border-black/5' : 'bg-white/15 text-white border border-white/20'
-                  }`}>
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-xs bg-gradient-to-br from-accent-primary/25 to-accent-primary/5 text-accent-secondary border border-accent-primary/20">
                     {project.name.charAt(0).toUpperCase()}
                   </div>
                   <span className={`text-[9px] font-black uppercase tracking-wider px-3 py-1.5 rounded-lg border transition-all ${
@@ -200,7 +198,7 @@ export default function Projects() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary focus:outline-none transition-all"
+                  className="w-full bg-bg-main border border-black/5 focus-glow rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary transition-all duration-300"
                   placeholder="e.g. Q3 Marketing Sprint"
                   required
                   autoFocus
@@ -213,7 +211,7 @@ export default function Projects() {
                   id="project-desc"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary focus:outline-none transition-all resize-none"
+                  className="w-full bg-bg-main border border-black/5 focus-glow rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary transition-all duration-300 resize-none"
                   placeholder="What's the scope of this project?"
                   rows="3"
                 />

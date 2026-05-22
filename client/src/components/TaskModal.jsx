@@ -68,7 +68,7 @@ export default function TaskModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={onClose}>
-      <div className="bg-bg-surface border border-black/5 w-full max-w-lg rounded-3xl p-7 shadow-xl flex flex-col gap-5 text-text-primary max-h-[90vh] overflow-y-auto animate-slideUp" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-bg-surface border border-black/5 w-full max-w-lg rounded-3xl p-7 mac-shadow flex flex-col gap-5 text-text-primary max-h-[90vh] overflow-y-auto animate-slideUp" onClick={(e) => e.stopPropagation()}>
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-black/5 pb-4">
@@ -99,7 +99,7 @@ export default function TaskModal({
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus:outline-none focus:border-accent-primary transition-all duration-200 cursor-pointer"
+                className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus-glow transition-all duration-300 cursor-pointer"
               >
                 <option value="TODO">To Do</option>
                 <option value="IN_PROGRESS">In Progress</option>
@@ -120,7 +120,7 @@ export default function TaskModal({
                   type="text"
                   value={formData.title}
                   onChange={handleChange}
-                  className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent-primary transition-all duration-200"
+                  className="w-full bg-bg-main border border-black/5 focus-glow rounded-xl py-2.5 px-3.5 text-sm text-text-primary placeholder-text-secondary transition-all duration-300"
                   placeholder="Enter task title"
                   required
                 />
@@ -137,7 +137,7 @@ export default function TaskModal({
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent-primary transition-all duration-200 resize-none"
+                  className="w-full bg-bg-main border border-black/5 focus-glow rounded-xl py-2.5 px-3.5 text-sm text-text-primary placeholder-text-secondary transition-all duration-300 resize-none"
                   placeholder="Describe the task details..."
                   rows="3"
                 />
@@ -152,7 +152,7 @@ export default function TaskModal({
                     name="priority"
                     value={formData.priority}
                     onChange={handleChange}
-                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus:outline-none focus:border-accent-primary transition-all duration-200 cursor-pointer"
+                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus-glow transition-all duration-300 cursor-pointer"
                   >
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
@@ -168,7 +168,7 @@ export default function TaskModal({
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus:outline-none focus:border-accent-primary transition-all duration-200 cursor-pointer"
+                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus-glow transition-all duration-300 cursor-pointer"
                   >
                     <option value="TODO">To Do</option>
                     <option value="IN_PROGRESS">In Progress</option>
@@ -190,7 +190,7 @@ export default function TaskModal({
                     type="date"
                     value={formData.dueDate}
                     onChange={handleChange}
-                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2 px-3 text-sm text-text-primary focus:outline-none focus:border-accent-primary transition-all duration-200 cursor-pointer"
+                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus-glow transition-all duration-300 cursor-pointer"
                   />
                 </div>
 
@@ -204,7 +204,7 @@ export default function TaskModal({
                     name="assignedToId"
                     value={formData.assignedToId}
                     onChange={handleChange}
-                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus:outline-none focus:border-accent-primary transition-all duration-200 cursor-pointer"
+                    className="w-full bg-bg-main border border-black/5 rounded-xl py-2.5 px-3.5 text-sm text-text-primary focus-glow transition-all duration-300 cursor-pointer"
                   >
                     <option value="">Unassigned</option>
                     {members?.map((m) => (

@@ -48,7 +48,7 @@ export default function Signup() {
       <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-accent-primary/10 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent-secondary/5 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="bg-bg-surface border border-black/5 p-6 sm:p-10 rounded-3xl w-full max-w-md shadow-xl relative z-10 flex flex-col gap-6">
+      <div className="bg-bg-surface border border-black/5 p-6 sm:p-10 rounded-3xl w-full max-w-md mac-shadow relative z-10 flex flex-col gap-6 hover:scale-[1.01] transition-all duration-300">
         
         {/* Header section with brand logo */}
         <div className="flex flex-col items-center text-center gap-3">
@@ -78,7 +78,7 @@ export default function Signup() {
               type="text"
               value={formData.name}
               onChange={handleChange}
-              className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary focus:outline-none transition-all duration-200"
+              className="w-full bg-bg-main border border-black/5 focus-glow rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary transition-all duration-300"
               placeholder="John Doe"
               required
               autoFocus
@@ -97,7 +97,7 @@ export default function Signup() {
               type="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary focus:outline-none transition-all duration-200"
+              className="w-full bg-bg-main border border-black/5 focus-glow rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary transition-all duration-300"
               placeholder="you@example.com"
               required
             />
@@ -115,7 +115,7 @@ export default function Signup() {
               type="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary focus:outline-none transition-all duration-200"
+              className="w-full bg-bg-main border border-black/5 focus-glow rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary transition-all duration-300"
               placeholder="Min. 6 characters"
               required
               minLength={6}
@@ -134,7 +134,7 @@ export default function Signup() {
               type="password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary focus:outline-none transition-all duration-200"
+              className="w-full bg-bg-main border border-black/5 focus-glow rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary transition-all duration-300"
               placeholder="••••••••"
               required
             />
@@ -145,7 +145,7 @@ export default function Signup() {
             type="submit"
             disabled={loading}
             id="btn-signup"
-            className="w-full bg-accent-secondary hover:opacity-95 text-white py-3 px-5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 shadow-md disabled:opacity-50 mt-2 cursor-pointer"
+            className="w-full bg-accent-secondary hover:opacity-95 text-white py-3 px-5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 shadow-xs hover:shadow-md active:scale-[0.98] disabled:opacity-50 mt-2 cursor-pointer"
           >
             {loading ? 'Creating account...' : 'Create Account'}
           </button>

@@ -160,7 +160,7 @@ export default function ProjectDetail() {
 
   const getColumnStyles = (status) => {
     return {
-      border: 'border border-black/[0.06] hover:border-black/12 hover:shadow-lg shadow-xs transition-all duration-300',
+      border: 'border border-black/[0.06] hover:border-accent-primary/25 mac-shadow transition-all duration-300',
       dot: 'bg-accent-secondary ring-4 ring-accent-secondary/15',
       glow: 'shadow-md',
       headerBg: 'bg-bg-main text-accent-secondary border border-black/5 font-black'
@@ -256,7 +256,7 @@ export default function ProjectDetail() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2 pl-9 pr-4 text-xs text-text-primary placeholder-text-secondary focus:outline-none transition-all"
+              className="w-full bg-bg-main border border-black/5 focus-glow rounded-xl py-2 pl-9 pr-4 text-xs text-text-primary placeholder-text-secondary transition-all duration-300"
               placeholder="Search tasks..."
             />
           </div>
@@ -266,7 +266,7 @@ export default function ProjectDetail() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value)}
-              className="w-full sm:w-auto bg-bg-main border border-black/5 rounded-xl py-2 px-3 text-xs text-text-primary focus:outline-none focus:border-accent-primary cursor-pointer appearance-none pr-8"
+              className="w-full sm:w-auto bg-bg-main border border-black/5 rounded-xl py-2 px-3.5 pr-8 text-xs text-text-primary focus-glow cursor-pointer appearance-none transition-all duration-300"
             >
               <option value="">All Priorities</option>
               <option value="LOW">Low</option>
@@ -282,7 +282,7 @@ export default function ProjectDetail() {
             <select
               value={assigneeFilter}
               onChange={(e) => setAssigneeFilter(e.target.value)}
-              className="w-full sm:w-auto bg-bg-main border border-black/5 rounded-xl py-2 px-3 text-xs text-text-primary focus:outline-none focus:border-accent-primary cursor-pointer appearance-none pr-8"
+              className="w-full sm:w-auto bg-bg-main border border-black/5 rounded-xl py-2 px-3.5 pr-8 text-xs text-text-primary focus-glow cursor-pointer appearance-none transition-all duration-300"
             >
               <option value="">All Assignees</option>
               {project.members?.map((m) => (
@@ -326,10 +326,10 @@ export default function ProjectDetail() {
                 onDrop={(e) => handleDrop(e, status)}
                 onDragOver={(e) => handleDragOver(e, status)}
                 onDragLeave={handleDragLeave}
-                className={`bg-bg-surface p-6 rounded-[2rem] min-h-[550px] flex flex-col gap-4 transition-all duration-300 ${
+                className={`bg-bg-surface p-6 rounded-[2rem] min-h-[550px] flex flex-col gap-4 transition-all duration-300 mac-shadow ${
                   styles.border
                 } ${
-                  isOver ? 'bg-bg-main border-accent-primary/20 scale-[1.01]' : ''
+                  isOver ? 'bg-white/60 !border-accent-primary/50 shadow-md shadow-accent-primary/5 scale-[1.01]' : ''
                 }`}
               >
                 {/* Column Header */}
