@@ -2,24 +2,46 @@ import React, { useState, useEffect } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, Plus, Tag } from 'lucide-react';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
+import TaskModal from '../components/TaskModal';
 
 export default function CalendarPage() {
+  const { user } = useAuth();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [tasks, setTasks] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDayTasks, setSelectedDayTasks] = useState([]);
   const [selectedDateStr, setSelectedDateStr] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  
+  const [editingTask, setEditingTask] = useState(null);
+  const [showTaskModal, setShowTaskModal] = useState(false);
 
   useEffect(() => {
     fetchAllTasks();
   }, []);
 
+  useEffect(() => {
+    if (selectedDate) {
+      const updatedDayTasks = tasks.filter(t => {
+        if (!t.dueDate) return false;
+        const tDate = new Date(t.dueDate);
+        return tDate.getDate() === selectedDate.getDate() &&
+               tDate.getMonth() === selectedDate.getMonth() &&
+               tDate.getFullYear() === selectedDate.getFullYear();
+      });
+      setSelectedDayTasks(updatedDayTasks);
+    }
+  }, [tasks, selectedDate]);
+
   const fetchAllTasks = async () => {
     try {
       const projRes = await api.get('/projects');
-      const projects = projRes.data.projects || [];
+      const projectsData = projRes.data.projects || [];
+      setProjects(projectsData);
       
-      const allTasksPromises = projects.map(p => api.get(`/projects/${p.id}/tasks`));
+      const allTasksPromises = projectsData.map(p => api.get(`/projects/${p.id}/tasks`));
       const taskResponses = await Promise.all(allTasksPromises);
       
       const combinedTasks = [];
@@ -28,7 +50,7 @@ export default function CalendarPage() {
         projectTasks.forEach(t => {
           combinedTasks.push({
             ...t,
-            projectName: projects[index].name
+            projectName: projectsData[index].name
           });
         });
       });
@@ -39,6 +61,24 @@ export default function CalendarPage() {
       toast.error('Failed to load tasks for calendar');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEditTask = (task) => {
+    setEditingTask(task);
+    setShowTaskModal(true);
+  };
+
+  const handleCreateOrUpdateTask = async (data, taskId) => {
+    try {
+      const taskToUpdate = tasks.find(t => t.id === taskId);
+      if (!taskToUpdate) return;
+      await api.put(`/projects/${taskToUpdate.projectId}/tasks/${taskId}`, data);
+      toast.success('Task updated successfully');
+      fetchAllTasks();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update task');
+      throw err;
     }
   };
 
@@ -112,8 +152,7 @@ export default function CalendarPage() {
   };
 
   const handleSelectDay = (cell) => {
-    const dayTasks = getTasksForDate(cell.date);
-    setSelectedDayTasks(dayTasks);
+    setSelectedDate(cell.date);
     setSelectedDateStr(cell.date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' }));
   };
 
@@ -125,6 +164,10 @@ export default function CalendarPage() {
       </div>
     );
   }
+
+  const projectOfTask = editingTask ? projects.find(p => p.id === editingTask.projectId) : null;
+  const taskMembers = projectOfTask?.members || [];
+  const taskUserRole = projectOfTask?.members?.find(m => m.user.id === user?.id)?.role || 'MEMBER';
 
   return (
     <div className="space-y-6 font-sans">
@@ -222,7 +265,11 @@ export default function CalendarPage() {
             <div className="space-y-3.5 mt-5">
               {selectedDayTasks.length > 0 ? (
                 selectedDayTasks.map((t, idx) => (
-                  <div key={idx} className="p-4 bg-bg-main/40 hover:bg-bg-main rounded-2xl border border-black/5 hover:border-accent-primary/25 transition-all text-left space-y-2 mac-shadow hover:scale-[1.02] duration-300">
+                  <div
+                    key={idx}
+                    onClick={() => handleEditTask(t)}
+                    className="group p-4 bg-bg-main/40 hover:bg-bg-main rounded-2xl border border-black/5 hover:border-accent-primary/25 cursor-pointer active:scale-[0.98] transition-all text-left space-y-2 mac-shadow hover:scale-[1.02] duration-300"
+                  >
 
                     <div className="flex justify-between items-center gap-2">
                       <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full border ${
@@ -235,7 +282,7 @@ export default function CalendarPage() {
                       </span>
                     </div>
 
-                    <h4 className="text-xs font-black text-text-primary leading-snug break-words">{t.title}</h4>
+                    <h4 className="text-xs font-black text-text-primary group-hover:text-accent-secondary transition-colors leading-snug break-words">{t.title}</h4>
                     {t.description && <p className="text-[10px] text-text-secondary leading-normal line-clamp-2">{t.description}</p>}
 
                     <div className="flex items-center gap-1 text-[9px] text-text-secondary pt-1 border-t border-black/5">
@@ -253,6 +300,18 @@ export default function CalendarPage() {
           </div>
         </div>
       </div>
+
+      <TaskModal
+        isOpen={showTaskModal}
+        onClose={() => {
+          setShowTaskModal(false);
+          setEditingTask(null);
+        }}
+        onSubmit={handleCreateOrUpdateTask}
+        task={editingTask}
+        members={taskMembers}
+        userRole={taskUserRole}
+      />
     </div>
   );
 }

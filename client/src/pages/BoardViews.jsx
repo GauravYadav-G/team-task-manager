@@ -3,16 +3,22 @@ import { Eye, Clock, User, Filter, AlertCircle, HelpCircle } from 'lucide-react'
 import api from '../api/axios';
 import { getInitials } from '../utils/helpers';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
+import TaskModal from '../components/TaskModal';
 
 const COLUMNS = ['TODO', 'IN_PROGRESS', 'DONE'];
 
 export default function BoardViews() {
+  const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProjectId, setSelectedProjectId] = useState('ALL');
   const [selectedPriority, setSelectedPriority] = useState('ALL');
   const [dragOverColumn, setDragOverColumn] = useState(null);
+  
+  const [editingTask, setEditingTask] = useState(null);
+  const [showTaskModal, setShowTaskModal] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -44,6 +50,24 @@ export default function BoardViews() {
       toast.error('Failed to load board tasks');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEditTask = (task) => {
+    setEditingTask(task);
+    setShowTaskModal(true);
+  };
+
+  const handleCreateOrUpdateTask = async (data, taskId) => {
+    try {
+      const taskToUpdate = tasks.find(t => t.id === taskId);
+      if (!taskToUpdate) return;
+      await api.put(`/projects/${taskToUpdate.projectId}/tasks/${taskId}`, data);
+      toast.success('Task updated successfully');
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update task');
+      throw err;
     }
   };
 
@@ -144,6 +168,10 @@ export default function BoardViews() {
     );
   }
 
+  const projectOfTask = editingTask ? projects.find(p => p.id === editingTask.projectId) : null;
+  const taskMembers = projectOfTask?.members || [];
+  const taskUserRole = projectOfTask?.members?.find(m => m.user.id === user?.id)?.role || 'MEMBER';
+
   return (
     <div className="space-y-6 font-sans">
       {/* Page Header */}
@@ -225,7 +253,8 @@ export default function BoardViews() {
                       key={t.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, t.id)}
-                      className={`group p-4 bg-bg-surface hover:scale-[1.02] hover:-translate-y-0.5 border border-black/5 hover:border-accent-primary/45 transition-all cursor-grab active:cursor-grabbing mac-shadow rounded-2xl ${priConfig.borderClass} ${priConfig.glow} ${
+                      onClick={() => handleEditTask(t)}
+                      className={`group p-4 bg-bg-surface hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] border border-black/5 hover:border-accent-primary/45 transition-all cursor-pointer active:cursor-grabbing mac-shadow rounded-2xl ${priConfig.borderClass} ${priConfig.glow} ${
                         overdue ? 'bg-rose-500/[0.02] border-rose-500/20 hover:border-rose-500/30' : ''
                       }`}
                     >
@@ -296,6 +325,18 @@ export default function BoardViews() {
           );
         })}
       </div>
+      
+      <TaskModal
+        isOpen={showTaskModal}
+        onClose={() => {
+          setShowTaskModal(false);
+          setEditingTask(null);
+        }}
+        onSubmit={handleCreateOrUpdateTask}
+        task={editingTask}
+        members={taskMembers}
+        userRole={taskUserRole}
+      />
     </div>
   );
 }

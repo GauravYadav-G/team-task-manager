@@ -35,7 +35,7 @@ export default function Sidebar() {
       
       {/* Brand Logo - Hide on mobile */}
       <div 
-        className="hidden md:flex mb-8 cursor-pointer transform hover:scale-110 transition-transform p-3 bg-accent-primary rounded-2xl shadow-sm text-accent-secondary items-center justify-center" 
+        className="hidden md:flex mb-8 cursor-pointer transform hover:scale-110 transition-transform p-3 bg-gradient-to-br from-[#F5D885] via-accent-primary to-[#D4AF37] rounded-2xl shadow-md shadow-accent-primary/20 text-accent-secondary items-center justify-center border border-white/30" 
         onClick={() => navigate('/')}
         title="TaskFlow Workspace"
       >
@@ -64,7 +64,7 @@ export default function Sidebar() {
                 <>
                   <Icon size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />
                   {isActive && (
-                    <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white animate-breath md:block hidden" />
+                    <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-accent-primary shadow-[0_0_8px_#E6C35C] animate-breath md:block hidden" />
                   )}
                   {/* Premium Floating Tooltip - Hide on mobile */}
                   <div className="hidden md:block absolute left-20 bg-accent-secondary text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl border border-white/10 z-30">
@@ -93,7 +93,7 @@ export default function Sidebar() {
             <>
               <Settings size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />
               {isActive && (
-                <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white animate-breath md:block hidden" />
+                <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-accent-primary shadow-[0_0_8px_#E6C35C] animate-breath md:block hidden" />
               )}
               <div className="hidden md:block absolute left-20 bg-accent-secondary text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl border border-white/10 z-30">
                 Settings

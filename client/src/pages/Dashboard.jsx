@@ -812,7 +812,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
 
   // Render Dashboard
   return (
-    <div className="min-h-screen bg-bg-main text-text-primary font-sans transition-colors duration-300">
+    <div className="w-full text-text-primary font-sans transition-colors duration-300">
       
       {/* Search and settings subheader */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-6 gap-3">
@@ -1026,7 +1026,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                     fill="transparent" 
                     strokeDasharray="264" 
                     strokeDashoffset={timerRunning ? (264 - (timerSeconds % 60) * 4.4) : 180}
-                    className="transition-all duration-1000 ease-linear drop-shadow-[0_0_6px_rgba(230,195,92,0.55)]"
+                    className={`transition-all duration-1000 ease-linear ${timerRunning ? 'animate-pulse drop-shadow-[0_0_8px_rgba(230,195,92,0.75)]' : 'drop-shadow-[0_0_4px_rgba(230,195,92,0.3)]'}`}
                   />
                 </svg>
 

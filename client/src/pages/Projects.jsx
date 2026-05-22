@@ -111,7 +111,7 @@ export default function Projects() {
                 to={`/projects/${project.id}`}
                 key={project.id}
                 id={`project-${project.id}`}
-                className={`${cardStyle} rounded-[2rem] p-6 flex flex-col h-72 relative border mac-shadow transition-all duration-300 hover:-translate-y-2 hover:scale-[1.01] group overflow-hidden`}
+                className={`${cardStyle} rounded-[2rem] p-6 flex flex-col h-72 relative border mac-shadow transition-all duration-300 hover:-translate-y-2 hover:scale-[1.01] active:scale-[0.98] group overflow-hidden`}
               >
                 <div className="flex justify-between items-start mb-5 relative z-10">
                   <div className="w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-xs bg-gradient-to-br from-accent-primary/25 to-accent-primary/5 text-accent-secondary border border-accent-primary/20">
@@ -178,7 +178,7 @@ export default function Projects() {
 
       {/* Create Project Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn" onClick={() => setShowModal(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md p-4 animate-fadeIn" onClick={() => setShowModal(false)}>
           <div className="bg-bg-surface border border-black/5 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-slideUp" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-6 border-b border-black/5">
               <h2 className="text-xl font-bold text-text-primary">Create Workspace Project</h2>

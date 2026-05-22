@@ -78,7 +78,7 @@ const Header = () => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const NotificationDropdown = () => (
-    <div className="absolute right-0 top-12 w-80 sm:w-96 bg-white/70 backdrop-blur-xl border border-white/50 rounded-[2rem] shadow-2xl z-50 p-4 animate-in fade-in slide-in-from-top-3 duration-200">
+    <div className="absolute right-0 top-12 w-80 sm:w-96 bg-bg-surface backdrop-blur-xl rounded-[2rem] shadow-2xl z-50 p-4 animate-in fade-in slide-in-from-top-3 duration-200">
       <div className="flex justify-between items-center mb-3 pb-2 border-b border-black/5">
         <div className="text-left">
           <h3 className="font-extrabold text-sm text-text-primary">Notifications</h3>
@@ -145,7 +145,7 @@ const Header = () => {
   return (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pt-2 w-full">
       <div className="flex items-center justify-between w-full md:w-auto">
-        <h1 className="text-text-primary text-2xl font-black tracking-tight">TaskFlow</h1>
+        <h1 className="text-2xl font-black tracking-tight text-brand-gradient">TaskFlow</h1>
         
         {/* Mobile profile & notifications */}
         <div className="flex md:hidden items-center gap-3 relative" ref={mobileDropdownRef}>
@@ -186,7 +186,7 @@ const Header = () => {
           type="text"
           value={searchQuery || ''}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="block w-full pl-10 pr-3 py-2 border border-white/50 rounded-full leading-5 bg-white/45 backdrop-blur-md text-text-primary placeholder-text-secondary focus:outline-none focus:bg-white/75 focus:border-accent-primary/60 sm:text-sm transition-all shadow-sm"
+          className="block w-full pl-10 pr-3 py-2 rounded-full leading-5 spotlight-input text-text-primary placeholder-text-secondary sm:text-sm shadow-sm"
           placeholder="Search tasks, projects, or ask AI"
         />
       </div>
@@ -226,17 +226,17 @@ const Header = () => {
 
 export default function Layout() {
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-bg-main text-text-primary font-sans antialiased selection:bg-accent-primary selection:text-accent-secondary relative overflow-hidden">
+    <div className="flex flex-col md:flex-row min-h-screen bg-solid-main text-text-primary font-sans antialiased selection:bg-accent-primary selection:text-accent-secondary relative overflow-hidden">
       {/* Decorative premium ambient glow blobs */}
-      <div className="absolute top-[-10%] left-[-15%] w-[45vw] h-[45vw] rounded-full bg-accent-primary/12 blur-[130px] pointer-events-none z-0"></div>
-      <div className="absolute top-[35%] right-[20%] w-[30vw] h-[30vw] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none z-0"></div>
-      <div className="absolute bottom-[5%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-accent-secondary/5 blur-[110px] pointer-events-none z-0"></div>
+      <div className="absolute top-[-10%] left-[-15%] w-[45vw] h-[45vw] rounded-full bg-accent-primary/12 blur-[130px] pointer-events-none z-0 animate-float-slow"></div>
+      <div className="absolute top-[35%] right-[20%] w-[30vw] h-[30vw] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none z-0 animate-float-reverse"></div>
+      <div className="absolute bottom-[5%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-accent-secondary/5 blur-[110px] pointer-events-none z-0 animate-float-slow"></div>
 
       <div className="flex flex-col md:flex-row flex-1 z-10 w-full relative">
         <Sidebar />
         <div className="flex-1 flex flex-col h-screen overflow-hidden p-4 sm:p-6 md:pl-8">
           <Header />
-          <div className="flex-1 overflow-y-auto pb-6 pr-1 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto pb-28 md:pb-6 pr-1 custom-scrollbar">
             <Outlet />
           </div>
         </div>
@@ -249,11 +249,11 @@ export default function Layout() {
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: rgba(0, 0, 0, 0.08);
+          background-color: rgba(230, 195, 92, 0.25);
           border-radius: 10px;
         }
         .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-          background-color: rgba(0, 0, 0, 0.15);
+          background-color: rgba(230, 195, 92, 0.45);
         }
       `}} />
     </div>

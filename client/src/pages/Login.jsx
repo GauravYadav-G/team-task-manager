@@ -28,7 +28,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-bg-main flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-solid-main flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
       {/* Subtle Warm Decorative Orbs */}
       <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-accent-primary/10 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent-secondary/5 rounded-full blur-[100px] pointer-events-none" />

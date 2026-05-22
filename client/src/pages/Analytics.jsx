@@ -3,6 +3,22 @@ import { BarChart3, TrendingUp, Users, CheckCircle2, AlertCircle } from 'lucide-
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 
+const getBezierPath = (points) => {
+  if (points.length === 0) return '';
+  if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
+  let path = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i];
+    const p1 = points[i + 1];
+    const cp1x = p0.x + (p1.x - p0.x) / 2;
+    const cp1y = p0.y;
+    const cp2x = p0.x + (p1.x - p0.x) / 2;
+    const cp2y = p1.y;
+    path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`;
+  }
+  return path;
+};
+
 export default function Analytics() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -194,15 +210,33 @@ export default function Analytics() {
               // Convert a data point index to SVG X coordinate
               const toX = (i) => padL + (i / Math.max(velocityData.length - 1, 1)) * chartW;
 
-              const optimisticPoints = velocityData.map((d, i) => `${toX(i)},${toY(d.optimistic)}`).join(' ');
-              const realisticPoints = velocityData.map((d, i) => `${toX(i)},${toY(d.realistic)}`).join(' ');
-              const velocityPoints = velocityData.map((d, i) => `${toX(i)},${toY(d.velocity)}`).join(' ');
+              const optimisticPoints = velocityData.map((d, i) => ({ x: toX(i), y: toY(d.optimistic) }));
+              const realisticPoints = velocityData.map((d, i) => ({ x: toX(i), y: toY(d.realistic) }));
+              const velocityPoints = velocityData.map((d, i) => ({ x: toX(i), y: toY(d.velocity) }));
 
-              // Gridline y values (3 horizontal guides)
+              const optimisticPath = getBezierPath(optimisticPoints);
+              const realisticPath = getBezierPath(realisticPoints);
+              const velocityPath = getBezierPath(velocityPoints);
+
               const gridYs = [padT, padT + chartH * 0.4, padT + chartH * 0.75];
+
+              // Area fill coordinate computation
+              const firstX = toX(0);
+              const baselineY = padT + chartH;
+              const pathData = `${velocityPath} L ${toX(velocityData.length - 1)} ${baselineY} L ${firstX} ${baselineY} Z`;
 
               return (
                 <svg className="w-full h-full" viewBox={`0 0 ${W} ${H}`}>
+                  <defs>
+                    <linearGradient id="velocity-area-gradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#2D2D2D" stopOpacity="0.12" />
+                      <stop offset="100%" stopColor="#2D2D2D" stopOpacity="0.0" />
+                    </linearGradient>
+                    <filter id="chart-line-shadow" x="-10%" y="-10%" width="120%" height="120%">
+                      <feDropShadow dx="0" dy="3.5" stdDeviation="2" floodColor="#000000" floodOpacity="0.08" />
+                    </filter>
+                  </defs>
+
                   {/* Horizontal Gridlines */}
                   {gridYs.map((gy, gi) => (
                     <line
@@ -213,34 +247,41 @@ export default function Analytics() {
                     />
                   ))}
 
+                  {/* Gradient Area Fill under Actual Velocity */}
+                  <path
+                    d={pathData}
+                    fill="url(#velocity-area-gradient)"
+                  />
+
                   {/* Optimistic Target line (dashed/dotted gold) */}
-                  <polyline
+                  <path
                     fill="none"
                     stroke="#E6C35C"
                     strokeWidth="1.8"
                     strokeDasharray="2 3"
                     strokeLinecap="round"
-                    points={optimisticPoints}
+                    d={optimisticPath}
                   />
 
                   {/* Target / Realistic line (dashed grey) */}
-                  <polyline
+                  <path
                     fill="none"
                     stroke="#737373"
                     strokeWidth="1.8"
                     strokeDasharray="4 3"
                     strokeLinecap="round"
-                    points={realisticPoints}
+                    d={realisticPath}
                   />
 
-                  {/* Actual Velocity line (solid dark) */}
-                  <polyline
+                  {/* Actual Velocity line (solid dark with shadow) */}
+                  <path
                     fill="none"
                     stroke="#2D2D2D"
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    points={velocityPoints}
+                    d={velocityPath}
+                    filter="url(#chart-line-shadow)"
                   />
 
                   {/* Interactive data point circles */}
