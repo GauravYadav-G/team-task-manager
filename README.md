@@ -4,7 +4,7 @@ A full-stack collaborative Team Task Management web application built with React
 
 ## 🚀 Live Demo
 
-**Live URL:** [Coming soon — Railway deployment]
+**Live URL:** [https://team-task-manager-g5hn.vercel.app/]
 
 ## ✨ Features
 
