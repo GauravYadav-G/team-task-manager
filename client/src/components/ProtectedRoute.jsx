@@ -6,8 +6,8 @@ export default function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#111827] flex flex-col items-center justify-center text-gray-400 gap-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-700 border-t-pink-500" />
+      <div className="min-h-screen bg-bg-main flex flex-col items-center justify-center text-text-secondary gap-4">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-black/10 border-t-accent-primary" />
         <p className="font-sans text-sm font-medium tracking-wide">Loading Dashboard...</p>
       </div>
     );

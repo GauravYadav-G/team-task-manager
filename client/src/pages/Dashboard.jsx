@@ -23,7 +23,7 @@ import {
   Bell, 
   X,
   FileText,
-  DollarSign,
+  IndianRupee,
   Monitor,
   Sparkles,
   Loader2,
@@ -72,7 +72,8 @@ const TaskIcon = ({ name, className }) => {
     Bell: Bell,
     X: X,
     FileText: FileText,
-    DollarSign: DollarSign,
+    DollarSign: IndianRupee,
+    IndianRupee: IndianRupee,
     Monitor: Monitor,
     Sparkles: Sparkles,
     Loader2: Loader2,
@@ -151,9 +152,9 @@ export default function Dashboard() {
 
   // Profile Settings State
   const [profile, setProfile] = useState({
-    name: user?.name || 'Lora Peterson',
-    role: user?.role || 'UX/UI Designer',
-    rate: user?.rate || '$1,200',
+    name: user?.name || 'User',
+    role: user?.role || 'Team Member',
+    rate: user?.rate || '—',
     avatar: user?.avatar || ''
   });
   const [geminiKey, setGeminiKey] = useState(localStorage.getItem('gemini_api_key') || '');
@@ -162,9 +163,9 @@ export default function Dashboard() {
   useEffect(() => {
     if (user) {
       setProfile({
-        name: user.name || 'Lora Peterson',
-        role: user.role || 'UX/UI Designer',
-        rate: user.rate || '$1,200',
+        name: user.name || 'User',
+        role: user.role || 'Team Member',
+        rate: user.rate || '—',
         avatar: user.avatar || ''
       });
     }
@@ -876,12 +877,18 @@ Provide an inspiring, conversational, professional agile workspace performance c
 
             {/* Core Metrics: Grid with dynamic bar tags from Crextio Template */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { label: 'Pending Tasks', val: `${stats.totalTasks - completedCount}`, desc: `${stats.overdueTasks} overdue`, color: 'bg-rose-500/10 text-rose-500', percent: totalCount > 0 ? Math.round(((totalCount - completedCount) / totalCount) * 100) : 0 },
-                { label: 'Hired Progress', val: `10%`, desc: 'Average onboarding', color: 'bg-accent-primary/20 text-accent-secondary', percent: 10 },
-                { label: 'Project time', val: `${onboardingCompletionPercent}%`, desc: 'Task completion rate', color: 'bg-emerald-500/10 text-emerald-600', percent: onboardingCompletionPercent },
-                { label: 'Sprint Output', val: `12pt`, desc: 'Estimated velocity', color: 'bg-blue-500/10 text-blue-600', percent: 45 }
-              ].map((metric, i) => (
+              {(() => {
+                const inProgressCount = stats.tasksByStatus?.IN_PROGRESS || 0;
+                const doneCount = stats.tasksByStatus?.DONE || 0;
+                const inProgressPct = stats.totalTasks > 0 ? Math.round((inProgressCount / stats.totalTasks) * 100) : 0;
+                const donePct = stats.totalTasks > 0 ? Math.round((doneCount / stats.totalTasks) * 100) : 0;
+                return [
+                  { label: 'Pending Tasks', val: `${stats.totalTasks - completedCount}`, desc: `${stats.overdueTasks} overdue`, color: 'bg-rose-500/10 text-rose-500', percent: totalCount > 0 ? Math.round(((totalCount - completedCount) / totalCount) * 100) : 0 },
+                  { label: 'In Progress', val: `${inProgressCount}`, desc: `${inProgressPct}% of all tasks`, color: 'bg-accent-primary/20 text-accent-secondary', percent: inProgressPct },
+                  { label: 'Completion Rate', val: `${onboardingCompletionPercent}%`, desc: 'Task completion rate', color: 'bg-emerald-500/10 text-emerald-600', percent: onboardingCompletionPercent },
+                  { label: 'Done Tasks', val: `${doneCount}`, desc: `${donePct}% completed`, color: 'bg-blue-500/10 text-blue-600', percent: donePct }
+                ];
+              })().map((metric, i) => (
                 <div key={i} className="bg-bg-main p-4 rounded-3xl border border-black/5 hover:scale-[1.02] transition-transform">
                   <span className="text-xs text-text-secondary font-semibold block mb-1">{metric.label}</span>
                   <span className="text-2xl font-black tracking-tight block text-text-primary">{metric.val}</span>
@@ -928,7 +935,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                   
                   {/* Float price/rate badge from template */}
                   <span className="absolute top-3 right-3 bg-accent-secondary text-white text-[11px] font-black px-2.5 py-1 rounded-full shadow-sm">
-                    {profile.rate}
+                    {profile.rate && profile.rate !== '—' ? (profile.rate.includes('₹') || profile.rate.includes('$') ? profile.rate : `₹${profile.rate}/hr`) : '—'}
                   </span>
                 </div>
               </div>
@@ -956,7 +963,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                     <h3 className="text-2xl font-black mt-1 text-text-primary">{(Object.values(dailyHours).reduce((a, b) => a + b, 0)).toFixed(1)} h</h3>
                   </div>
                   <span className="bg-emerald-500/10 text-emerald-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    +12% this wk
+                    {(Object.values(dailyHours).reduce((a, b) => a + b, 0)).toFixed(1)}h total
                   </span>
                 </div>
                 <p className="text-[11px] text-text-secondary">Total tracked productive task hours across active sprint</p>
@@ -1526,7 +1533,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase text-text-secondary mb-1.5">Day of September</label>
+                  <label className="block text-[10px] font-bold uppercase text-text-secondary mb-1.5">Day of {new Date().toLocaleDateString('en-US', { month: 'long' })}</label>
                   <input
                     type="number"
                     min="1"

@@ -207,7 +207,7 @@ export default function SettingsPage() {
 
             <div className="bg-bg-main border border-black/5 px-4 py-2.5 rounded-2xl mt-4 w-full text-left flex justify-between items-center text-xs text-text-secondary">
               <span>Hourly Billing Rate</span>
-              <span className="text-text-primary font-black">{profileData.rate ? `$${profileData.rate}/hr` : 'Not Set'}</span>
+              <span className="text-text-primary font-black">{profileData.rate ? `₹${profileData.rate}/hr` : 'Not Set'}</span>
             </div>
 
             <div className="bg-bg-main border border-black/5 px-4 py-2.5 rounded-2xl mt-2 w-full text-left flex justify-between items-center text-xs text-text-secondary">
@@ -262,13 +262,13 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-text-secondary">Hourly Rate (USD)</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-text-secondary">Hourly Rate (INR)</label>
                 <input 
                   type="text" 
                   value={profileData.rate}
                   onChange={(e) => setProfileData({ ...profileData, rate: e.target.value })}
                   className="w-full bg-bg-main border border-black/5 focus:border-accent-primary rounded-xl py-2.5 px-4 text-sm text-text-primary placeholder-text-secondary focus:outline-none transition-all"
-                  placeholder="e.g. 85"
+                  placeholder="e.g. 500"
                 />
               </div>
 
