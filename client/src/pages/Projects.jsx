@@ -52,16 +52,9 @@ export default function Projects() {
     return membership?.role || 'MEMBER';
   };
 
-  // Fun random colors for the new theme
-  const getCardColor = (index) => {
-    const colors = [
-      'bg-bg-surface border-black/5 text-text-primary',
-      'bg-accent-primary/10 border-accent-primary/20 text-accent-secondary',
-      'bg-accent-secondary text-white border-accent-secondary',
-      'bg-amber-100 border-amber-200 text-amber-900',
-      'bg-[#E6C35C]/20 border-[#E6C35C]/30 text-accent-secondary',
-    ];
-    return colors[index % colors.length];
+  // Unify all cards with the premium glassmorphic theme
+  const getCardColor = () => {
+    return 'bg-bg-surface border-black/5 text-text-primary';
   };
 
   if (loading) {
@@ -110,8 +103,8 @@ export default function Projects() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5 w-full animate-fadeIn">
           {projects.map((project, idx) => {
             const role = getUserRole(project);
-            const isDark = idx % 5 === 2;
-            const cardStyle = getCardColor(idx);
+            const isDark = false;
+            const cardStyle = getCardColor();
             
             return (
               <Link
