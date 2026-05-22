@@ -11,6 +11,7 @@ import {
   LogOut,
   FileText
 } from 'lucide-react';
+import Logo from './Logo';
 
 export default function Sidebar() {
   const { logout } = useAuth();
@@ -35,14 +36,11 @@ export default function Sidebar() {
       
       {/* Brand Logo - Hide on mobile */}
       <div 
-        className="hidden md:flex mb-8 cursor-pointer transform hover:scale-110 transition-transform p-3 bg-gradient-to-br from-[#F5D885] via-accent-primary to-[#D4AF37] rounded-2xl shadow-md shadow-accent-primary/20 text-accent-secondary items-center justify-center border border-white/30" 
+        className="hidden md:flex mb-8 cursor-pointer transform hover:scale-110 hover:-translate-y-0.5 active:scale-95 transition-all duration-300" 
         onClick={() => navigate('/')}
         title="TaskFlow Workspace"
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M4 12L10 6L14 10L20 4" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M4 20L10 14L14 18L20 12" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        <Logo className="w-11 h-11" />
       </div>
 
       {/* Main Navigation Items - Flex Row on mobile, Flex Col on Desktop */}
