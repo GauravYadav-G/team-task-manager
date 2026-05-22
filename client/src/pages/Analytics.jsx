@@ -194,6 +194,7 @@ export default function Analytics() {
               // Convert a data point index to SVG X coordinate
               const toX = (i) => padL + (i / Math.max(velocityData.length - 1, 1)) * chartW;
 
+              const optimisticPoints = velocityData.map((d, i) => `${toX(i)},${toY(d.optimistic)}`).join(' ');
               const realisticPoints = velocityData.map((d, i) => `${toX(i)},${toY(d.realistic)}`).join(' ');
               const velocityPoints = velocityData.map((d, i) => `${toX(i)},${toY(d.velocity)}`).join(' ');
 
@@ -211,6 +212,16 @@ export default function Analytics() {
                       stroke="rgba(0,0,0,0.06)" strokeWidth="0.5" strokeDasharray="3"
                     />
                   ))}
+
+                  {/* Optimistic Target line (dashed/dotted gold) */}
+                  <polyline
+                    fill="none"
+                    stroke="#E6C35C"
+                    strokeWidth="1.8"
+                    strokeDasharray="2 3"
+                    strokeLinecap="round"
+                    points={optimisticPoints}
+                  />
 
                   {/* Target / Realistic line (dashed grey) */}
                   <polyline
@@ -235,16 +246,43 @@ export default function Analytics() {
                   {/* Interactive data point circles */}
                   {velocityData.map((d, i) => (
                     <g key={i}>
+                      {/* Optimistic Target point */}
+                      <circle
+                        cx={toX(i)}
+                        cy={toY(d.optimistic)}
+                        r="3.5"
+                        fill="#E6C35C"
+                        stroke="#FFFFFF"
+                        strokeWidth="1"
+                        className="cursor-pointer hover:r-5 transition-all"
+                      >
+                        <title>{d.name} Optimistic Target: {d.optimistic} tasks</title>
+                      </circle>
+
+                      {/* Realistic Target point */}
+                      <circle
+                        cx={toX(i)}
+                        cy={toY(d.realistic)}
+                        r="3.5"
+                        fill="#737373"
+                        stroke="#FFFFFF"
+                        strokeWidth="1"
+                        className="cursor-pointer hover:r-5 transition-all"
+                      >
+                        <title>{d.name} Realistic Target: {d.realistic} tasks</title>
+                      </circle>
+
+                      {/* Actual Completed point */}
                       <circle
                         cx={toX(i)}
                         cy={toY(d.velocity)}
-                        r="5"
-                        fill="#E6C35C"
-                        stroke="#2D2D2D"
+                        r="4.5"
+                        fill="#2D2D2D"
+                        stroke="#FFFFFF"
                         strokeWidth="1.5"
-                        className="cursor-pointer hover:r-7 transition-all"
+                        className="cursor-pointer hover:r-6 transition-all"
                       >
-                        <title>{d.name}: {d.velocity} completed (target: {d.realistic})</title>
+                        <title>{d.name} Actual Completed: {d.velocity} tasks</title>
                       </circle>
                     </g>
                   ))}
@@ -273,11 +311,15 @@ export default function Analytics() {
           <div className="flex items-center gap-6 mt-4 pt-4 border-t border-black/5">
             <div className="flex items-center gap-2">
               <span className="w-3 h-1 bg-accent-secondary rounded-full"></span>
-              <span className="text-[10px] text-text-secondary font-semibold uppercase">Actual Velocity</span>
+              <span className="text-[10px] text-text-secondary font-semibold uppercase">Actual Completed</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-3 h-1 bg-text-secondary border-dashed border rounded-full"></span>
-              <span className="text-[10px] text-text-secondary font-semibold uppercase">Target Velocity</span>
+              <span className="text-[10px] text-text-secondary font-semibold uppercase">Realistic Target</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-1 bg-accent-primary border-dotted border rounded-full"></span>
+              <span className="text-[10px] text-text-secondary font-semibold uppercase">Optimistic Target</span>
             </div>
           </div>
         </div>

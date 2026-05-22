@@ -228,7 +228,8 @@ export default function Layout() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-bg-main text-text-primary font-sans antialiased selection:bg-accent-primary selection:text-accent-secondary relative overflow-hidden">
       {/* Decorative premium ambient glow blobs */}
-      <div className="absolute top-[-10%] left-[-15%] w-[45vw] h-[45vw] rounded-full bg-accent-primary/10 blur-[130px] pointer-events-none z-0"></div>
+      <div className="absolute top-[-10%] left-[-15%] w-[45vw] h-[45vw] rounded-full bg-accent-primary/12 blur-[130px] pointer-events-none z-0"></div>
+      <div className="absolute top-[35%] right-[20%] w-[30vw] h-[30vw] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute bottom-[5%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-accent-secondary/5 blur-[110px] pointer-events-none z-0"></div>
 
       <div className="flex flex-col md:flex-row flex-1 z-10 w-full relative">

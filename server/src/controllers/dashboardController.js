@@ -263,10 +263,10 @@ async function getOverall(req, res, next) {
         }
       });
 
-      // Fallbacks to keep the chart beautiful if there's no data
-      const velocity = completedCount || (index === 0 ? 1 : index === 1 ? 3 : index === 2 ? 2 : 4);
-      const realistic = dueCount || (index === 0 ? 2 : index === 1 ? 4 : index === 2 ? 3 : 5);
-      const optimistic = Math.max(activeCount, realistic + 2) || (index === 0 ? 4 : index === 1 ? 6 : index === 2 ? 5 : 7);
+      // Real live chart metrics (no hardcoded fallbacks)
+      const velocity = completedCount;
+      const realistic = dueCount;
+      const optimistic = activeCount;
 
       return {
         name: sprint.name,

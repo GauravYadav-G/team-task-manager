@@ -60,12 +60,18 @@ export default function Sidebar() {
               }`}
               title={item.title}
             >
-              <Icon size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />
-              
-              {/* Premium Floating Tooltip - Hide on mobile */}
-              <div className="hidden md:block absolute left-20 bg-accent-secondary text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl border border-black/5 z-30">
-                {item.title}
-              </div>
+              {({ isActive }) => (
+                <>
+                  <Icon size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />
+                  {isActive && (
+                    <span className="absolute bottom-1 w-1 h-1 rounded-full bg-white animate-pulse md:block hidden" />
+                  )}
+                  {/* Premium Floating Tooltip - Hide on mobile */}
+                  <div className="hidden md:block absolute left-20 bg-accent-secondary text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl border border-white/10 z-30">
+                    {item.title}
+                  </div>
+                </>
+              )}
             </NavLink>
           );
         })}
@@ -83,10 +89,17 @@ export default function Sidebar() {
           }`}
           title="Settings"
         >
-          <Settings size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />
-          <div className="hidden md:block absolute left-20 bg-accent-secondary text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl border border-black/5 z-30">
-            Settings
-          </div>
+          {({ isActive }) => (
+            <>
+              <Settings size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />
+              {isActive && (
+                <span className="absolute bottom-1 w-1 h-1 rounded-full bg-white animate-pulse md:block hidden" />
+              )}
+              <div className="hidden md:block absolute left-20 bg-accent-secondary text-white text-[10px] font-black tracking-wider uppercase px-3 py-1.5 rounded-xl opacity-0 translate-x-[-10px] group-hover:opacity-100 group-hover:translate-x-0 transition-all pointer-events-none whitespace-nowrap shadow-xl border border-white/10 z-30">
+                Settings
+              </div>
+            </>
+          )}
         </NavLink>
 
         {/* Logout */}
