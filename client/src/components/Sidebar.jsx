@@ -31,7 +31,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-full md:w-24 h-16 md:h-[95vh] md:my-[2.5vh] md:ml-4 bg-white/45 backdrop-blur-xl flex md:flex-col flex-row items-center md:py-8 px-4 md:px-0 shrink-0 fixed bottom-0 md:sticky md:top-[2.5vh] rounded-t-3xl md:rounded-3xl z-20 border border-white/50 shadow-xl shadow-black/[0.02] transition-all duration-300">
+    <div className="w-full md:w-24 h-16 md:h-[95vh] md:my-[2.5vh] md:ml-4 mac-dock backdrop-blur-xl flex md:flex-col flex-row items-center md:py-8 px-4 md:px-0 shrink-0 fixed bottom-0 md:sticky md:top-[2.5vh] rounded-t-3xl md:rounded-3xl z-20 border border-white/50 transition-all duration-300">
       
       {/* Brand Logo - Hide on mobile */}
       <div 
@@ -56,7 +56,7 @@ export default function Sidebar() {
               className={({ isActive }) => `p-2.5 md:p-3 rounded-xl md:rounded-2xl transition-all duration-300 relative group flex items-center justify-center ${
                 isActive 
                   ? 'bg-accent-secondary text-white shadow-md shadow-accent-secondary/15 scale-105' 
-                  : 'text-text-secondary hover:text-text-primary hover:bg-black/5 hover:scale-108 active:scale-95'
+                  : 'text-text-secondary hover:text-text-primary nav-item-glow hover:scale-108 active:scale-95'
               }`}
               title={item.title}
             >
@@ -85,7 +85,7 @@ export default function Sidebar() {
           className={({ isActive }) => `p-2.5 md:p-3 rounded-xl md:rounded-2xl transition-all duration-300 relative group flex items-center justify-center ${
             isActive 
               ? 'bg-accent-secondary text-white shadow-md shadow-accent-secondary/15 scale-105' 
-              : 'text-text-secondary hover:text-text-primary hover:bg-black/5 hover:scale-108 active:scale-95'
+              : 'text-text-secondary hover:text-text-primary nav-item-glow hover:scale-108 active:scale-95'
           }`}
           title="Settings"
         >
@@ -105,7 +105,7 @@ export default function Sidebar() {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="p-2.5 md:p-3 text-text-secondary hover:text-rose-500 hover:bg-rose-500/10 cursor-pointer transition-all duration-200 rounded-xl md:rounded-2xl relative group"
+          className="p-2.5 md:p-3 text-text-secondary hover:text-rose-500 hover:bg-rose-500/10 hover:border-rose-500/20 border border-transparent cursor-pointer transition-all duration-200 rounded-xl md:rounded-2xl relative group"
           title="Log Out"
         >
           <LogOut size={18} className="stroke-[2.2] md:w-[20px] md:h-[20px]" />

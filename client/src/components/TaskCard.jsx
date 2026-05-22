@@ -19,26 +19,30 @@ export default function TaskCard({ task, onEdit, userRole }) {
         return {
           bg: 'bg-rose-500/10 border-rose-500/20 text-rose-700 shadow-sm',
           dot: 'bg-rose-500',
-          glow: 'group-hover:shadow-[0_0_15px_rgba(244,63,94,0.05)]'
+          glow: 'group-hover:shadow-[0_0_15px_rgba(244,63,94,0.05)]',
+          borderClass: 'priority-urgent'
         };
       case 'HIGH':
         return {
           bg: 'bg-amber-500/10 border-amber-500/20 text-amber-700 shadow-sm',
           dot: 'bg-amber-500',
-          glow: 'group-hover:shadow-[0_0_15px_rgba(245,158,11,0.05)]'
+          glow: 'group-hover:shadow-[0_0_15px_rgba(245,158,11,0.05)]',
+          borderClass: 'priority-high'
         };
       case 'MEDIUM':
         return {
           bg: 'bg-blue-500/10 border-blue-500/20 text-blue-700 shadow-sm',
           dot: 'bg-blue-500',
-          glow: 'group-hover:shadow-[0_0_15px_rgba(59,130,246,0.05)]'
+          glow: 'group-hover:shadow-[0_0_15px_rgba(59,130,246,0.05)]',
+          borderClass: 'priority-medium'
         };
       case 'LOW':
       default:
         return {
           bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700 shadow-sm',
           dot: 'bg-emerald-500',
-          glow: 'group-hover:shadow-[0_0_15px_rgba(16,185,129,0.05)]'
+          glow: 'group-hover:shadow-[0_0_15px_rgba(16,185,129,0.05)]',
+          borderClass: 'priority-low'
         };
     }
   }, [task.priority]);
@@ -58,7 +62,7 @@ export default function TaskCard({ task, onEdit, userRole }) {
       onDragStart={handleDragStart}
       onClick={() => onEdit?.(task)}
       id={`task-${task.id}`}
-      className={`group bg-bg-surface hover:scale-[1.02] hover:-translate-y-0.5 border border-black/5 hover:border-accent-primary/45 p-5 rounded-2xl cursor-grab active:cursor-grabbing transition-all duration-300 mac-shadow ${
+      className={`group bg-bg-surface hover:scale-[1.02] hover:-translate-y-0.5 border border-black/5 hover:border-accent-primary/45 p-5 rounded-2xl cursor-grab active:cursor-grabbing transition-all duration-300 mac-shadow ${priorityStyle.borderClass} ${
         overdue 
           ? 'bg-rose-500/[0.02] border-rose-500/20 hover:border-rose-500/30' 
           : ''

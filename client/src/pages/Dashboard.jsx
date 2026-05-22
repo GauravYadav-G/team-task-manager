@@ -972,13 +972,13 @@ Provide an inspiring, conversational, professional agile workspace performance c
               {/* Bar Chart Graphics */}
               <div className="flex items-end justify-between h-28 pt-4 pb-2 px-1">
                 {[
-                  { day: 'M', h: dailyHours.M, color: 'bg-text-secondary' },
-                  { day: 'T', h: dailyHours.T, color: 'bg-accent-primary' },
-                  { day: 'W', h: dailyHours.W, color: 'bg-accent-secondary' },
-                  { day: 'T', h: dailyHours.T_u, color: 'bg-accent-primary/70' },
-                  { day: 'F', h: dailyHours.F, color: 'bg-text-secondary/70' },
-                  { day: 'S', h: dailyHours.S, color: 'bg-text-secondary/50' },
-                  { day: 'S', h: dailyHours.S_u, color: 'bg-text-secondary/30' }
+                  { day: 'M', h: dailyHours.M, color: 'bg-gradient-to-t from-[#737373] to-[#A3A3A3]' },
+                  { day: 'T', h: dailyHours.T, color: 'bg-gradient-to-t from-accent-primary to-[#F5D885]' },
+                  { day: 'W', h: dailyHours.W, color: 'bg-gradient-to-t from-accent-secondary to-[#4A4A4A]' },
+                  { day: 'T', h: dailyHours.T_u, color: 'bg-gradient-to-t from-accent-primary/70 to-[#F5D885]/70' },
+                  { day: 'F', h: dailyHours.F, color: 'bg-gradient-to-t from-[#737373]/70 to-[#A3A3A3]/70' },
+                  { day: 'S', h: dailyHours.S, color: 'bg-gradient-to-t from-[#737373]/50 to-[#A3A3A3]/50' },
+                  { day: 'S', h: dailyHours.S_u, color: 'bg-gradient-to-t from-[#737373]/30 to-[#A3A3A3]/30' }
                 ].map((bar, idx) => {
                   const heightPercent = Math.min(100, Math.max(8, (bar.h / 12) * 100));
                   return (
@@ -1026,7 +1026,7 @@ Provide an inspiring, conversational, professional agile workspace performance c
                     fill="transparent" 
                     strokeDasharray="264" 
                     strokeDashoffset={timerRunning ? (264 - (timerSeconds % 60) * 4.4) : 180}
-                    className="transition-all duration-1000 ease-linear"
+                    className="transition-all duration-1000 ease-linear drop-shadow-[0_0_6px_rgba(230,195,92,0.55)]"
                   />
                 </svg>
 
@@ -1095,17 +1095,23 @@ Provide an inspiring, conversational, professional agile workspace performance c
                       <div key={item.user.id} className="leaderboard-row flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-bg-main rounded-2xl border border-black/5 gap-3 transition-all duration-300">
                         <div className="flex items-center gap-3">
                           {/* Rank Badge */}
-                          <div className="w-8 h-8 rounded-xl flex items-center justify-center font-black text-sm">
-                            {rank === 1 ? (
-                              <span className="text-xl" title="Gold Trophy">🏆</span>
-                            ) : rank === 2 ? (
-                              <span className="text-xl" title="Silver Trophy">🥈</span>
-                            ) : rank === 3 ? (
-                              <span className="text-xl" title="Bronze Trophy">🥉</span>
-                            ) : (
-                              <span className="text-text-secondary font-extrabold">#{rank}</span>
-                            )}
-                          </div>
+                          {rank === 1 ? (
+                            <div className="w-9 h-9 rounded-full flex items-center justify-center font-black text-sm bg-amber-100/80 border border-amber-300/50 shadow-[0_0_12px_rgba(245,158,11,0.25)] animate-pulse" title="Gold Trophy">
+                              🏆
+                            </div>
+                          ) : rank === 2 ? (
+                            <div className="w-9 h-9 rounded-full flex items-center justify-center font-black text-sm bg-slate-100/80 border border-slate-300/50 shadow-[0_0_10px_rgba(148,163,184,0.15)]" title="Silver Trophy">
+                              🥈
+                            </div>
+                          ) : rank === 3 ? (
+                            <div className="w-9 h-9 rounded-full flex items-center justify-center font-black text-sm bg-amber-900/10 border border-amber-800/20 shadow-[0_0_8px_rgba(120,53,4,0.1)]" title="Bronze Trophy">
+                              🥉
+                            </div>
+                          ) : (
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs bg-black/5 border border-black/5 text-text-secondary">
+                              #{rank}
+                            </div>
+                          )}
 
                           {/* User Avatar */}
                           {item.user.avatar ? (

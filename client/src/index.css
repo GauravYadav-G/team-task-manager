@@ -17,6 +17,11 @@
     @apply bg-bg-main text-text-primary font-sans antialiased;
   }
 
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', 'Inter', sans-serif !important;
+    letter-spacing: -0.02em;
+  }
+
   /* Custom scrollbar matching soft light dashboard styles */
   ::-webkit-scrollbar {
     width: 6px;
@@ -206,10 +211,32 @@
 
 /* Glass panels & cards with linear gradient reflections and tactile inset highlights */
 .bg-bg-surface {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%) !important;
-  backdrop-filter: blur(24px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.3) 100%) !important;
+  backdrop-filter: blur(28px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
   box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.65), 0 8px 32px 0 rgba(0, 0, 0, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Tactile priority left-border indicators with important overrides */
+.priority-urgent {
+  border-left-width: 4.5px !important;
+  border-left-color: rgba(244, 63, 94, 0.95) !important;
+}
+
+.priority-high {
+  border-left-width: 4.5px !important;
+  border-left-color: rgba(245, 158, 11, 0.95) !important;
+}
+
+.priority-medium {
+  border-left-width: 4.5px !important;
+  border-left-color: rgba(59, 130, 246, 0.95) !important;
+}
+
+.priority-low {
+  border-left-width: 4.5px !important;
+  border-left-color: rgba(16, 185, 129, 0.95) !important;
 }
 
 /* Glass borders - replacing thin dark borders with reflective translucent glass edges */
@@ -318,6 +345,22 @@
   border-color: rgba(230, 195, 92, 0.35) !important;
   transform: translateY(-1.5px) scale(1.005);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* macOS dock and navigation glow effects */
+.mac-dock {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.35)) !important;
+  box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.65), 0 8px 32px 0 rgba(0, 0, 0, 0.04) !important;
+}
+
+.nav-item-glow {
+  border: 1px solid transparent !important;
+}
+
+.nav-item-glow:hover {
+  background: rgba(255, 255, 255, 0.55) !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.8), 0 4px 12px rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
 }
 
 
