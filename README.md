@@ -197,4 +197,3 @@ Add the following keys in your Vercel Project Settings under Environment Variabl
 
 ## 📄 License
 
-MIT
